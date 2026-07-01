@@ -43,16 +43,7 @@ export default function NewsPanel() {
           </div>
         )}
 
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "1rem" }}>
-          <button 
-            className="card-action-btn" 
-            style={{ maxWidth: "200px", padding: "0.6rem" }}
-            disabled
-          >
-            <span>View All News</span>
-            <ChevronRight size={14} />
-          </button>
-        </div>
+
       </div>
     </div>
   );
