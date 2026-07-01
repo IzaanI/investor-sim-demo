@@ -148,7 +148,7 @@ export default function PitchPanel() {
 
                   <button 
                     className="diligence-btn"
-                    disabled={points.available < 2}
+                    disabled={points.available < 2 || activeLog.deepDivedCount > 0}
                     onClick={() => conductDeepDive(selectedPitch.instanceId)}
                   >
                     <span className="diligence-btn-title">
@@ -156,7 +156,7 @@ export default function PitchPanel() {
                       <span className="diligence-btn-cost">2 Points</span>
                     </span>
                     <span className="diligence-btn-desc">
-                      75% success chance. Attempts to uncover one key hidden truth.
+                      {activeLog.deepDivedCount > 0 ? "Completed" : "Investigates metrics and operations to uncover hidden anomalies."}
                     </span>
                   </button>
                 </div>
@@ -197,12 +197,7 @@ export default function PitchPanel() {
                       <div className="log-item">
                         <div className="log-label">Deep Dive Log:</div>
                         
-                        {activeLog.lastDeepDiveResult === "miss" && (
-                          <div className="log-alert severe" style={{ marginBottom: "0.5rem" }}>
-                            <AlertTriangle size={16} style={{ flexShrink: 0 }} />
-                            <span>Deep dive failed: The founder was unresponsive or financial audit access was delayed. (25% miss chance)</span>
-                          </div>
-                        )}
+                        {/* Miss results are silently mapped to no_more (clean) to preserve mystery */}
 
                         {activeLog.lastDeepDiveResult === "no_more" && (
                           <div className="log-alert neutral" style={{ marginBottom: "0.5rem" }}>

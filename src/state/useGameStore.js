@@ -115,8 +115,8 @@ export const useGameStore = create((set, get) => ({
       lastDeepDiveResult: null
     };
 
-    const isMiss = Math.random() < 0.25;
-    let result = "miss";
+    const isMiss = Math.random() < 0.20;
+    let result = "no_more";
     let revealedTraits = [...currentLog.revealedTraits];
 
     if (!isMiss) {
@@ -131,8 +131,6 @@ export const useGameStore = create((set, get) => ({
         const chosenTrait = discoverableTraits[Math.floor(Math.random() * discoverableTraits.length)];
         revealedTraits.push(chosenTrait);
         result = "hit";
-      } else {
-        result = "no_more";
       }
     }
 
