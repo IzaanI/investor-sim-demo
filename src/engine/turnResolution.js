@@ -79,10 +79,12 @@ export function generatePitchesForTurn(industry, count = 3) {
 /**
  * Gets news items for the current turn.
  */
-export function getNewsForTurn(turn, industry) {
+export function getNewsForTurn(turn, industry, activeNewsEffects = []) {
+  const activeIds = activeNewsEffects.map(a => a.id);
   return NEWS_BANK.filter(news => {
     if (news.turn !== turn) return false;
     if (news.scope === "industry" && news.industry !== industry) return false;
+    if (activeIds.includes(news.id)) return false;
     return true;
   });
 }
@@ -113,7 +115,7 @@ export function resolveTurn(state, operatingCost = 50000) {
   // 2. Roll outcomes for active holdings
   nextPortfolio = nextPortfolio.map(holding => {
     if (holding.status === "active") {
-      const { outcomeType, multiplier, newValueMultiplier, isFailed } = rollHoldingOutcome(holding);
+      const { outcomeType, multiplier, newValueMultiplier, isFailed } = rollHoldingOutcome(holding, state.activeNewsEffects);
       const prevValue = Math.round(holding.investedAmount * holding.currentValueMultiplier);
       const nextValue = Math.round(holding.investedAmount * newValueMultiplier);
 
@@ -227,13 +229,36 @@ export function resolveTurn(state, operatingCost = 50000) {
   const nextTurn = state.turn + 1;
   const isDemoFinished = nextTurn > 52; // Max turn limit of 52
 
+  // 6.5 Handle active news durations
+  let nextActiveNewsEffects = (state.activeNewsEffects || [])
+    .map(evt => ({
+      ...evt,
+      turnsRemaining: evt.turnsRemaining - 1
+    }))
+    .filter(evt => evt.turnsRemaining > 0);
+
   // 7. Generate next turn's news and pitches (if game is not over)
   let nextPitches = [];
   let nextNews = [];
 
   if (!nextGameOver && !isDemoFinished) {
     nextPitches = generatePitchesForTurn(state.industry, 3);
-    nextNews = getNewsForTurn(nextTurn, state.industry);
+    nextNews = getNewsForTurn(nextTurn, state.industry, nextActiveNewsEffects);
+
+    // Register newly triggered persistent news
+    nextNews.forEach(newsItem => {
+      if (newsItem.duration > 0) {
+        nextActiveNewsEffects.push({
+          id: newsItem.id,
+          headline: newsItem.headline,
+          detail: newsItem.detail,
+          category: newsItem.category,
+          timeString: newsItem.timeString,
+          turnsRemaining: newsItem.duration,
+          macroModifiers: newsItem.macroModifiers
+        });
+      }
+    });
   }
 
   return {
@@ -244,6 +269,7 @@ export function resolveTurn(state, operatingCost = 50000) {
     eventQueue: [...(state.eventQueue || []), ...nextEventQueue],
     currentPitches: nextPitches,
     currentNews: nextNews,
+    activeNewsEffects: nextActiveNewsEffects,
     gameOver: nextGameOver,
     demoFinished: isDemoFinished,
     points: {

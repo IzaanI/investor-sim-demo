@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { generatePitchesForTurn, getNewsForTurn, resolveTurn } from "../engine/turnResolution";
 import { TRAITS } from "../data/traits";
 
-const SAVE_KEY = "investor_game_save_v2";
-const SAVE_VERSION = 2;
+const SAVE_KEY = "investor_game_save_v3";
+const SAVE_VERSION = 3;
 const INITIAL_CASH = 10000000; // $10,000,000 starting cash
 const DEMO_INDUSTRY = "Health & Wellness";
 
@@ -24,7 +24,9 @@ const createInitialState = () => {
     currentPitches: initialPitches,
     currentNews: initialNews,
     gameOver: false,
-    demoFinished: false
+    demoFinished: false,
+    activeNewsEffects: [],
+    pinnedNewsIds: []
   };
 };
 
@@ -315,6 +317,17 @@ export const useGameStore = create((set, get) => ({
       gameOver: nextGameOver
     });
 
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
+
+  togglePinNews: (newsId) => {
+    const { pinnedNewsIds } = get();
+    const isPinned = pinnedNewsIds.includes(newsId);
+    const nextPinned = isPinned
+      ? pinnedNewsIds.filter(id => id !== newsId)
+      : [...pinnedNewsIds, newsId];
+    
+    set({ pinnedNewsIds: nextPinned });
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   }
 }));

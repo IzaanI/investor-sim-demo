@@ -5,13 +5,28 @@ import { TRAITS } from "../data/traits.js";
  * @param {Object} holding - The portfolio holding object
  * @returns {Object} { outcomeType, multiplier, newValueMultiplier, isFailed }
  */
-export function rollHoldingOutcome(holding) {
-  const { outcomeWeights, traits, currentValueMultiplier } = holding;
+export function rollHoldingOutcome(holding, activeNewsEffects = []) {
+  const { outcomeWeights, traits, currentValueMultiplier, industry } = holding;
 
-  // 1. Gather all trait nudges
+  // 1. Gather all trait nudges and active news modifiers
   let growthWeight = outcomeWeights.growth;
   let declineWeight = outcomeWeights.decline;
   let volatileWeight = outcomeWeights.volatile;
+  let multiplierModifier = 0;
+
+  activeNewsEffects.forEach(effect => {
+    // Check if news applies to this industry
+    if (effect.scope === "industry" && effect.industry && effect.industry !== industry) {
+      return;
+    }
+    
+    if (effect.macroModifiers) {
+      growthWeight += effect.macroModifiers.declineWeightModifier || 0;
+      declineWeight += effect.macroModifiers.declineWeightModifier || 0;
+      volatileWeight += effect.macroModifiers.volatileWeightModifier || 0;
+      multiplierModifier += effect.macroModifiers.valueMultiplierModifier || 0;
+    }
+  });
 
   traits.forEach(traitId => {
     const trait = TRAITS[traitId];
@@ -41,22 +56,21 @@ export function rollHoldingOutcome(holding) {
       outcomeType = "volatile";
     }
   } else {
-    // Fallback if weights somehow sum to zero
     outcomeType = "volatile";
   }
 
   // Calculate multiplier based on outcome type
   let multiplier = 1.0;
   if (outcomeType === "growth") {
-    // Growth: +5% to +25%
     multiplier = 1.05 + Math.random() * 0.20;
   } else if (outcomeType === "decline") {
-    // Decline: -5% to -35%
     multiplier = 0.65 + Math.random() * 0.30;
   } else {
-    // Volatile: -70% to +60% (negative-biased — unpredictability punishes more than it rewards)
     multiplier = 0.30 + Math.random() * 1.30;
   }
+
+  // Apply macro multiplier modifier silently
+  multiplier = Math.max(0.1, multiplier + multiplierModifier);
 
   // Calculate new value multiplier
   let nextValueMultiplier = currentValueMultiplier * multiplier;

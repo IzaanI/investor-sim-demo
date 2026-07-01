@@ -220,10 +220,7 @@ export default function PitchPanel() {
                                 <div key={t} className="log-alert neutral">
                                   <ShieldAlert size={16} style={{ flexShrink: 0 }} />
                                   <div>
-                                    <strong style={{ textTransform: "uppercase", fontSize: "0.75rem" }}>
-                                      {traitDef.label}
-                                    </strong>
-                                    <p style={{ fontSize: "0.8rem", marginTop: "0.15rem", color: "white" }}>
+                                    <p style={{ fontSize: "0.85rem", color: "white", margin: 0, lineHeight: "1.4" }}>
                                       {traitDef.deepDiveReveal}
                                     </p>
                                   </div>

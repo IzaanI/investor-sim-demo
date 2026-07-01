@@ -18,8 +18,14 @@ export const NEWS_BANK = [
     impact: "MEDIUM",
     timeString: "5 hours ago",
     headline: "Global Supply Chain Delays Continue",
-    detail: "New disruptions in key shipping lanes expected to impact consumer goods, automotive, and electronics sectors through end of year.",
-    relevantTraits: []
+    detail: "New disruptions in key shipping lanes expected to impact wellness hardware container shipping through next 4 quarters.",
+    relevantTraits: [],
+    duration: 4,
+    macroModifiers: {
+      declineWeightModifier: 0.15,
+      growthWeightModifier: -0.05,
+      valueMultiplierModifier: -0.03
+    }
   },
   {
     id: "news_wellness_claims",
@@ -30,8 +36,13 @@ export const NEWS_BANK = [
     impact: "HIGH",
     timeString: "2 hours ago",
     headline: "Regulators Probing Unsubstantiated Health Claims in Supplements",
-    detail: "The Federal Trade Commission warns that wellness startups making clinical claims without peer-reviewed studies will face heavy fines.",
-    relevantTraits: ["uncalculated_risk_taker"]
+    detail: "The Federal Trade Commission warns that wellness startups making clinical claims without peer-reviewed studies will face heavy audits and fines.",
+    relevantTraits: ["uncalculated_risk_taker"],
+    duration: 3,
+    macroModifiers: {
+      declineWeightModifier: 0.20,
+      growthWeightModifier: -0.10
+    }
   },
   {
     id: "news_legal_audits",
@@ -86,8 +97,13 @@ export const NEWS_BANK = [
     impact: "HIGH",
     timeString: "4 hours ago",
     headline: "Startup Founders Struggle with Key Personnel Attrition",
-    detail: "Venture analysts report an increase in startup operational failures when core software systems and intellectual properties are concentrated in one person without documentation.",
-    relevantTraits: ["key_man_risk"]
+    detail: "Venture analysts report an increase in startup operational failures when core software systems and intellectual properties are concentrated in one developer.",
+    relevantTraits: ["key_man_risk"],
+    duration: 3,
+    macroModifiers: {
+      declineWeightModifier: 0.15,
+      volatileWeightModifier: 0.10
+    }
   },
   {
     id: "news_pe_slowing",
@@ -110,7 +126,12 @@ export const NEWS_BANK = [
     timeString: "2 hours ago",
     headline: "Industry Audits Show Decaying Retention on Social Acquisition Channels",
     detail: "Marketing experts warn that while digital ad campaigns drive cheap trial conversions, consumer subscription churn by Month 2 has doubled.",
-    relevantTraits: ["over_optimized_marketing"]
+    relevantTraits: ["over_optimized_marketing"],
+    duration: 4,
+    macroModifiers: {
+      declineWeightModifier: 0.25,
+      growthWeightModifier: -0.15
+    }
   },
   {
     id: "news_label_probe",
