@@ -1,6 +1,7 @@
 import { PITCH_TEMPLATES } from "../data/pitches.js";
 import { NEWS_BANK } from "../data/news.js";
 import { rollHoldingOutcome } from "./outcomeRoll.js";
+import { EVENT_TEMPLATES } from "../data/events.js";
 
 /**
  * Shuffles an array helper.
@@ -135,6 +136,74 @@ export function resolveTurn(state, operatingCost = 50000) {
     return holding;
   });
 
+  // 2.5 Generate events probabilistically for active holdings
+  const nextEventQueue = [];
+  nextPortfolio.forEach(holding => {
+    // Only roll events for holdings that survived this turn as 'active'
+    if (holding.status === "active") {
+      const roll = Math.random();
+      const eventBaseChance = holding.eventChance?.base || 0.15;
+      
+      if (roll < eventBaseChance) {
+        // Trigger event!
+        // Find if company is performing well (multiplier >= 1.0) or declining (< 1.0)
+        const isUpTrend = holding.currentValueMultiplier >= 1.0;
+        
+        // Find templates
+        const candidateTemplates = EVENT_TEMPLATES.filter(evt => {
+          if (isUpTrend) {
+            return evt.triggerCondition === "trend_up" || evt.triggerCondition === "any";
+          } else {
+            return evt.triggerCondition === "trend_down" || evt.triggerCondition === "any";
+          }
+        });
+
+        if (candidateTemplates.length > 0) {
+          // Select random template
+          const template = candidateTemplates[Math.floor(Math.random() * candidateTemplates.length)];
+          
+          // Calculate values
+          let eventAsk = 0;
+          let buyoutAmount = 0;
+          
+          if (template.type === "follow_on_request") {
+            eventAsk = Math.round((holding.investedAmount * (0.4 + Math.random() * 0.2)) / 50000) * 50000;
+          } else if (template.type === "distress_request") {
+            eventAsk = Math.round((holding.investedAmount * (0.2 + Math.random() * 0.1)) / 25000) * 25000;
+          } else if (template.type === "buyout_offer") {
+            const currentValue = holding.investedAmount * holding.currentValueMultiplier;
+            buyoutAmount = Math.round((currentValue * (1.2 + Math.random() * 0.3)) / 100000) * 100000;
+          }
+
+          const formatCurrencyStr = (val) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(val);
+
+          // Create event instance
+          const eventInstance = {
+            id: `${holding.pitchId}_evt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+            pitchId: holding.pitchId,
+            investedAmount: holding.investedAmount,
+            businessName: holding.businessName,
+            type: template.type,
+            promptText: template.promptText
+              .replaceAll("{businessName}", holding.businessName)
+              .replaceAll("{eventAsk}", formatCurrencyStr(eventAsk))
+              .replaceAll("{buyoutAmount}", formatCurrencyStr(buyoutAmount)),
+            eventAsk,
+            buyoutAmount,
+            options: template.options.map(opt => ({
+              ...opt,
+              label: opt.label
+                .replaceAll("{eventAsk}", formatCurrencyStr(eventAsk))
+                .replaceAll("{buyoutAmount}", formatCurrencyStr(buyoutAmount))
+            }))
+          };
+          
+          nextEventQueue.push(eventInstance);
+        }
+      }
+    }
+  });
+
   // 3. Deduct operating cost
   nextCash -= operatingCost;
 
@@ -172,6 +241,7 @@ export function resolveTurn(state, operatingCost = 50000) {
     cash: nextCash,
     netWorthHistory: nextNetWorthHistory,
     portfolio: nextPortfolio,
+    eventQueue: [...(state.eventQueue || []), ...nextEventQueue],
     currentPitches: nextPitches,
     currentNews: nextNews,
     gameOver: nextGameOver,

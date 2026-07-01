@@ -31,13 +31,6 @@ export default function NewsPanel() {
                   <p className="news-detail">{news.detail}</p>
                 </div>
               </div>
-              <div className="news-impact-container">
-                <span className="news-impact-label">Impact</span>
-                <span className={`news-impact-badge ${news.impact.toLowerCase()}`}>
-                  <span className={`dot ${news.impact.toLowerCase()}`}></span>
-                  {news.impact}
-                </span>
-              </div>
             </div>
           ))
         ) : (

@@ -257,11 +257,11 @@ export default function PortfolioPanel() {
                         const traitDef = TRAITS[t];
                         if (!traitDef) return null;
                         return (
-                          <div key={t} className={`log-alert ${traitDef.severity}`}>
+                          <div key={t} className="log-alert neutral">
                             <ShieldAlert size={16} style={{ flexShrink: 0 }} />
                             <div>
                               <strong style={{ textTransform: "uppercase", fontSize: "0.75rem" }}>
-                                {traitDef.label} ({traitDef.severity})
+                                {traitDef.label}
                               </strong>
                               <p style={{ fontSize: "0.8rem", marginTop: "0.15rem", color: "white" }}>
                                 {traitDef.deepDiveReveal}

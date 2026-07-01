@@ -5,6 +5,7 @@ import Header, { formatMoney } from "./components/Header";
 import NewsPanel from "./components/NewsPanel";
 import PitchPanel from "./components/PitchPanel";
 import PortfolioPanel from "./components/PortfolioPanel";
+import EventModal from "./components/EventModal";
 import { ArrowRight, AlertTriangle, Trophy, TrendingUp, RefreshCw } from "lucide-react";
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
     netWorthHistory,
     gameOver,
     demoFinished,
+    eventQueue,
     startGame,
     nextTurn,
     resetGame
@@ -178,6 +180,9 @@ export default function App() {
   // 3. MAIN GAMEPLAY INTERFACE
   return (
     <div className="app-container">
+      {eventQueue && eventQueue.length > 0 && (
+        <EventModal event={eventQueue[0]} />
+      )}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <main className="main-viewport">

@@ -222,6 +222,100 @@ export const useGameStore = create((set, get) => ({
     const updatedPitches = currentPitches.filter(p => p.instanceId !== pitchInstanceId);
     set({ currentPitches: updatedPitches });
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
+
+  resolveEventOption: (eventId, effectType) => {
+    const { eventQueue, portfolio, cash, netWorthHistory } = get();
+    const event = eventQueue.find(e => e.id === eventId);
+    if (!event) return;
+
+    let nextCash = cash;
+    let nextPortfolio = [...portfolio];
+
+    nextPortfolio = nextPortfolio.map(h => {
+      if (h.pitchId === event.pitchId && h.investedAmount === event.investedAmount && h.status === "active") {
+        if (effectType === "accept_follow_on") {
+          nextCash -= event.eventAsk;
+          return {
+            ...h,
+            investedAmount: h.investedAmount + event.eventAsk
+          };
+        } else if (effectType === "decline_follow_on") {
+          const dilutionFactor = 0.65 + Math.random() * 0.1;
+          const nextEquity = Number((h.equityPercent * dilutionFactor).toFixed(2));
+          return {
+            ...h,
+            equityPercent: nextEquity,
+            history: [
+              ...(h.history || []),
+              {
+                turn: get().turn,
+                outcomeType: "dilution",
+                multiplier: 1.0,
+                value: Math.round(h.investedAmount * h.currentValueMultiplier),
+                changePercent: 0,
+                note: `Diluted from ${h.equityPercent}% to ${nextEquity}%`
+              }
+            ]
+          };
+        } else if (effectType === "accept_buyout") {
+          nextCash += event.buyoutAmount;
+          return {
+            ...h,
+            status: "exited",
+            exitValue: event.buyoutAmount
+          };
+        } else if (effectType === "accept_distress") {
+          nextCash -= event.eventAsk;
+          return {
+            ...h,
+            investedAmount: h.investedAmount + event.eventAsk
+          };
+        } else if (effectType === "decline_distress") {
+          return {
+            ...h,
+            status: "failed",
+            currentValueMultiplier: 0,
+            history: [
+              ...(h.history || []),
+              {
+                turn: get().turn,
+                outcomeType: "decline",
+                multiplier: 0,
+                value: 0,
+                changePercent: -100,
+                note: "Declared bankruptcy due to liquidity crisis."
+              }
+            ]
+          };
+        }
+      }
+      return h;
+    });
+
+    const updatedEventQueue = eventQueue.filter(e => e.id !== eventId);
+
+    const activeValue = nextPortfolio
+      .filter(h => h.status === "active" || h.status === "exit_pending")
+      .reduce((sum, h) => sum + Math.round(h.investedAmount * h.currentValueMultiplier), 0);
+    const nextNetWorth = nextCash + activeValue;
+    const nextNetWorthHistory = [...netWorthHistory.slice(0, -1), nextNetWorth];
+
+    let nextGameOver = get().gameOver;
+    if (nextNetWorth <= 0) {
+      nextGameOver = true;
+      nextCash = 0;
+    }
+
+    set({
+      cash: nextCash,
+      portfolio: nextPortfolio,
+      eventQueue: updatedEventQueue,
+      netWorthHistory: nextNetWorthHistory,
+      gameOver: nextGameOver
+    });
+
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   }
 }));
 export default useGameStore;
