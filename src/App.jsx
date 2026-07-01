@@ -195,7 +195,10 @@ export default function App() {
 
           {/* End Turn Widget */}
           <div className="next-turn-container">
-            <button className="next-turn-btn" onClick={nextTurn}>
+            <button className="next-turn-btn" onClick={() => {
+              nextTurn();
+              setActiveTab("news");
+            }}>
               <span>End Turn {turn}</span>
               <ArrowRight size={18} />
             </button>

@@ -236,10 +236,30 @@ button {
 .stat-value.cash {
   color: var(--color-success);
   text-shadow: 0 0 15px var(--color-success-glow);
+  transition: var(--transition-smooth);
+}
+
+.stat-value.cash.liquidity-crunch {
+  color: var(--color-danger);
+  text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+  animation: subtle-pulse 3s infinite ease-in-out;
 }
 
 .stat-value.networth {
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  transition: var(--transition-smooth);
+}
+
+.stat-value.networth.bankruptcy-danger {
+  color: #f59e0b;
+  text-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+  animation: subtle-pulse 3s infinite ease-in-out;
+}
+
+@keyframes subtle-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.65; }
+  100% { opacity: 1; }
 }
 
 .stat-subtext {

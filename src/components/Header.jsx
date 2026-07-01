@@ -27,17 +27,20 @@ export default function Header() {
   const year = Math.floor((turn - 1) / totalTurns) + 1;
   const quarter = Math.floor(((turn - 1) % totalTurns) / 13) + 1;
 
+  const isCashNegative = cash < 0;
+  const isNetWorthDanger = netWorth < 200000;
+
   return (
     <header className="dashboard-header">
       <div className="header-stat">
         <span className="stat-label">Net Worth</span>
-        <span className="stat-value networth">{formatMoney(netWorth)}</span>
+        <span className={`stat-value networth ${isNetWorthDanger ? "bankruptcy-danger" : ""}`}>{formatMoney(netWorth)}</span>
         <span className="stat-subtext">Portfolio + Cash</span>
       </div>
 
       <div className="header-stat">
         <span className="stat-label">Cash (Spendable)</span>
-        <span className="stat-value cash">{formatMoney(cash)}</span>
+        <span className={`stat-value cash ${isCashNegative ? "liquidity-crunch" : ""}`}>{formatMoney(cash)}</span>
         <span className="stat-subtext">Ready to deploy</span>
       </div>
 

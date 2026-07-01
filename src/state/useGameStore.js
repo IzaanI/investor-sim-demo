@@ -2,14 +2,28 @@ import { create } from "zustand";
 import { generatePitchesForTurn, getNewsForTurn, resolveTurn } from "../engine/turnResolution";
 import { TRAITS } from "../data/traits";
 
-const SAVE_KEY = "investor_game_save_v3";
-const SAVE_VERSION = 3;
-const INITIAL_CASH = 10000000; // $10,000,000 starting cash
+const SAVE_KEY = "investor_game_save_v4";
+const SAVE_VERSION = 4;
+const INITIAL_CASH = 1000000; // $1,000,000 starting cash
 const DEMO_INDUSTRY = "Health & Wellness";
 
 const createInitialState = () => {
-  const initialPitches = generatePitchesForTurn(DEMO_INDUSTRY, 3);
-  const initialNews = getNewsForTurn(1, DEMO_INDUSTRY);
+  const initialPitches = generatePitchesForTurn(DEMO_INDUSTRY, INITIAL_CASH, 1);
+  const initialNews = getNewsForTurn(1, DEMO_INDUSTRY, []);
+  const initialActiveNews = [];
+  initialNews.forEach(newsItem => {
+    if (newsItem.duration > 0) {
+      initialActiveNews.push({
+        id: newsItem.id,
+        headline: newsItem.headline,
+        detail: newsItem.detail,
+        category: newsItem.category,
+        timeString: newsItem.timeString,
+        turnsRemaining: newsItem.duration,
+        macroModifiers: newsItem.macroModifiers
+      });
+    }
+  });
 
   return {
     saveVersion: SAVE_VERSION,
@@ -25,7 +39,7 @@ const createInitialState = () => {
     currentNews: initialNews,
     gameOver: false,
     demoFinished: false,
-    activeNewsEffects: [],
+    activeNewsEffects: initialActiveNews,
     pinnedNewsIds: []
   };
 };
@@ -63,7 +77,7 @@ export const useGameStore = create((set, get) => ({
     const state = get();
     if (state.gameOver || state.demoFinished) return;
 
-    const nextStateValues = resolveTurn(state, 100000); // $100K operating cost per turn
+    const nextStateValues = resolveTurn(state, 10000); // $10K operating cost per turn
     set(nextStateValues);
 
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
@@ -321,6 +335,11 @@ export const useGameStore = create((set, get) => ({
   togglePinNews: (newsId) => {
     const { pinnedNewsIds } = get();
     const isPinned = pinnedNewsIds.includes(newsId);
+    
+    if (!isPinned && pinnedNewsIds.length >= 4) {
+      return; // Enforce 4 maximum pins limit
+    }
+    
     const nextPinned = isPinned
       ? pinnedNewsIds.filter(id => id !== newsId)
       : [...pinnedNewsIds, newsId];

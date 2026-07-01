@@ -18,7 +18,7 @@ function shuffle(array) {
 /**
  * Rolls a single pitch instance from a template.
  */
-export function rollPitchInstance(template) {
+export function rollPitchInstance(template, netWorth = 1000000) {
   // 1. Roll traits
   const { possibleTraitPool, traitCountRange, baseAsk, baseValuation, baseOutcomeWeights, outcomeWeightVariance } = template;
   const minTraits = traitCountRange[0];
@@ -28,11 +28,14 @@ export function rollPitchInstance(template) {
   const shuffledTraits = shuffle(possibleTraitPool);
   const selectedTraits = shuffledTraits.slice(0, count);
 
-  // 2. Jitter ask and valuation (+/- 10%)
-  const askJitter = 0.9 + Math.random() * 0.2;
-  const valuationJitter = 0.9 + Math.random() * 0.2;
-  const ask = Math.round((baseAsk * askJitter) / 10000) * 10000;
-  const valuation = Math.round((baseValuation * valuationJitter) / 50000) * 50000;
+  // 2. Net Worth ask scaling multiplier (upper limit moves up from 1.2 by 0.8 for every $1M of net worth growth)
+  const minScale = 0.5;
+  const maxScale = 1.2 + Math.max(0, (netWorth - 1000000) / 1000000) * 0.8;
+  const scale = minScale + Math.random() * (maxScale - minScale);
+
+  // Apply scale to ask and valuation, rounding to clean numbers
+  const ask = Math.round((baseAsk * scale) / 5000) * 5000;
+  const valuation = Math.round((baseValuation * scale) / 25000) * 25000;
 
   // 3. Jitter outcome weights
   const weightJitter = () => (Math.random() * 2 - 1) * outcomeWeightVariance;
@@ -68,12 +71,21 @@ export function rollPitchInstance(template) {
 /**
  * Generates active pitches for the current turn.
  */
-export function generatePitchesForTurn(industry, count = 3) {
+export function generatePitchesForTurn(industry, netWorth = 1000000, turnNumber = 1) {
+  let count = 3;
+  if (turnNumber === 1) {
+    count = 1;
+  } else if (turnNumber === 2) {
+    count = 2;
+  } else {
+    count = Math.random() < 0.5 ? 2 : 3;
+  }
+
   const filtered = PITCH_TEMPLATES.filter(p => p.industry === industry);
   const shuffled = shuffle(filtered);
   const selectedTemplates = shuffled.slice(0, Math.min(count, shuffled.length));
 
-  return selectedTemplates.map(template => rollPitchInstance(template));
+  return selectedTemplates.map(template => rollPitchInstance(template, netWorth));
 }
 
 /**
@@ -169,12 +181,12 @@ export function resolveTurn(state, operatingCost = 50000) {
           let buyoutAmount = 0;
           
           if (template.type === "follow_on_request") {
-            eventAsk = Math.round((holding.investedAmount * (0.4 + Math.random() * 0.2)) / 50000) * 50000;
+            eventAsk = Math.round((holding.investedAmount * (0.4 + Math.random() * 0.2)) / 5000) * 5000;
           } else if (template.type === "distress_request") {
-            eventAsk = Math.round((holding.investedAmount * (0.2 + Math.random() * 0.1)) / 25000) * 25000;
+            eventAsk = Math.round((holding.investedAmount * (0.2 + Math.random() * 0.1)) / 2500) * 2500;
           } else if (template.type === "buyout_offer") {
             const currentValue = holding.investedAmount * holding.currentValueMultiplier;
-            buyoutAmount = Math.round((currentValue * (1.2 + Math.random() * 0.3)) / 100000) * 100000;
+            buyoutAmount = Math.round((currentValue * (1.2 + Math.random() * 0.3)) / 10000) * 10000;
           }
 
           const formatCurrencyStr = (val) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(val);
@@ -242,7 +254,7 @@ export function resolveTurn(state, operatingCost = 50000) {
   let nextNews = [];
 
   if (!nextGameOver && !isDemoFinished) {
-    nextPitches = generatePitchesForTurn(state.industry, 3);
+    nextPitches = generatePitchesForTurn(state.industry, nextNetWorth, nextTurn);
     nextNews = getNewsForTurn(nextTurn, state.industry, nextActiveNewsEffects);
 
     // Register newly triggered persistent news
