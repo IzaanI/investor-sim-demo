@@ -6,7 +6,9 @@ export const ARCHETYPES = {
       "key_man_risk",
       "solid_prior_exit",
       "proprietary_tech",
-      "proprietary_tech"
+      "proprietary_tech",
+      "history_of_burn_out",
+      "deep_domain_expertise"
     ]
   },
   operator: {
@@ -16,7 +18,9 @@ export const ARCHETYPES = {
       "over_optimized_marketing",
       "efficient_operations",
       "efficient_operations",
-      "niche_focus"
+      "niche_focus",
+      "toxic_culture",
+      "deep_domain_expertise"
     ]
   },
   hustler: {
@@ -26,7 +30,9 @@ export const ARCHETYPES = {
       "inflated_metrics",
       "shops_deal",
       "bootstrapped_culture",
-      "solid_prior_exit"
+      "solid_prior_exit",
+      "history_of_burn_out",
+      "pivot_history"
     ]
   },
   first_time_founder: {
@@ -36,7 +42,9 @@ export const ARCHETYPES = {
       "key_man_risk",
       "passionate_but_inexperienced",
       "bootstrapped_culture",
-      "niche_focus"
+      "niche_focus",
+      "solo_founder",
+      "strong_advisory_board"
     ]
   },
   the_friend: {
@@ -46,7 +54,9 @@ export const ARCHETYPES = {
       "bootstrapped_culture",
       "passionate_but_inexperienced",
       "niche_focus",
-      "shops_deal"
+      "shops_deal",
+      "solo_founder",
+      "toxic_culture"
     ]
   },
   academic: {
@@ -56,7 +66,9 @@ export const ARCHETYPES = {
       "key_man_risk",
       "proprietary_tech",
       "questionable_legal_history",
-      "bootstrapped_culture"
+      "bootstrapped_culture",
+      "pivot_history",
+      "strong_advisory_board"
     ]
   }
 };

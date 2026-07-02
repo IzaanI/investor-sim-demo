@@ -15,7 +15,11 @@ export default function EventModal({ event }) {
   let headerColor = "var(--color-accent-light)";
   let borderStyle = "1px solid var(--border-color)";
 
-  if (event.type === "follow_on_request") {
+  if (event.type === "founder_swap") {
+    title = "Leadership Change";
+    icon = <AlertCircle size={24} style={{ color: "var(--color-warning)" }} />;
+    headerColor = "var(--color-warning)";
+  } else if (event.type === "follow_on_request") {
     title = "Series A Funding Request";
     icon = <DollarSign size={24} style={{ color: "var(--color-accent-light)" }} />;
     headerColor = "var(--color-accent-light)";
@@ -50,15 +54,15 @@ export default function EventModal({ event }) {
 
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {event.options.map((option, idx) => {
-              const isSpendOption = option.effectType === "accept_follow_on" || option.effectType === "accept_distress";
+              const isSpendOption = option.effectType === "accept_follow_on" || option.effectType === "accept_distress" || option.effectType === "accept_lawsuit_settlement";
               const cannotAfford = isSpendOption && cash < event.eventAsk;
 
               return (
                 <button
                   key={idx}
-                  className={`decision-btn ${option.effectType.startsWith("accept") ? "invest" : "pass"}`}
+                  className={`decision-btn ${(option.effectType || option.effect || "").startsWith("accept") ? "invest" : "pass"}`}
                   disabled={cannotAfford}
-                  onClick={() => handleSelectOption(option.effectType)}
+                  onClick={() => handleSelectOption(option.effectType || option.effect)}
                   style={{ width: "100%", padding: "0.85rem", fontSize: "0.85rem" }}
                 >
                   {cannotAfford ? `${option.label} (Insufficient Cash)` : option.label}

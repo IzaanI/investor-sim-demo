@@ -66,6 +66,28 @@ export const TRAITS = {
     ],
     outcomeNudge: { growth: -0.1, decline: 0.1, volatile: 0.1 }
   },
+  history_of_burn_out: {
+    id: "history_of_burn_out",
+    label: "History of Burnout",
+    severity: "severe",
+    category: "personality",
+    backgroundClue: [
+      "Public records show the founder stepped away from their last two ventures citing 'exhaustion' before the two-year mark.",
+      "Industry whispers suggest the founder struggles to delegate and frequently bottlenecks critical operations."
+    ],
+    outcomeNudge: { growth: -0.15, decline: 0.20, volatile: 0.10 }
+  },
+  toxic_culture: {
+    id: "toxic_culture",
+    label: "Toxic Culture Rumours",
+    severity: "severe",
+    category: "process",
+    backgroundClue: [
+      "A quick search on employee review sites reveals multiple allegations of a hostile work environment and high turnover.",
+      "Three senior engineers have departed in the last six months, citing fundamental disagreements with leadership."
+    ],
+    outcomeNudge: { growth: -0.20, decline: 0.30, volatile: 0.15 }
+  },
 
   // ─── NEUTRAL PROCESS TRAITS ────────────────────────────────────────────────
   shops_deal: {
@@ -101,6 +123,28 @@ export const TRAITS = {
     ],
     outcomeNudge: { growth: 0.0, decline: 0.0, volatile: 0.0 }
   },
+  solo_founder: {
+    id: "solo_founder",
+    label: "Solo Founder",
+    severity: "neutral",
+    category: "structure",
+    backgroundClue: [
+      "The company was incorporated by a single individual with no current plans to expand the executive team.",
+      "All equity is concentrated in a single individual, with no co-founder or technical lead on the cap table."
+    ],
+    outcomeNudge: { growth: -0.05, decline: 0.0, volatile: 0.05 }
+  },
+  pivot_history: {
+    id: "pivot_history",
+    label: "Pivot History",
+    severity: "neutral",
+    category: "history",
+    backgroundClue: [
+      "The company's domain name originally hosted a completely different business model just eighteen months ago.",
+      "Archived versions of their website show they initially targeted enterprise before recently pivoting to consumer."
+    ],
+    outcomeNudge: { growth: 0.05, decline: 0.05, volatile: 0.10 }
+  },
 
   // ─── POSITIVE TRAITS ───────────────────────────────────────────────────────
   solid_prior_exit: {
@@ -135,5 +179,27 @@ export const TRAITS = {
       "Financial audits confirm a customer acquisition payback period under three months."
     ],
     outcomeNudge: { growth: 0.10, decline: -0.10, volatile: 0.00 }
+  },
+  deep_domain_expertise: {
+    id: "deep_domain_expertise",
+    label: "Deep Domain Expertise",
+    severity: "positive",
+    category: "technology",
+    backgroundClue: [
+      "The founder has spent over a decade in this specific niche, holding senior technical roles at two major competitors.",
+      "Publications in industry journals confirm the founder is a recognized thought leader in this specialized field."
+    ],
+    outcomeNudge: { growth: 0.20, decline: -0.10, volatile: -0.05 }
+  },
+  strong_advisory_board: {
+    id: "strong_advisory_board",
+    label: "Strong Advisory Board",
+    severity: "positive",
+    category: "structure",
+    backgroundClue: [
+      "The cap table includes two highly respected industry veterans who are actively providing strategic guidance.",
+      "Formal filings reveal a board of directors with a proven track record of shepherding companies through IPOs."
+    ],
+    outcomeNudge: { growth: 0.15, decline: -0.15, volatile: -0.05 }
   }
 };

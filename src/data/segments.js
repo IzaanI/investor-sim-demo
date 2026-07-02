@@ -30,6 +30,31 @@ export const SEGMENTS = {
       tones: ["confident"],
       text: "If you look closely at {{market}}, you'll see a massive gap where {{painPoint}} has been ignored for far too long."
     },
+    {
+      id: "intro_confident_user_1",
+      tones: ["confident"],
+      text: "{{painPoint}} isn't going away on its own. Fortunately, we already have a solution that's proving itself."
+    },
+    {
+      id: "intro_confident_user_2",
+      tones: ["confident"],
+      text: "I know investors hear dozens of ideas every week. I genuinely believe {{companyName}} deserves to be one you'll remember."
+    },
+    {
+      id: "intro_confident_user_3",
+      tones: ["confident"],
+      text: "Our team didn't come here with a dream—we came with results."
+    },
+    {
+      id: "intro_confident_user_4",
+      tones: ["confident"],
+      text: "There are opportunities that look good on paper, and there are opportunities that change industries. I believe this is the latter."
+    },
+    {
+      id: "intro_confident_user_5",
+      tones: ["confident"],
+      text: "I wouldn't be sitting in this room if I didn't believe {{companyName}} could become a leader in {{market}}."
+    },
 
     // --- METHODICAL TONE ---
     {
@@ -195,6 +220,26 @@ export const SEGMENTS = {
       tones: ["confident"],
       text: "{{companyName}} is scaling rapidly with {{product}}. We've already hit {{growthStr}} growth without spending a dollar on traditional ads."
     },
+    {
+      id: "body_confident_user_1",
+      tones: ["confident"],
+      text: "Since launching {{product}}, we've generated {{revenueStr}} while building a loyal customer base. The demand is there—we're simply looking for the resources to meet it."
+    },
+    {
+      id: "body_confident_user_2",
+      tones: ["confident"],
+      text: "{{product}} has already helped us achieve {{metric}}, and every month we're seeing more {{customerNoun}} choose us over existing alternatives."
+    },
+    {
+      id: "body_confident_user_3",
+      tones: ["confident"],
+      text: "The response to {{product}} has exceeded even our own expectations. After growing by {{growthStr}}, we're confident the next stage of expansion is well within reach."
+    },
+    {
+      id: "body_confident_user_4",
+      tones: ["confident"],
+      text: "We didn't build {{product}} just because it was an interesting idea, we built it because {{customerNoun}} genuinely needed a better solution. The results so far have only reinforced that belief."
+    },
 
     // --- METHODICAL TONE ---
     {
@@ -359,6 +404,26 @@ export const SEGMENTS = {
       id: "close_confident_4",
       tones: ["confident"],
       text: "We are positioned to lead this space. I invite you to join {{companyName}} before the valuation adjusts."
+    },
+    {
+      id: "close_confident_user_1",
+      tones: ["confident"],
+      text: "I'd love to have you involved as we build something that lasts."
+    },
+    {
+      id: "close_confident_user_2",
+      tones: ["confident"],
+      text: "I think this is the beginning of something much bigger, and I hope you'll be part of it."
+    },
+    {
+      id: "close_confident_user_3",
+      tones: ["confident"],
+      text: "Whether you decide to invest today or not, I believe you'll be hearing about {{companyName}} again."
+    },
+    {
+      id: "close_confident_user_4",
+      tones: ["confident"],
+      text: "This isn't about chasing quick wins, it's about building a company that will still matter years from now."
     },
 
     // --- METHODICAL TONE ---

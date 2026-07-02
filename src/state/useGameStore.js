@@ -8,7 +8,10 @@ const INITIAL_CASH = 1000000; // $1,000,000 starting cash
 const DEMO_INDUSTRY = "Health & Wellness";
 
 const createInitialState = () => {
-  const initialPitches = generatePitchesForTurn(DEMO_INDUSTRY, INITIAL_CASH, 1);
+  const drawnSegments = { intro: [], body: [], close: [] };
+  const seenTemplates = {};
+  
+  const initialPitches = generatePitchesForTurn(DEMO_INDUSTRY, drawnSegments, seenTemplates, INITIAL_CASH, 1);
   const initialNews = getNewsForTurn(1, DEMO_INDUSTRY, []);
   const initialActiveNews = [];
   initialNews.forEach(newsItem => {
@@ -32,6 +35,8 @@ const createInitialState = () => {
     netWorthHistory: [INITIAL_CASH],
     industry: DEMO_INDUSTRY,
     portfolio: [],
+    passedPitches: [],
+    pendingOffers: [],
     eventQueue: [],
     // instanceId -> { backgroundChecked: bool, backgroundClue: string|null }
     diligenceLog: {},
@@ -41,7 +46,9 @@ const createInitialState = () => {
     demoFinished: false,
     activeNewsEffects: initialActiveNews,
     pinnedNewsIds: [],
-    backgroundChecksRemaining: 1
+    backgroundChecksRemaining: 1,
+    drawnSegments,
+    seenTemplates
   };
 };
 
@@ -94,7 +101,10 @@ export const useGameStore = create((set, get) => ({
 
     const currentLog = diligenceLog[pitchInstanceId] || {
       backgroundChecked: false,
-      backgroundClue: null
+      backgroundClue: null,
+      coiChecked: false,
+      coiWarning: null,
+      hasConflict: false
     };
 
     if (currentLog.backgroundChecked) return; // already run
@@ -106,11 +116,12 @@ export const useGameStore = create((set, get) => ({
     // Pick one backgroundClue from the pitch's trait
     const traitDef = TRAITS[pitch.trait];
     const clues = traitDef?.backgroundClue || [];
-    const clue = clues.length > 0
+    const clue = clues.length > 0 && Math.random() < 0.9 // 15% chance of clean check even with traits
       ? clues[Math.floor(Math.random() * clues.length)]
       : "Nothing notable surfaced in the public record.";
 
     const newLog = {
+      ...currentLog,
       backgroundChecked: true,
       backgroundClue: clue
     };
@@ -127,19 +138,63 @@ export const useGameStore = create((set, get) => ({
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   },
 
+  runCOICheck: (pitchInstanceId) => {
+    const { portfolio, diligenceLog, currentPitches } = get();
+    const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
+    if (!pitch) return;
+
+    const currentLog = diligenceLog[pitchInstanceId] || {
+      backgroundChecked: false,
+      backgroundClue: null,
+      coiChecked: false,
+      coiWarning: null,
+      hasConflict: false
+    };
+
+    if (currentLog.coiChecked) return;
+
+    const coiCost = 1000;
+    if (get().cash < coiCost) return;
+
+    const conflict = portfolio.find(h => h.pitchId === pitch.id && h.status === "active");
+    const warning = conflict 
+      ? `CONFLICT OF INTEREST DETECTED: You already hold an active investment in ${conflict.businessName}, a direct competitor.`
+      : "Clear: No portfolio conflicts found.";
+
+    set({
+      cash: get().cash - coiCost,
+      diligenceLog: {
+        ...diligenceLog,
+        [pitchInstanceId]: {
+          ...currentLog,
+          coiChecked: true,
+          coiWarning: warning,
+          hasConflict: !!conflict
+        }
+      }
+    });
+
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
+
 
 
   investInPitch: (pitchInstanceId) => {
-    const { cash, currentPitches, portfolio } = get();
+    const { cash, currentPitches, portfolio, diligenceLog } = get();
     const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
     if (!pitch || cash < pitch.ask) return;
 
     const equityPercent = Number(((pitch.ask / pitch.valuation) * 100).toFixed(2));
+    const logEntry = diligenceLog[pitchInstanceId];
+
+    const hasConflict = portfolio.some(h => h.pitchId === pitch.id && h.status === "active");
 
     const newHolding = {
       pitchId: pitch.id,
       businessName: pitch.businessName,
       archetypeLabel: pitch.archetypeLabel,
+      backgroundChecked: logEntry?.backgroundChecked || false,
+      backgroundClue: logEntry?.backgroundClue || null,
       industry: pitch.industry,             // needed for industry-scoped news effects
       investedAmount: pitch.ask,
       equityPercent,
@@ -151,7 +206,10 @@ export const useGameStore = create((set, get) => ({
       outcomeWeights: pitch.outcomeWeights,
       history: [],
       assembledParagraphs: pitch.assembledParagraphs,
-      valuationAtInvestment: pitch.valuation
+      valuationAtInvestment: pitch.valuation,
+      capitalContributions: [{ amount: pitch.ask, turn: get().turn, type: "Initial Investment" }],
+      coiLawsuitPending: hasConflict,
+      lastMilestoneMultiplier: 1.0
     };
 
     // Remove from current pitches so they can't buy it twice
@@ -196,9 +254,56 @@ export const useGameStore = create((set, get) => ({
   },
 
   dismissPitch: (pitchInstanceId) => {
-    const { currentPitches } = get();
+    const { currentPitches, passedPitches } = get();
+    const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
+    if (!pitch) return;
+
+    const ghostHolding = {
+      pitchId: pitch.id,
+      businessName: pitch.businessName,
+      archetypeLabel: pitch.archetypeLabel,
+      industry: pitch.industry,
+      investedAmount: pitch.ask,
+      currentValueMultiplier: 1.0,
+      turnsHeld: 0,
+      status: "passed",
+      trait: pitch.trait,
+      outcomeWeights: pitch.outcomeWeights,
+      history: [],
+      valuationAtPass: pitch.valuation
+    };
+
     const updatedPitches = currentPitches.filter(p => p.instanceId !== pitchInstanceId);
-    set({ currentPitches: updatedPitches });
+    set({ 
+      currentPitches: updatedPitches,
+      passedPitches: [ghostHolding, ...passedPitches]
+    });
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
+
+  proposeFollowOn: (pitchId, investedAmount, offerAmount) => {
+    const { cash, portfolio, pendingOffers } = get();
+    if (cash < offerAmount || offerAmount <= 0) return;
+
+    const holding = portfolio.find(h => h.pitchId === pitchId && h.investedAmount === investedAmount && h.status === "active");
+    if (!holding) return;
+
+    if (pendingOffers.some(o => o.pitchId === pitchId && o.investedAmount === investedAmount)) return;
+
+    set({
+      cash: cash - offerAmount,
+      pendingOffers: [...pendingOffers, {
+        id: `offer_${Date.now()}`,
+        pitchId: holding.pitchId,
+        investedAmount: holding.investedAmount,
+        businessName: holding.businessName,
+        offerAmount,
+        archetypeLabel: holding.archetypeLabel,
+        currentValueMultiplier: holding.currentValueMultiplier,
+        valuationAtInvestment: holding.valuationAtInvestment,
+        equityPercent: holding.equityPercent
+      }]
+    });
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   },
 
@@ -216,7 +321,22 @@ export const useGameStore = create((set, get) => ({
           nextCash -= event.eventAsk;
           return {
             ...h,
-            investedAmount: h.investedAmount + event.eventAsk
+            investedAmount: h.investedAmount + event.eventAsk,
+            capitalContributions: [
+              ...(h.capitalContributions || [{ amount: h.investedAmount, turn: "Start", type: "Initial Investment" }]),
+              { amount: event.eventAsk, turn: get().turn, type: "Follow-On Funding" }
+            ]
+          };
+        } else if (effectType === "acknowledge_offer_accepted") {
+          // Cash was already deducted when offer was made
+          const offerAmount = event.options.find(o => o.effectType === effectType)?.offerAmount || 0;
+          return {
+            ...h,
+            investedAmount: h.investedAmount + offerAmount,
+            capitalContributions: [
+              ...(h.capitalContributions || [{ amount: h.investedAmount, turn: "Start", type: "Initial Investment" }]),
+              { amount: offerAmount, turn: get().turn, type: "Proactive Offer" }
+            ]
           };
         } else if (effectType === "decline_follow_on") {
           const dilutionFactor = 0.65 + Math.random() * 0.1;
@@ -247,7 +367,11 @@ export const useGameStore = create((set, get) => ({
           nextCash -= event.eventAsk;
           return {
             ...h,
-            investedAmount: h.investedAmount + event.eventAsk
+            investedAmount: h.investedAmount + event.eventAsk,
+            capitalContributions: [
+              ...(h.capitalContributions || [{ amount: h.investedAmount, turn: "Start", type: "Initial Investment" }]),
+              { amount: event.eventAsk, turn: get().turn, type: "Emergency Capital" }
+            ]
           };
         } else if (effectType === "decline_distress") {
           return {
@@ -266,10 +390,48 @@ export const useGameStore = create((set, get) => ({
               }
             ]
           };
+        } else if (effectType === "accept_lawsuit_settlement") {
+          nextCash -= 150000;
+          return {
+            ...h,
+            history: [
+              ...(h.history || []),
+              {
+                turn: get().turn,
+                outcomeType: "penalty",
+                multiplier: 1.0,
+                value: Math.round(h.investedAmount * h.currentValueMultiplier),
+                changePercent: 0,
+                note: "Paid $150k to settle conflict of interest dispute."
+              }
+            ]
+          };
+        } else if (effectType === "decline_lawsuit_settlement") {
+          return {
+            ...h,
+            status: "failed",
+            currentValueMultiplier: 0,
+            history: [
+              ...(h.history || []),
+              {
+                turn: get().turn,
+                outcomeType: "decline",
+                multiplier: 0,
+                value: 0,
+                changePercent: -100,
+                note: "Founder dissolved partnership over conflict of interest breach."
+              }
+            ]
+          };
         }
       }
       return h;
     });
+
+    if (effectType === "acknowledge_offer_declined") {
+      const offerAmount = event.options.find(o => o.effectType === effectType)?.offerAmount || 0;
+      nextCash += offerAmount;
+    }
 
     const updatedEventQueue = eventQueue.filter(e => e.id !== eventId);
 

@@ -1,5 +1,6 @@
 import { PITCH_TEMPLATES } from "../data/pitches.js";
 import { NEWS_BANK } from "../data/news.js";
+import { COMPANY_NEWS_TEMPLATES } from "../data/companyNews.js";
 import { rollHoldingOutcome } from "./outcomeRoll.js";
 import { TRAITS } from "../data/traits.js";
 import { EVENT_TEMPLATES } from "../data/events.js";
@@ -28,13 +29,25 @@ function interpolate(text, vars) {
 /**
  * Generates random runtime metric strings for traction segments.
  */
-function generateRuntimeMetrics() {
-  const users = Math.round((500 + Math.random() * 49500) / 100) * 100;
-  const mrr = Math.round((2000 + Math.random() * 48000) / 500) * 500;
-  const growth = (5 + Math.random() * 40).toFixed(0);
+function generateRuntimeMetrics(valuation) {
+  // Derive MRR from valuation. Assume Valuation is 4x-12x ARR.
+  const arrMultiplier = 4 + Math.random() * 8;
+  const arr = valuation / arrMultiplier;
+  const mrrRaw = arr / 12;
+  const mrr = Math.round(mrrRaw / 10) * 10; 
+
+  // Derive active users from MRR. Assume ARPU is $5-$50.
+  const arpu = 5 + Math.random() * 45;
+  const usersRaw = mrr / arpu;
+  const users = Math.round(usersRaw / 10) * 10;
+
+  // Growth between 5% and 40%, with occasional decimals
+  const growthRaw = 5 + Math.random() * 35;
+  const growth = Math.random() > 0.5 ? growthRaw.toFixed(1) : Math.round(growthRaw);
+
   return {
     metric: `${users.toLocaleString()} active users`,
-    revenueStr: `$${(mrr / 1000).toFixed(0)}k MRR`,
+    revenueStr: `$${mrr.toLocaleString()} MRR`,
     growthStr: `${growth}% month-over-month`
   };
 }
@@ -43,10 +56,10 @@ function generateRuntimeMetrics() {
  * Assembles a pitch from the segment pool using the template's archetype.
  * Returns an array of 5 interpolated paragraph strings (one per slot).
  */
-function assemblePitch(template, businessName, archetypeKey) {
+function assemblePitch(template, businessName, archetypeKey, drawnSegments, valuation) {
   const slots = ["intro", "body", "close"];
   const allowedTones = ARCHETYPES[archetypeKey]?.tones || [];
-  const metrics = generateRuntimeMetrics();
+  const metrics = generateRuntimeMetrics(valuation);
 
   const vars = {
     companyName: businessName,
@@ -59,11 +72,26 @@ function assemblePitch(template, businessName, archetypeKey) {
 
   return slots.map(slot => {
     // Filter segments where at least one of the segment's tones is allowed for this archetype
-    const pool = (SEGMENTS[slot] || []).filter(s => 
+    const tonePool = (SEGMENTS[slot] || []).filter(s => 
       s.tones && s.tones.some(tone => allowedTones.includes(tone))
     );
-    if (pool.length === 0) return "";
-    const chosen = pool[Math.floor(Math.random() * pool.length)];
+    if (tonePool.length === 0) return "";
+
+    // Deck System: Filter out already drawn segments
+    let availablePool = tonePool.filter(s => !drawnSegments[slot].includes(s.id));
+    
+    // Reshuffle if deck is exhausted for this tone group
+    if (availablePool.length === 0) {
+      // Clear the drawn list for this slot to "reshuffle the deck"
+      drawnSegments[slot] = [];
+      availablePool = tonePool;
+    }
+
+    const chosen = availablePool[Math.floor(Math.random() * availablePool.length)];
+    
+    // Mark as drawn
+    drawnSegments[slot].push(chosen.id);
+
     return interpolate(chosen.text, vars);
   });
 }
@@ -84,7 +112,7 @@ function pickTrait(archetypeKey) {
 /**
  * Rolls a single pitch instance from a template using the combinatorial engine.
  */
-export function rollPitchInstance(template, netWorth = 1000000) {
+export function rollPitchInstance(template, drawnSegments, netWorth = 1000000) {
   // Select a name at random from the template's possible names
   const nameOptions = template.businessNames || [template.businessName || "Unknown Startup"];
   const businessName = nameOptions[Math.floor(Math.random() * nameOptions.length)];
@@ -93,19 +121,19 @@ export function rollPitchInstance(template, netWorth = 1000000) {
   const archetypeKeys = Object.keys(ARCHETYPES);
   const selectedArchetypeKey = archetypeKeys[Math.floor(Math.random() * archetypeKeys.length)];
 
-  // 1. Assemble pitch paragraphs using the dynamic name and archetype key
-  const assembledParagraphs = assemblePitch(template, businessName, selectedArchetypeKey);
-
-  // 2. Pick one trait weighted by the selected archetype bias
-  const traitId = pickTrait(selectedArchetypeKey);
-
-  // 3. Random ask $50k–$500k (nearest $5k)
+  // 1. Random ask $50k–$500k (nearest $5k)
   const askRaw = 50000 + Math.random() * 450000;
   const ask = Math.round(askRaw / 5000) * 5000;
 
-  // 4. Valuation 5–15× ask (nearest $25k)
+  // 2. Valuation 5–15× ask (nearest $25k)
   const multiplier = 5 + Math.random() * 10;
   const valuation = Math.round((ask * multiplier) / 25000) * 25000;
+
+  // 3. Assemble pitch paragraphs using the dynamic name, archetype key, segment deck, and valuation
+  const assembledParagraphs = assemblePitch(template, businessName, selectedArchetypeKey, drawnSegments, valuation);
+
+  // 4. Pick one trait weighted by the selected archetype bias
+  const traitId = pickTrait(selectedArchetypeKey);
 
   // 5. Outcome weights from trait nudge
   const baseWeights = { growth: 0.5, decline: 0.4, volatile: 0.1 };
@@ -136,7 +164,7 @@ export function rollPitchInstance(template, netWorth = 1000000) {
 /**
  * Generates active pitches for the current turn.
  */
-export function generatePitchesForTurn(industry, netWorth = 1000000, turnNumber = 1) {
+export function generatePitchesForTurn(industry, drawnSegments, seenTemplates, netWorth = 1000000, turnNumber = 1) {
   let count = 3;
   if (turnNumber === 1) {
     count = 1;
@@ -147,22 +175,109 @@ export function generatePitchesForTurn(industry, netWorth = 1000000, turnNumber 
   }
 
   const filtered = PITCH_TEMPLATES.filter(p => p.industry === industry);
-  const shuffled = shuffle(filtered);
-  const selectedTemplates = shuffled.slice(0, Math.min(count, shuffled.length));
+  
+  // Weighted Selection System
+  const weightedPool = filtered.map(template => {
+    const timesSeen = seenTemplates[template.id] || 0;
+    return {
+      template,
+      weight: 1 / (timesSeen + 1) // Weight drops significantly the more it's seen
+    };
+  });
 
-  return selectedTemplates.map(template => rollPitchInstance(template, netWorth));
+  const selectedTemplates = [];
+  for (let i = 0; i < Math.min(count, filtered.length); i++) {
+    const totalWeight = weightedPool.reduce((sum, item) => sum + item.weight, 0);
+    let random = Math.random() * totalWeight;
+    
+    let selectedIndex = 0;
+    for (let j = 0; j < weightedPool.length; j++) {
+      random -= weightedPool[j].weight;
+      if (random <= 0) {
+        selectedIndex = j;
+        break;
+      }
+    }
+
+    const chosen = weightedPool[selectedIndex].template;
+    selectedTemplates.push(chosen);
+    
+    // Mark as seen for future turns (and the remainder of this turn)
+    seenTemplates[chosen.id] = (seenTemplates[chosen.id] || 0) + 1;
+    
+    // Remove from the pool so we don't draw it twice in the same turn
+    weightedPool.splice(selectedIndex, 1);
+  }
+
+  return selectedTemplates.map(template => rollPitchInstance(template, drawnSegments, netWorth));
 }
 
 /**
- * Gets news items for the current turn.
+ * Gets news items for the current turn from the static bank.
  */
 export function getNewsForTurn(turn, industry, activeNewsEffects = []) {
   return NEWS_BANK.filter(news => {
     if (news.turn !== turn) return false;
     if (news.scope === "industry" && news.industry !== industry) return false;
-    // Repeats are allowed — do not filter by activeNewsEffects ids
     return true;
   });
+}
+
+/**
+ * Generates dynamic company-specific news from active portfolio holdings.
+ * 40% chance per holding, positive or negative template based on momentum.
+ * Returns at most `limit` items total.
+ */
+function generateCompanyNews(portfolio, nextTurn, limit = 3) {
+  const companyHeadlines = [];
+
+  // Shuffle portfolio to randomise which company gets a headline if we hit the cap
+  const shuffled = shuffle([...portfolio]);
+
+  for (const holding of shuffled) {
+    if (companyHeadlines.length >= limit) break;
+    if (holding.status !== "active") continue;
+    if (Math.random() > 0.40) continue; // 40% chance
+
+    const isPositive = holding.currentValueMultiplier >= 1.0;
+    const pool = isPositive ? COMPANY_NEWS_TEMPLATES.positive : COMPANY_NEWS_TEMPLATES.negative;
+    const template = pool[Math.floor(Math.random() * pool.length)];
+
+    // Resolve market from holding (fall back gracefully)
+    const market = holding.industry || "emerging";
+
+    const headline = template.headline
+      .replace(/\{\{companyName\}\}/g, holding.businessName)
+      .replace(/\{\{market\}\}/g, market);
+
+    const detail = template.detail
+      .replace(/\{\{companyName\}\}/g, holding.businessName)
+      .replace(/\{\{market\}\}/g, market);
+
+    const actionableDetail = template.actionableDetail
+      ? template.actionableDetail
+          .replace(/\{\{companyName\}\}/g, holding.businessName)
+          .replace(/\{\{market\}\}/g, market)
+      : null;
+
+    companyHeadlines.push({
+      id: `company_news_${holding.pitchId}_${nextTurn}_${Math.floor(Math.random() * 1000)}`,
+      turn: nextTurn,
+      scope: "company",
+      category: template.category,
+      headline,
+      detail,
+      actionable: !!template.actionable,
+      actionableDetail,
+      pitchId: holding.pitchId,
+      businessName: holding.businessName,
+      sentiment: isPositive ? "positive" : "negative",
+      timeString: `${Math.floor(Math.random() * 11) + 1}h ago`,
+      duration: 0
+    });
+  }
+
+  return companyHeadlines;
 }
 
 /**
@@ -214,11 +329,117 @@ export function resolveTurn(state, operatingCost = 50000) {
     return holding;
   });
 
-  // 2.5 Generate events probabilistically for active holdings
+  // Roll outcomes for passed pitches (ghost tracking)
+  let nextPassedPitches = (state.passedPitches || []).map(ghost => {
+    if (ghost.status === "passed") {
+      const { outcomeType, multiplier, newValueMultiplier, isFailed } = rollHoldingOutcome(ghost, state.activeNewsEffects);
+      const nextValue = Math.round(ghost.investedAmount * newValueMultiplier);
+
+      const historyLog = {
+        turn: state.turn,
+        outcomeType,
+        multiplier,
+        value: nextValue,
+        changePercent: Math.round((multiplier - 1) * 100)
+      };
+
+      return {
+        ...ghost,
+        currentValueMultiplier: newValueMultiplier,
+        turnsHeld: ghost.turnsHeld + 1,
+        status: isFailed ? "failed" : "passed",
+        history: [...(ghost.history || []), historyLog]
+      };
+    }
+    return ghost;
+  });
+
   const nextEventQueue = [];
+
+  // 2.25 Founder Swap check
+  nextPortfolio = nextPortfolio.map(holding => {
+    if (holding.status !== "active") return holding;
+
+    const diff = Math.abs(holding.currentValueMultiplier - (holding.lastMilestoneMultiplier || 1.0));
+    if (diff >= 0.5) {
+      if (Math.random() < 0.25) { // 25% chance
+        const archetypeKeys = Object.keys(ARCHETYPES).filter(k => k !== holding.archetypeKey);
+        const newArchetypeKey = archetypeKeys[Math.floor(Math.random() * archetypeKeys.length)];
+        const newArchetypeLabel = ARCHETYPES[newArchetypeKey]?.label ?? newArchetypeKey;
+        
+        let newTrait = pickTrait(newArchetypeKey);
+        if (newTrait === holding.trait) {
+          const alternativeTrait = pickTrait(newArchetypeKey);
+          if (alternativeTrait !== holding.trait) newTrait = alternativeTrait;
+        }
+
+        const baseWeights = { growth: 0.5, decline: 0.4, volatile: 0.1 };
+        const nudges = TRAITS[newTrait]?.outcomeNudge || {};
+        const g = Math.max(0, baseWeights.growth + (nudges.growth || 0));
+        const d = Math.max(0, baseWeights.decline + (nudges.decline || 0));
+        const v = Math.max(0, baseWeights.volatile + (nudges.volatile || 0));
+        const total = g + d + v;
+        const normalized = total > 0
+          ? { growth: g / total, decline: d / total, volatile: v / total }
+          : baseWeights;
+
+        nextEventQueue.push({
+          id: `founder_swap_${holding.pitchId}_${Date.now()}`,
+          pitchId: holding.pitchId,
+          investedAmount: holding.investedAmount,
+          businessName: holding.businessName,
+          type: "founder_swap",
+          promptText: `The original founder of ${holding.businessName} has stepped down. A new CEO has taken the reins, changing the company's culture.`,
+          options: [{ id: "ok", label: "Noted", effectType: "acknowledge_founder_swap" }]
+        });
+
+        return {
+          ...holding,
+          archetypeKey: newArchetypeKey,
+          archetypeLabel: newArchetypeLabel,
+          trait: newTrait,
+          outcomeWeights: normalized,
+          lastMilestoneMultiplier: holding.currentValueMultiplier,
+          history: [
+            ...(holding.history || []),
+            {
+              turn: state.turn + 1,
+              outcomeType: "swap",
+              multiplier: 1.0,
+              value: Math.round(holding.investedAmount * holding.currentValueMultiplier),
+              changePercent: 0,
+              note: `Leadership change: New CEO is ${newArchetypeLabel}.`
+            }
+          ]
+        };
+      }
+    }
+    return holding;
+  });
+
+  // 2.5 Generate events probabilistically for active holdings
   nextPortfolio.forEach(holding => {
     // Only roll events for holdings that survived this turn as 'active'
     if (holding.status === "active") {
+      if (holding.coiLawsuitPending) {
+        nextEventQueue.push({
+          id: `coi_lawsuit_${holding.pitchId}_${Date.now()}`,
+          pitchId: holding.pitchId,
+          investedAmount: holding.investedAmount,
+          businessName: holding.businessName,
+          type: "lawsuit",
+          promptText: `CONFLICT OF INTEREST LAWSUIT: The founder of ${holding.businessName} discovered your investment in a direct competitor. They are threatening to dissolve the partnership unless you settle out of court for $150,000.`,
+          eventAsk: 150000,
+          buyoutAmount: 0,
+          options: [
+            { id: "settle", label: "Pay $150,000 Settlement", effectType: "accept_lawsuit_settlement" },
+            { id: "refuse", label: "Refuse (They walk away)", effectType: "decline_lawsuit_settlement" }
+          ]
+        });
+        holding.coiLawsuitPending = false; // clear the flag so it doesn't trigger again
+        return; // skip normal events for this turn
+      }
+
       const roll = Math.random();
       const eventBaseChance = holding.eventChance?.base || 0.15;
       
@@ -282,7 +503,48 @@ export function resolveTurn(state, operatingCost = 50000) {
     }
   });
 
-  // 3. Deduct operating cost
+  // 3. Process Pending Follow-On Offers
+  let nextPendingOffers = []; // Wipe them after processing
+  (state.pendingOffers || []).forEach(offer => {
+    let baseAcceptChance = 0.5;
+    if (offer.currentValueMultiplier < 1.0) baseAcceptChance = 0.9;
+    else if (offer.currentValueMultiplier > 3.0) baseAcceptChance = 0.1;
+    else if (offer.currentValueMultiplier > 1.5) baseAcceptChance = 0.3;
+
+    if (offer.archetypeLabel === "The First-Timer" || offer.archetypeLabel === "The Friend") baseAcceptChance += 0.2;
+    if (offer.archetypeLabel === "The Hustler" || offer.archetypeLabel === "The Operator") baseAcceptChance -= 0.2;
+    
+    const formatCurrency = (v) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
+
+    let eventType, promptText, options;
+    const roll = Math.random();
+
+    if (roll < baseAcceptChance) {
+      eventType = "offer_accepted";
+      promptText = `The founder of ${offer.businessName} has accepted your proactive follow-on offer of ${formatCurrency(offer.offerAmount)}.`;
+      options = [{ id: "ok", label: "Great", effectType: "acknowledge_offer_accepted", pitchId: offer.pitchId, investedAmount: offer.investedAmount, offerAmount: offer.offerAmount }];
+    } else if (roll < baseAcceptChance + 0.3) {
+      eventType = "offer_declined";
+      promptText = `The founder of ${offer.businessName} declined your offer of ${formatCurrency(offer.offerAmount)}, stating they have enough runway for now.`;
+      options = [{ id: "ok", label: "Understood", effectType: "acknowledge_offer_declined", offerAmount: offer.offerAmount }];
+    } else {
+      eventType = "offer_ghosted";
+      promptText = `You reached out to the founder of ${offer.businessName} with an offer of ${formatCurrency(offer.offerAmount)}, but they left you on read. The funds have been returned to your balance.`;
+      options = [{ id: "ok", label: "Ouch", effectType: "acknowledge_offer_declined", offerAmount: offer.offerAmount }];
+    }
+
+    nextEventQueue.push({
+      id: `offer_response_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      pitchId: offer.pitchId,
+      investedAmount: offer.investedAmount,
+      businessName: offer.businessName,
+      type: eventType,
+      promptText,
+      options
+    });
+  });
+
+  // 4. Deduct operating cost
   nextCash -= operatingCost;
 
   // 4. Calculate Net Worth
@@ -316,10 +578,17 @@ export function resolveTurn(state, operatingCost = 50000) {
   // 7. Generate next turn's news and pitches (if game is not over)
   let nextPitches = [];
   let nextNews = [];
+  let nextDrawnSegments = state.drawnSegments ? JSON.parse(JSON.stringify(state.drawnSegments)) : { intro: [], body: [], close: [] };
+  let nextSeenTemplates = state.seenTemplates ? { ...state.seenTemplates } : {};
 
   if (!nextGameOver && !isDemoFinished) {
-    nextPitches = generatePitchesForTurn(state.industry, nextNetWorth, nextTurn);
-    nextNews = getNewsForTurn(nextTurn, state.industry, nextActiveNewsEffects);
+    nextPitches = generatePitchesForTurn(state.industry, nextDrawnSegments, nextSeenTemplates, nextNetWorth, nextTurn);
+    const staticNews = getNewsForTurn(nextTurn, state.industry, nextActiveNewsEffects);
+
+    // Generate company-specific headlines, capped so total news ≤ 3
+    const remainingSlots = Math.max(0, 3 - staticNews.length);
+    const companyNews = generateCompanyNews(nextPortfolio, nextTurn, remainingSlots);
+    nextNews = [...staticNews, ...companyNews];
 
     // Register newly triggered persistent news
     nextNews.forEach(newsItem => {
@@ -342,6 +611,8 @@ export function resolveTurn(state, operatingCost = 50000) {
     cash: nextCash,
     netWorthHistory: nextNetWorthHistory,
     portfolio: nextPortfolio,
+    passedPitches: nextPassedPitches,
+    pendingOffers: nextPendingOffers,
     eventQueue: [...(state.eventQueue || []), ...nextEventQueue],
     currentPitches: nextPitches,
     currentNews: nextNews,
@@ -349,6 +620,8 @@ export function resolveTurn(state, operatingCost = 50000) {
     gameOver: nextGameOver,
     demoFinished: isDemoFinished,
     diligenceLog: {},
-    backgroundChecksRemaining: 1
+    backgroundChecksRemaining: 1,
+    drawnSegments: nextDrawnSegments,
+    seenTemplates: nextSeenTemplates
   };
 }
