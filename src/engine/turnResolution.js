@@ -1,7 +1,10 @@
 import { PITCH_TEMPLATES } from "../data/pitches.js";
 import { NEWS_BANK } from "../data/news.js";
 import { rollHoldingOutcome } from "./outcomeRoll.js";
+import { TRAITS } from "../data/traits.js";
 import { EVENT_TEMPLATES } from "../data/events.js";
+import { ARCHETYPES } from "../data/archetypes.js";
+import { SEGMENTS } from "../data/segments.js";
 
 /**
  * Shuffles an array helper.
@@ -16,55 +19,117 @@ function shuffle(array) {
 }
 
 /**
- * Rolls a single pitch instance from a template.
+ * Interpolates {{placeholder}} tokens in a segment text string.
+ */
+function interpolate(text, vars) {
+  return text.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] ?? `{{${key}}}`);
+}
+
+/**
+ * Generates random runtime metric strings for traction segments.
+ */
+function generateRuntimeMetrics() {
+  const users = Math.round((500 + Math.random() * 49500) / 100) * 100;
+  const mrr = Math.round((2000 + Math.random() * 48000) / 500) * 500;
+  const growth = (5 + Math.random() * 40).toFixed(0);
+  return {
+    metric: `${users.toLocaleString()} active users`,
+    revenueStr: `$${(mrr / 1000).toFixed(0)}k MRR`,
+    growthStr: `${growth}% month-over-month`
+  };
+}
+
+/**
+ * Assembles a pitch from the segment pool using the template's archetype.
+ * Returns an array of 5 interpolated paragraph strings (one per slot).
+ */
+function assemblePitch(template, businessName, archetypeKey) {
+  const slots = ["intro", "body", "close"];
+  const allowedTones = ARCHETYPES[archetypeKey]?.tones || [];
+  const metrics = generateRuntimeMetrics();
+
+  const vars = {
+    companyName: businessName,
+    product: template.product,
+    market: template.market,
+    painPoint: template.painPoint,
+    customerNoun: template.customerNoun,
+    ...metrics
+  };
+
+  return slots.map(slot => {
+    // Filter segments where at least one of the segment's tones is allowed for this archetype
+    const pool = (SEGMENTS[slot] || []).filter(s => 
+      s.tones && s.tones.some(tone => allowedTones.includes(tone))
+    );
+    if (pool.length === 0) return "";
+    const chosen = pool[Math.floor(Math.random() * pool.length)];
+    return interpolate(chosen.text, vars);
+  });
+}
+
+/**
+ * Picks one trait from the archetype's bias list (duplicates act as weight).
+ */
+function pickTrait(archetypeKey) {
+  const archetype = ARCHETYPES[archetypeKey];
+  if (!archetype) {
+    const fallback = Object.keys(TRAITS);
+    return fallback[Math.floor(Math.random() * fallback.length)];
+  }
+  const bias = archetype.traitBias;
+  return bias[Math.floor(Math.random() * bias.length)];
+}
+
+/**
+ * Rolls a single pitch instance from a template using the combinatorial engine.
  */
 export function rollPitchInstance(template, netWorth = 1000000) {
-  // 1. Roll traits
-  const { possibleTraitPool, traitCountRange, baseAsk, baseValuation, baseOutcomeWeights, outcomeWeightVariance } = template;
-  const minTraits = traitCountRange[0];
-  const maxTraits = traitCountRange[1];
-  const count = Math.floor(Math.random() * (maxTraits - minTraits + 1)) + minTraits;
+  // Select a name at random from the template's possible names
+  const nameOptions = template.businessNames || [template.businessName || "Unknown Startup"];
+  const businessName = nameOptions[Math.floor(Math.random() * nameOptions.length)];
 
-  const shuffledTraits = shuffle(possibleTraitPool);
-  const selectedTraits = shuffledTraits.slice(0, count);
+  // Pick a random founder archetype key
+  const archetypeKeys = Object.keys(ARCHETYPES);
+  const selectedArchetypeKey = archetypeKeys[Math.floor(Math.random() * archetypeKeys.length)];
 
-  // 2. Net Worth ask scaling multiplier (upper limit moves up from 1.2 by 0.8 for every $1M of net worth growth)
-  const minScale = 0.5;
-  const maxScale = 1.2 + Math.max(0, (netWorth - 1000000) / 1000000) * 0.8;
-  const scale = minScale + Math.random() * (maxScale - minScale);
+  // 1. Assemble pitch paragraphs using the dynamic name and archetype key
+  const assembledParagraphs = assemblePitch(template, businessName, selectedArchetypeKey);
 
-  // Apply scale to ask and valuation, rounding to clean numbers
-  const ask = Math.round((baseAsk * scale) / 5000) * 5000;
-  const valuation = Math.round((baseValuation * scale) / 25000) * 25000;
+  // 2. Pick one trait weighted by the selected archetype bias
+  const traitId = pickTrait(selectedArchetypeKey);
 
-  // 3. Jitter outcome weights
-  const weightJitter = () => (Math.random() * 2 - 1) * outcomeWeightVariance;
-  let growth = Math.max(0, baseOutcomeWeights.growth + weightJitter());
-  let decline = Math.max(0, baseOutcomeWeights.decline + weightJitter());
-  let volatile = Math.max(0, baseOutcomeWeights.volatile + weightJitter());
+  // 3. Random ask $50k–$500k (nearest $5k)
+  const askRaw = 50000 + Math.random() * 450000;
+  const ask = Math.round(askRaw / 5000) * 5000;
 
-  const total = growth + decline + volatile;
-  if (total > 0) {
-    growth /= total;
-    decline /= total;
-    volatile /= total;
-  } else {
-    growth = 0.4;
-    decline = 0.3;
-    volatile = 0.3;
-  }
+  // 4. Valuation 5–15× ask (nearest $25k)
+  const multiplier = 5 + Math.random() * 10;
+  const valuation = Math.round((ask * multiplier) / 25000) * 25000;
+
+  // 5. Outcome weights from trait nudge
+  const baseWeights = { growth: 0.5, decline: 0.4, volatile: 0.1 };
+  const nudges = TRAITS[traitId]?.outcomeNudge || {};
+  const g = Math.max(0, baseWeights.growth + (nudges.growth || 0));
+  const d = Math.max(0, baseWeights.decline + (nudges.decline || 0));
+  const v = Math.max(0, baseWeights.volatile + (nudges.volatile || 0));
+  const total = g + d + v;
+  const normalized = total > 0
+    ? { growth: g / total, decline: d / total, volatile: v / total }
+    : baseWeights;
 
   return {
     id: template.id,
     instanceId: `${template.id}_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
-    businessName: template.businessName,
+    businessName,
     industry: template.industry,
-    archetype: template.archetype,
-    pitchSummary: template.pitchSummary,
+    archetypeKey: selectedArchetypeKey,
+    archetypeLabel: ARCHETYPES[selectedArchetypeKey]?.label ?? selectedArchetypeKey,
+    assembledParagraphs,
     ask,
     valuation,
-    traits: selectedTraits,
-    outcomeWeights: { growth, decline, volatile }
+    trait: traitId,
+    outcomeWeights: normalized
   };
 }
 
@@ -92,11 +157,10 @@ export function generatePitchesForTurn(industry, netWorth = 1000000, turnNumber 
  * Gets news items for the current turn.
  */
 export function getNewsForTurn(turn, industry, activeNewsEffects = []) {
-  const activeIds = activeNewsEffects.map(a => a.id);
   return NEWS_BANK.filter(news => {
     if (news.turn !== turn) return false;
     if (news.scope === "industry" && news.industry !== industry) return false;
-    if (activeIds.includes(news.id)) return false;
+    // Repeats are allowed — do not filter by activeNewsEffects ids
     return true;
   });
 }
@@ -284,10 +348,7 @@ export function resolveTurn(state, operatingCost = 50000) {
     activeNewsEffects: nextActiveNewsEffects,
     gameOver: nextGameOver,
     demoFinished: isDemoFinished,
-    points: {
-      available: state.points.max,
-      max: state.points.max
-    },
-    diligenceLog: {}
+    diligenceLog: {},
+    backgroundChecksRemaining: 1
   };
 }

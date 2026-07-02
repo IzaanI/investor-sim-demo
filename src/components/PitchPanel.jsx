@@ -1,36 +1,31 @@
 import React, { useState } from "react";
 import { useGameStore } from "../state/useGameStore";
-import { TRAITS } from "../data/traits";
 import { formatMoney } from "./Header";
-import { Search, Eye, TrendingUp, AlertTriangle, Check, X, ShieldAlert } from "lucide-react";
+import { Search, TrendingUp, X, FileText } from "lucide-react";
 
 export default function PitchPanel() {
   const currentPitches = useGameStore(state => state.currentPitches);
   const cash = useGameStore(state => state.cash);
-  const points = useGameStore(state => state.points);
   const diligenceLog = useGameStore(state => state.diligenceLog);
-  
+  const backgroundChecksRemaining = useGameStore(state => state.backgroundChecksRemaining);
+
   const conductBackgroundCheck = useGameStore(state => state.conductBackgroundCheck);
-  const conductDeepDive = useGameStore(state => state.conductDeepDive);
   const investInPitch = useGameStore(state => state.investInPitch);
   const dismissPitch = useGameStore(state => state.dismissPitch);
 
   const [selectedPitch, setSelectedPitch] = useState(null);
 
-  const handleOpenPitch = (pitch) => {
-    setSelectedPitch(pitch);
-  };
+  const handleOpenPitch = (pitch) => setSelectedPitch(pitch);
+  const handleClosePitch = () => setSelectedPitch(null);
 
-  const handleClosePitch = () => {
-    setSelectedPitch(null);
-  };
+  const activeLog = selectedPitch
+    ? diligenceLog[selectedPitch.instanceId] || { backgroundChecked: false, backgroundClue: null }
+    : null;
 
-  const activeLog = selectedPitch ? diligenceLog[selectedPitch.instanceId] || {
-    backgroundChecked: false,
-    deepDivedCount: 0,
-    revealedTraits: [],
-    lastDeepDiveResult: null
-  } : null;
+  // Background check cost for the selected pitch
+  const bgCheckCost = selectedPitch
+    ? Math.max(10000, Math.round((selectedPitch.ask * 0.08) / 5000) * 5000)
+    : 0;
 
   return (
     <div className="pitch-panel">
@@ -46,10 +41,12 @@ export default function PitchPanel() {
           {currentPitches.map((pitch) => (
             <div className="game-card" key={pitch.instanceId}>
               <div className="card-header">
-                <span className="card-archetype">{pitch.archetype}</span>
+                <span className="card-archetype">{pitch.archetypeLabel}</span>
                 <h3 className="card-title">{pitch.businessName}</h3>
               </div>
-              <p className="card-summary">{pitch.pitchSummary}</p>
+              <p className="card-summary" style={{ fontStyle: "italic", opacity: 0.85 }}>
+                {pitch.assembledParagraphs?.[0] ?? ""}
+              </p>
               <div className="card-stats">
                 <div className="card-stat-box">
                   <span className="card-stat-label">Funding Ask</span>
@@ -62,11 +59,8 @@ export default function PitchPanel() {
                   <span className="card-stat-value">{formatMoney(pitch.valuation)}</span>
                 </div>
               </div>
-              <button 
-                className="card-action-btn"
-                onClick={() => handleOpenPitch(pitch)}
-              >
-                <span>Review Deal</span>
+              <button className="card-action-btn" onClick={() => handleOpenPitch(pitch)}>
+                <span>Read Pitch</span>
               </button>
             </div>
           ))}
@@ -76,18 +70,20 @@ export default function PitchPanel() {
           <div style={{ textAlign: "center" }}>
             <TrendingUp size={36} style={{ marginBottom: "1rem", opacity: 0.5, display: "inline-block" }} />
             <p>No new deals on the table.</p>
-            <p style={{ fontSize: "0.8rem", marginTop: "0.25rem", opacity: 0.7 }}>All active pitches have been evaluated or funded. Advance the turn to source more deals.</p>
+            <p style={{ fontSize: "0.8rem", marginTop: "0.25rem", opacity: 0.7 }}>
+              All active pitches have been evaluated or funded. Advance the turn to source more deals.
+            </p>
           </div>
         </div>
       )}
 
-      {/* Modal Detail Pop-up */}
+      {/* Modal */}
       {selectedPitch && activeLog && (
         <div className="modal-overlay" onClick={handleClosePitch}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "680px" }}>
             <div className="modal-header">
               <div>
-                <span className="card-archetype">{selectedPitch.archetype}</span>
+                <span className="card-archetype">{selectedPitch.archetypeLabel}</span>
                 <h2 className="card-title" style={{ fontSize: "1.6rem", marginTop: "0.25rem" }}>
                   {selectedPitch.businessName}
                 </h2>
@@ -98,10 +94,24 @@ export default function PitchPanel() {
             </div>
 
             <div className="modal-body">
-              <p style={{ fontSize: "0.95rem", lineHeight: "1.6", color: "var(--text-secondary)", marginBottom: "1.5rem" }}>
-                {selectedPitch.pitchSummary}
-              </p>
+              {/* Assembled pitch — joined 3 slots */}
+              <div style={{
+                borderLeft: "3px solid var(--color-accent-light)",
+                paddingLeft: "1.25rem",
+                marginBottom: "1.75rem"
+              }}>
+                <p style={{
+                  fontSize: "1rem",
+                  lineHeight: "1.8",
+                  color: "#ffffff", // Pure white for high contrast storytelling
+                  margin: 0,
+                  textShadow: "0 1px 2px rgba(0,0,0,0.15)"
+                }}>
+                  {(selectedPitch.assembledParagraphs || []).join(" ")}
+                </p>
+              </div>
 
+              {/* Deal terms */}
               <div className="card-stats" style={{ marginBottom: "1.5rem" }}>
                 <div className="card-stat-box">
                   <span className="card-stat-label">Investment Ask</span>
@@ -120,125 +130,47 @@ export default function PitchPanel() {
                 </div>
               </div>
 
-              {/* Diligence Dashboard */}
+              {/* Background Check */}
               <div className="diligence-section">
                 <div className="diligence-section-title">
                   <Search size={14} />
-                  Due Diligence Actions
-                </div>
-                
-                <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "1rem", fontWeight: "500" }}>
-                  Diligence Points Available: <strong style={{ color: "var(--color-accent-light)" }}>{points.available} / {points.max}</strong>
+                  Background Check
                 </div>
 
-                <div className="diligence-actions">
-                  <button 
+                {!activeLog.backgroundChecked ? (
+                  <button
                     className="diligence-btn"
-                    disabled={points.available < 1 || activeLog.backgroundChecked}
+                    disabled={cash < bgCheckCost || backgroundChecksRemaining < 1}
                     onClick={() => conductBackgroundCheck(selectedPitch.instanceId)}
+                    style={{ marginTop: "0.5rem" }}
                   >
                     <span className="diligence-btn-title">
-                      <span>Background Check</span>
-                      <span className="diligence-btn-cost">1 Point</span>
+                      <span>Run Background Check ({backgroundChecksRemaining} left)</span>
+                      <span className="diligence-btn-cost">{formatMoney(bgCheckCost)}</span>
                     </span>
                     <span className="diligence-btn-desc">
-                      {activeLog.backgroundChecked ? "Completed" : "Reveals basic public alerts and track record."}
+                      {backgroundChecksRemaining < 1 
+                        ? "Out of bandwidth. Only 1 check per turn."
+                        : cash < bgCheckCost
+                        ? "Insufficient cash to run a check."
+                        : "Surfaces one factual note from public records. One-time only."}
                     </span>
                   </button>
-
-                  <button 
-                    className="diligence-btn"
-                    disabled={points.available < 2 || activeLog.deepDivedCount > 0}
-                    onClick={() => conductDeepDive(selectedPitch.instanceId)}
-                  >
-                    <span className="diligence-btn-title">
-                      <span>Deep Dive</span>
-                      <span className="diligence-btn-cost">2 Points</span>
-                    </span>
-                    <span className="diligence-btn-desc">
-                      {activeLog.deepDivedCount > 0 ? "Completed" : "Investigates metrics and operations to uncover hidden anomalies."}
-                    </span>
-                  </button>
-                </div>
-
-                {/* Diligence Results Log */}
-                {(activeLog.backgroundChecked || activeLog.deepDivedCount > 0) && (
-                  <div className="diligence-log-box">
-                    <h4 style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--text-secondary)" }}>
-                      Investigation Findings
-                    </h4>
-                    
-                    {/* Background Check Log */}
-                    {activeLog.backgroundChecked && (
-                      <div className="log-item">
-                        <div className="log-label">Background Check Logs:</div>
-                        {selectedPitch.traits.some(t => TRAITS[t]?.discoverable.backgroundCheck) ? (
-                          selectedPitch.traits.map(t => {
-                            const traitDef = TRAITS[t];
-                            if (traitDef && traitDef.discoverable.backgroundCheck) {
-                              return (
-                                <p key={t} className="log-value" style={{ marginTop: "0.25rem" }}>
-                                  • {traitDef.backgroundCheckHint}
-                                </p>
-                              );
-                            }
-                            return null;
-                          })
-                        ) : (
-                          <p className="log-value" style={{ color: "var(--color-success)" }}>
-                            ✓ Clean record. No civil lawsuits, bankruptcy records, or outstanding red flags found.
-                          </p>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Deep Dive Log */}
-                    {activeLog.deepDivedCount > 0 && (
-                      <div className="log-item">
-                        <div className="log-label">Deep Dive Log:</div>
-                        
-                        {/* Miss results are silently mapped to no_more (clean) to preserve mystery */}
-
-                        {activeLog.lastDeepDiveResult === "no_more" && (
-                          <div className="log-alert neutral" style={{ marginBottom: "0.5rem" }}>
-                            <Check size={16} style={{ flexShrink: 0 }} />
-                            <span>Deep dive complete: Audit team spent 2 turns investigating and found no further hidden anomalies.</span>
-                          </div>
-                        )}
-
-                        {activeLog.revealedTraits.length > 0 ? (
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                            {activeLog.revealedTraits.map(t => {
-                              const traitDef = TRAITS[t];
-                              if (!traitDef) return null;
-                              return (
-                                <div key={t} className="log-alert neutral">
-                                  <ShieldAlert size={16} style={{ flexShrink: 0 }} />
-                                  <div>
-                                    <p style={{ fontSize: "0.85rem", color: "white", margin: 0, lineHeight: "1.4" }}>
-                                      {traitDef.deepDiveReveal}
-                                    </p>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          activeLog.lastDeepDiveResult !== "miss" && (
-                            <p className="log-value" style={{ color: "var(--text-secondary)" }}>
-                              No anomalies uncovered in this deep dive search.
-                            </p>
-                          )
-                        )}
-                      </div>
-                    )}
+                ) : (
+                  <div className="diligence-log-box" style={{ marginTop: "0.5rem" }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+                      <FileText size={16} style={{ flexShrink: 0, marginTop: "0.15rem", color: "var(--color-accent-light)" }} />
+                      <p style={{ fontSize: "0.9rem", lineHeight: "1.6", color: "var(--text-secondary)", margin: 0 }}>
+                        {activeLog.backgroundClue}
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
             </div>
 
             <div className="modal-footer">
-              <button 
+              <button
                 className="decision-btn pass"
                 onClick={() => {
                   dismissPitch(selectedPitch.instanceId);
@@ -247,7 +179,7 @@ export default function PitchPanel() {
               >
                 Pass Deal
               </button>
-              <button 
+              <button
                 className="decision-btn invest"
                 disabled={cash < selectedPitch.ask}
                 onClick={() => {

@@ -1,172 +1,183 @@
 export const PITCH_TEMPLATES = [
   {
     id: "vitality_pure",
-    businessName: "VitalityPure",
+    businessNames: ["VitalityPure", "DailyBlend", "NuSupplement", "VitaAura", "PureEpigen"],
     industry: "Health & Wellness",
-    archetype: "Direct-to-Consumer Supplements",
-    baseAsk: 100000,
-    baseValuation: 650000,
-    pitchSummary: "VitalityPure offers organic, personalized vitamin blends formulated by artificial intelligence. Seeking capital to scale manufacturing and expand marketing.",
-    possibleTraitPool: ["inflated_metrics", "uncalculated_risk_taker", "shops_deal"],
-    traitCountRange: [1, 2],
-    baseOutcomeWeights: {
-      growth: 0.4,
-      decline: 0.3,
-      volatile: 0.3
-    },
-    outcomeWeightVariance: 0.05
+    product: "an AI-personalised vitamin subscription",
+    market: "direct-to-consumer supplements",
+    painPoint: "guesswork in daily nutrient matching",
+    customerNoun: "health-conscious consumers"
   },
   {
     id: "aura_sleep",
-    businessName: "Aura Sleep",
+    businessNames: ["Aura Sleep", "DeepRest", "SomnusTech", "NirvanaBand", "HypnosWear"],
     industry: "Health & Wellness",
-    archetype: "Wearable Bio-hacking",
-    baseAsk: 150000,
-    baseValuation: 1000000,
-    pitchSummary: "Aura Sleep is a smart headband that monitors EEG waves and uses acoustic stimulation to increase deep sleep. Seeking capital to expand R&D and launch retail partnerships.",
-    possibleTraitPool: ["solid_prior_exit", "passionate_but_inexperienced", "shops_deal"],
-    traitCountRange: [1, 2],
-    baseOutcomeWeights: {
-      growth: 0.5,
-      decline: 0.3,
-      volatile: 0.2
-    },
-    outcomeWeightVariance: 0.05
+    product: "a sleep-optimizing acoustic headband",
+    market: "sleep technology",
+    painPoint: "restless, shallow sleep cycles",
+    customerNoun: "stressed professionals"
   },
   {
     id: "rejuvenate_labs",
-    businessName: "Rejuvenate Labs",
+    businessNames: ["Rejuvenate Labs", "CryoCell", "BioRestore", "VitalityRoom", "AtlasClinic"],
     industry: "Health & Wellness",
-    archetype: "Longevity Clinics",
-    baseAsk: 250000,
-    baseValuation: 1500000,
-    pitchSummary: "Rejuvenate Labs provides cellular hydration, cryotherapy, and biomarkers in boutique clinics. We have 3 clinics active and seek funding for regional expansion.",
-    possibleTraitPool: ["questionable_legal_history", "uncalculated_risk_taker", "solid_prior_exit"],
-    traitCountRange: [1, 2],
-    baseOutcomeWeights: {
-      growth: 0.3,
-      decline: 0.3,
-      volatile: 0.4
-    },
-    outcomeWeightVariance: 0.1
+    product: "a cryotherapy and longevity clinic",
+    market: "premium longevity treatments",
+    painPoint: "slow muscle recovery and cellular decline",
+    customerNoun: "fitness-focused elites"
   },
   {
     id: "core_foods",
-    businessName: "Core Foods",
+    businessNames: ["Core Foods", "DNADish", "MetabolicKit", "EpigenEats", "NutriCore"],
     industry: "Health & Wellness",
-    archetype: "Personalized Meal Kits",
-    baseAsk: 75000,
-    baseValuation: 450000,
-    pitchSummary: "Core Foods delivers chef-prepared, macro-balanced meals customized to user DNA test kits. High retention and high margin, seeking capital to scale customer acquisition.",
-    possibleTraitPool: ["inflated_metrics", "passionate_but_inexperienced"],
-    traitCountRange: [1, 1],
-    baseOutcomeWeights: {
-      growth: 0.6,
-      decline: 0.3,
-      volatile: 0.1
-    },
-    outcomeWeightVariance: 0.05
+    product: "a DNA-matched meal kit subscription",
+    market: "personalized nutrition",
+    painPoint: "metabolic mismatches in typical diets",
+    customerNoun: "wellness-focused home cooks"
   },
   {
     id: "flex_stretch",
-    businessName: "FlexStretch",
+    businessNames: ["FlexStretch", "FormPilates", "VibeGym", "OptiReformer", "KinetiWall"],
     industry: "Health & Wellness",
-    archetype: "Smart Gym Equipment",
-    baseAsk: 200000,
-    baseValuation: 1300000,
-    pitchSummary: "FlexStretch is an interactive pilates reformer wall mount with computer vision to track form. 500 pre-orders shipped, capital needed to scale production.",
-    possibleTraitPool: ["key_man_risk", "shops_deal", "solid_prior_exit"],
-    traitCountRange: [1, 2],
-    baseOutcomeWeights: {
-      growth: 0.45,
-      decline: 0.35,
-      volatile: 0.2
-    },
-    outcomeWeightVariance: 0.05
+    product: "an interactive reformer with computer-vision coaching",
+    market: "smart home gym equipment",
+    painPoint: "poor posture and form during home workouts",
+    customerNoun: "at-home pilates practitioners"
   },
   {
     id: "zen_mind",
-    businessName: "ZenMind",
+    businessNames: ["ZenMind", "SoundMeditation", "CalmSense", "NadiFlow", "AnandaApp"],
     industry: "Health & Wellness",
-    archetype: "Mental Health App",
-    baseAsk: 60000,
-    baseValuation: 400000,
-    pitchSummary: "ZenMind is a meditation app utilizing biosensors on wearables to dynamically customize soundscapes. Over 50k active subscriptions.",
-    possibleTraitPool: ["over_optimized_marketing", "passionate_but_inexperienced"],
-    traitCountRange: [1, 1],
-    baseOutcomeWeights: {
-      growth: 0.5,
-      decline: 0.4,
-      volatile: 0.1
-    },
-    outcomeWeightVariance: 0.05
+    product: "a biosensor-driven meditation app",
+    market: "mobile mental wellness",
+    painPoint: "chronic stress and focus decay",
+    customerNoun: "stressed urban professionals"
   },
   {
     id: "hydro_pulse",
-    businessName: "HydroPulse",
+    businessNames: ["HydroPulse", "CellHydrate", "HydraSmart", "OptiSip", "AquaMetrics"],
     industry: "Health & Wellness",
-    archetype: "Smart Water Bottles",
-    baseAsk: 80000,
-    baseValuation: 500000,
-    pitchSummary: "HydroPulse tracks cellular hydration level via saliva contact on the nozzle. Capital needed to resolve container logistics.",
-    possibleTraitPool: ["uncalculated_risk_taker", "questionable_legal_history", "key_man_risk"],
-    traitCountRange: [1, 2],
-    baseOutcomeWeights: {
-      growth: 0.3,
-      decline: 0.4,
-      volatile: 0.3
-    },
-    outcomeWeightVariance: 0.1
+    product: "a saliva-contact hydration-tracking water bottle",
+    market: "smart hydration hardware",
+    painPoint: "dehydration-induced performance drops",
+    customerNoun: "endurance athletes"
   },
   {
     id: "ergo_back",
-    businessName: "ErgoBack",
+    businessNames: ["ErgoBack", "BioSeat", "PostureDesk", "SpineSupport", "ActiveOffice"],
     industry: "Health & Wellness",
-    archetype: "Bespoke Office Furniture",
-    baseAsk: 120000,
-    baseValuation: 800000,
-    pitchSummary: "ErgoBack designs biomechanically active posture-correcting office chairs. B2B contracts signed with three major tech firms.",
-    possibleTraitPool: ["solid_prior_exit", "shops_deal", "inflated_metrics"],
-    traitCountRange: [1, 2],
-    baseOutcomeWeights: {
-      growth: 0.55,
-      decline: 0.3,
-      volatile: 0.15
-    },
-    outcomeWeightVariance: 0.05
+    product: "a biomechanically active office chair",
+    market: "B2B ergonomic office furniture",
+    painPoint: "chronic lower back fatigue",
+    customerNoun: "corporate purchasing managers"
   },
   {
     id: "bio_byte",
-    businessName: "BioByte",
+    businessNames: ["BioByte", "DNAAge", "EpigenSkin", "DermBio", "GenetikGlow"],
     industry: "Health & Wellness",
-    archetype: "DNA-based Skincare",
-    baseAsk: 140000,
-    baseValuation: 950000,
-    pitchSummary: "BioByte delivers anti-aging serums tailored to custom epigenetic swabs. Strong initial retention in test demographic.",
-    possibleTraitPool: ["inflated_metrics", "over_optimized_marketing", "uncalculated_risk_taker"],
-    traitCountRange: [1, 2],
-    baseOutcomeWeights: {
-      growth: 0.4,
-      decline: 0.4,
-      volatile: 0.2
-    },
-    outcomeWeightVariance: 0.05
+    product: "an epigenetic-tailored skincare line",
+    market: "epigenetic skincare products",
+    painPoint: "premature skin aging from genetic mismatches",
+    customerNoun: "skincare-focused buyers"
   },
   {
     id: "green_bite",
-    businessName: "GreenBite",
+    businessNames: ["GreenBite", "PureBite", "CleanCandy", "MacroChew", "OptiBar"],
     industry: "Health & Wellness",
-    archetype: "Plant-Based Protein Snacks",
-    baseAsk: 50000,
-    baseValuation: 300000,
-    pitchSummary: "GreenBite produces plant protein bars that taste like confectionary candy. Already stocked in 150 local organic grocery stores.",
-    possibleTraitPool: ["passionate_but_inexperienced", "shops_deal"],
-    traitCountRange: [1, 1],
-    baseOutcomeWeights: {
-      growth: 0.5,
-      decline: 0.3,
-      volatile: 0.2
-    },
-    outcomeWeightVariance: 0.05
+    product: "a confectionery-style plant protein bar",
+    market: "better-for-you snacks",
+    painPoint: "chalky, high-sugar protein bars",
+    customerNoun: "healthy snackers"
+  },
+  {
+    id: "pulse_cardio",
+    businessNames: ["Pulse Cardio", "ArteriaRing", "CardioSphere", "VascularFit", "PulseLoop"],
+    industry: "Health & Wellness",
+    product: "a medical-grade fitness ring that tracks arterial stiffness",
+    market: "cardiovascular health monitoring",
+    painPoint: "silent cardiovascular decline",
+    customerNoun: "heart-conscious athletes"
+  },
+  {
+    id: "work_flow_desk",
+    businessNames: ["Workflow Desk", "ActiveStool", "PostureCore", "FlowDesk", "ErgoActive"],
+    industry: "Health & Wellness",
+    product: "an active-sitting balance stool for standing desks",
+    market: "office wellness hardware",
+    painPoint: "physical fatigue from sedentary desk setups",
+    customerNoun: "enterprise operations leads"
+  },
+  {
+    id: "mind_scape_box",
+    businessNames: ["Mindscape Box", "CircadiaLight", "LuminaSync", "SolarisBox", "MoodGlow"],
+    industry: "Health & Wellness",
+    product: "a circadian-syncing light therapy box",
+    market: "sensory home wellness tech",
+    painPoint: "seasonal mood drops and circadian disruption",
+    customerNoun: "remote desk workers"
+  },
+  // --- USER'S LIGHT-HEARTED BUSINESSES ---
+  {
+    id: "hw_006",
+    businessNames: ["HydraMood", "Emotion Water", "MoodSip", "HappyHydrate", "AuraBottle"],
+    industry: "Health & Wellness",
+    product: "a mood-enhancing bottled water",
+    market: "functional beverages",
+    painPoint: "everyday stress",
+    customerNoun: "busy professionals"
+  },
+  {
+    id: "hw_007",
+    businessNames: ["ZenSock", "ToeBalance", "SockSense", "GroundedFeet", "CalmStep"],
+    industry: "Health & Wellness",
+    product: "a pair of acupressure wellness socks",
+    market: "alternative wellness products",
+    painPoint: "daily fatigue",
+    customerNoun: "wellness enthusiasts"
+  },
+  {
+    id: "hw_008",
+    businessNames: ["Blink Better", "EyeZen", "FocusFace", "VisionPause", "ScreenRelief"],
+    industry: "Health & Wellness",
+    product: "a pair of smart glasses that remind users to blink",
+    market: "digital eye care",
+    painPoint: "screen-induced eye strain",
+    customerNoun: "computer users"
+  },
+  {
+    id: "hw_009",
+    businessNames: ["NapCapsule", "PowerNap Pro", "DreamPod", "QuickRest", "RestBox"],
+    industry: "Health & Wellness",
+    product: "a portable office nap pod",
+    market: "workplace wellness",
+    painPoint: "afternoon fatigue",
+    customerNoun: "corporate employees"
+  },
+  {
+    id: "hw_010",
+    businessNames: ["Grandma's Secret", "SoupRx", "BrothWorks", "Healing Bowl", "Comfort Cure"],
+    industry: "Health & Wellness",
+    product: "a premium immune-support chicken soup subscription",
+    market: "functional foods",
+    painPoint: "seasonal illness",
+    customerNoun: "families"
+  },
+  {
+    id: "hw_011",
+    businessNames: ["AuraScan", "SpiritMetrics", "EnergySync", "VibeSense", "QuantumAura"],
+    industry: "Health & Wellness",
+    product: "an AI-powered aura scanner",
+    market: "holistic wellness",
+    painPoint: "uncertainty about emotional wellbeing",
+    customerNoun: "alternative wellness seekers"
+  },
+  {
+    id: "hw_012",
+    businessNames: ["Goat Yoga Co.", "StretchGoat", "ZenBarn", "BaaBalance", "Hoof Harmony"],
+    industry: "Health & Wellness",
+    product: "a mobile goat yoga experience",
+    market: "experiential fitness",
+    painPoint: "boring exercise routines",
+    customerNoun: "urban professionals"
   }
 ];

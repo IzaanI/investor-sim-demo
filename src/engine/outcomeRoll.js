@@ -6,7 +6,7 @@ import { TRAITS } from "../data/traits.js";
  * @returns {Object} { outcomeType, multiplier, newValueMultiplier, isFailed }
  */
 export function rollHoldingOutcome(holding, activeNewsEffects = []) {
-  const { outcomeWeights, traits, currentValueMultiplier, industry } = holding;
+  const { outcomeWeights, trait, currentValueMultiplier, industry } = holding;
 
   // 1. Gather all trait nudges and active news modifiers
   let growthWeight = outcomeWeights.growth;
@@ -21,21 +21,22 @@ export function rollHoldingOutcome(holding, activeNewsEffects = []) {
     }
     
     if (effect.macroModifiers) {
-      growthWeight += effect.macroModifiers.declineWeightModifier || 0;
+      growthWeight += effect.macroModifiers.growthWeightModifier || 0;
       declineWeight += effect.macroModifiers.declineWeightModifier || 0;
       volatileWeight += effect.macroModifiers.volatileWeightModifier || 0;
       multiplierModifier += effect.macroModifiers.valueMultiplierModifier || 0;
     }
   });
 
-  traits.forEach(traitId => {
-    const trait = TRAITS[traitId];
-    if (trait && trait.outcomeNudge) {
-      growthWeight += trait.outcomeNudge.growth || 0;
-      declineWeight += trait.outcomeNudge.decline || 0;
-      volatileWeight += trait.outcomeNudge.volatile || 0;
+  // Apply trait nudge (single trait string)
+  if (trait) {
+    const traitDef = TRAITS[trait];
+    if (traitDef && traitDef.outcomeNudge) {
+      growthWeight += traitDef.outcomeNudge.growth || 0;
+      declineWeight += traitDef.outcomeNudge.decline || 0;
+      volatileWeight += traitDef.outcomeNudge.volatile || 0;
     }
-  });
+  }
 
   // Clamp weights at 0 to avoid negative probabilities
   growthWeight = Math.max(0, growthWeight);
@@ -62,11 +63,15 @@ export function rollHoldingOutcome(holding, activeNewsEffects = []) {
   // Calculate multiplier based on outcome type
   let multiplier = 1.0;
   if (outcomeType === "growth") {
-    multiplier = 1.05 + Math.random() * 0.20;
+    // Range: +3% to +13% (centered around +8%)
+    multiplier = 1.03 + Math.random() * 0.10;
   } else if (outcomeType === "decline") {
-    multiplier = 0.65 + Math.random() * 0.30;
+    // Range: -12% to -2% (centered around -7%)
+    multiplier = 0.88 + Math.random() * 0.10;
   } else {
-    multiplier = 0.30 + Math.random() * 1.30;
+    // Volatile (rare extreme boom/bust)
+    // Range: -30% to +40%
+    multiplier = 0.70 + Math.random() * 0.70;
   }
 
   // Apply macro multiplier modifier silently

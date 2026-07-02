@@ -13,7 +13,6 @@ export default function Header() {
   const cash = useGameStore(state => state.cash);
   const portfolio = useGameStore(state => state.portfolio);
   const turn = useGameStore(state => state.turn);
-  const points = useGameStore(state => state.points);
 
   // Recalculate current net worth
   const activeHoldingsValue = portfolio
@@ -51,11 +50,11 @@ export default function Header() {
       </div>
 
       <div className="header-stat">
-        <span className="stat-label">Due Diligence Points</span>
+        <span className="stat-label">Active Holdings</span>
         <span className="stat-value" style={{ color: "var(--color-accent-light)" }}>
-          {points.available} / {points.max}
+          {portfolio.filter(h => h.status === "active").length}
         </span>
-        <span className="stat-subtext">Refreshes next turn</span>
+        <span className="stat-subtext">Companies funded</span>
       </div>
     </header>
   );

@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { generatePitchesForTurn, getNewsForTurn, resolveTurn } from "../engine/turnResolution";
 import { TRAITS } from "../data/traits";
 
-const SAVE_KEY = "investor_game_save_v4";
-const SAVE_VERSION = 4;
+const SAVE_KEY = "investor_game_save_v5";
+const SAVE_VERSION = 5;
 const INITIAL_CASH = 1000000; // $1,000,000 starting cash
 const DEMO_INDUSTRY = "Health & Wellness";
 
@@ -30,17 +30,18 @@ const createInitialState = () => {
     turn: 1,
     cash: INITIAL_CASH,
     netWorthHistory: [INITIAL_CASH],
-    points: { available: 5, max: 5 },
     industry: DEMO_INDUSTRY,
     portfolio: [],
     eventQueue: [],
-    diligenceLog: {}, // instanceId -> { backgroundChecked: bool, deepDivedCount: number, revealedTraits: string[], lastDeepDiveResult: "hit" | "miss" | "no_more" | null }
+    // instanceId -> { backgroundChecked: bool, backgroundClue: string|null }
+    diligenceLog: {},
     currentPitches: initialPitches,
     currentNews: initialNews,
     gameOver: false,
     demoFinished: false,
     activeNewsEffects: initialActiveNews,
-    pinnedNewsIds: []
+    pinnedNewsIds: [],
+    backgroundChecksRemaining: 1
   };
 };
 
@@ -84,28 +85,39 @@ export const useGameStore = create((set, get) => ({
   },
 
   conductBackgroundCheck: (pitchInstanceId) => {
-    const { points, diligenceLog, currentPitches } = get();
-    if (points.available < 1) return;
+    const { cash, diligenceLog, currentPitches, backgroundChecksRemaining } = get();
+
+    if (backgroundChecksRemaining < 1) return; // out of checks for this turn
 
     const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
     if (!pitch) return;
 
     const currentLog = diligenceLog[pitchInstanceId] || {
       backgroundChecked: false,
-      deepDivedCount: 0,
-      revealedTraits: [],
-      lastDeepDiveResult: null
+      backgroundClue: null
     };
 
-    if (currentLog.backgroundChecked) return;
+    if (currentLog.backgroundChecked) return; // already run
+
+    // Cost: 8% of ask, rounded to nearest $5k, minimum $10k
+    const cost = Math.max(10000, Math.round((pitch.ask * 0.08) / 5000) * 5000);
+    if (cash < cost) return; // can't afford it
+
+    // Pick one backgroundClue from the pitch's trait
+    const traitDef = TRAITS[pitch.trait];
+    const clues = traitDef?.backgroundClue || [];
+    const clue = clues.length > 0
+      ? clues[Math.floor(Math.random() * clues.length)]
+      : "Nothing notable surfaced in the public record.";
 
     const newLog = {
-      ...currentLog,
-      backgroundChecked: true
+      backgroundChecked: true,
+      backgroundClue: clue
     };
 
     set({
-      points: { ...points, available: points.available - 1 },
+      cash: cash - cost,
+      backgroundChecksRemaining: backgroundChecksRemaining - 1,
       diligenceLog: {
         ...diligenceLog,
         [pitchInstanceId]: newLog
@@ -115,56 +127,7 @@ export const useGameStore = create((set, get) => ({
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   },
 
-  conductDeepDive: (pitchInstanceId) => {
-    const { points, diligenceLog, currentPitches } = get();
-    if (points.available < 2) return;
 
-    const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
-    if (!pitch) return;
-
-    const currentLog = diligenceLog[pitchInstanceId] || {
-      backgroundChecked: false,
-      deepDivedCount: 0,
-      revealedTraits: [],
-      lastDeepDiveResult: null
-    };
-
-    const isMiss = Math.random() < 0.20;
-    let result = "no_more";
-    let revealedTraits = [...currentLog.revealedTraits];
-
-    if (!isMiss) {
-      // Find traits in the pitch that are deep-dive discoverable AND not already revealed
-      const discoverableTraits = pitch.traits.filter(traitId => {
-        const traitDef = TRAITS[traitId];
-        return traitDef && traitDef.discoverable.deepDive && !revealedTraits.includes(traitId);
-      });
-
-      if (discoverableTraits.length > 0) {
-        // Pick one at random
-        const chosenTrait = discoverableTraits[Math.floor(Math.random() * discoverableTraits.length)];
-        revealedTraits.push(chosenTrait);
-        result = "hit";
-      }
-    }
-
-    const newLog = {
-      ...currentLog,
-      deepDivedCount: currentLog.deepDivedCount + 1,
-      revealedTraits,
-      lastDeepDiveResult: result
-    };
-
-    set({
-      points: { ...points, available: points.available - 2 },
-      diligenceLog: {
-        ...diligenceLog,
-        [pitchInstanceId]: newLog
-      }
-    });
-
-    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
-  },
 
   investInPitch: (pitchInstanceId) => {
     const { cash, currentPitches, portfolio } = get();
@@ -176,17 +139,18 @@ export const useGameStore = create((set, get) => ({
     const newHolding = {
       pitchId: pitch.id,
       businessName: pitch.businessName,
-      archetype: pitch.archetype,
+      archetypeLabel: pitch.archetypeLabel,
+      industry: pitch.industry,             // needed for industry-scoped news effects
       investedAmount: pitch.ask,
       equityPercent,
       currentValueMultiplier: 1.0,
       turnsHeld: 0,
       status: "active",
       eventChance: { base: 0.1, trendModifier: 0 },
-      traits: pitch.traits, // Captured ground truth
-      outcomeWeights: pitch.outcomeWeights, // Captured ground truth
+      trait: pitch.trait,
+      outcomeWeights: pitch.outcomeWeights,
       history: [],
-      pitchSummary: pitch.pitchSummary,
+      assembledParagraphs: pitch.assembledParagraphs,
       valuationAtInvestment: pitch.valuation
     };
 

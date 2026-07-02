@@ -7,6 +7,7 @@ import { Briefcase, ArrowUpRight, TrendingDown, Clock, ShieldAlert, BarChart3, X
 export default function PortfolioPanel() {
   const portfolio = useGameStore(state => state.portfolio);
   const exitHolding = useGameStore(state => state.exitHolding);
+  const diligenceLog = useGameStore(state => state.diligenceLog);
   const [selectedHolding, setSelectedHolding] = useState(null);
 
   const handleOpenDetails = (holding) => {
@@ -90,7 +91,7 @@ export default function PortfolioPanel() {
         <div>
           <div className="portfolio-cell-header">Company</div>
           <strong style={{ color: "var(--text-primary)" }}>{holding.businessName}</strong>
-          <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{holding.archetype}</div>
+          <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{holding.archetypeLabel}</div>
         </div>
 
         <div>
@@ -206,7 +207,7 @@ export default function PortfolioPanel() {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div>
-                <span className="card-archetype">{selectedHolding.archetype}</span>
+                <span className="card-archetype">{selectedHolding.archetypeLabel}</span>
                 <h2 className="card-title" style={{ fontSize: "1.6rem", marginTop: "0.25rem" }}>
                   {selectedHolding.businessName}
                 </h2>
@@ -245,32 +246,30 @@ export default function PortfolioPanel() {
                 </div>
               )}
 
-              {/* Ground Truth Traits */}
+              {/* Ground Truth Trait */}
               <div style={{ marginBottom: "1.5rem" }}>
                 <h4 style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--color-accent-light)", marginBottom: "0.5rem" }}>
                   Internal Company Dynamics (Ground Truth)
                 </h4>
                 <div className="diligence-log-box">
-                  {selectedHolding.traits.length > 0 ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                      {selectedHolding.traits.map(t => {
-                        const traitDef = TRAITS[t];
-                        if (!traitDef) return null;
-                        return (
-                          <div key={t} className="log-alert neutral">
-                            <ShieldAlert size={16} style={{ flexShrink: 0 }} />
-                            <div>
-                              <p style={{ fontSize: "0.85rem", color: "white", margin: 0, lineHeight: "1.4" }}>
-                                {traitDef.deepDiveReveal}
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
+                  {selectedHolding.trait ? (() => {
+                    // Show what the player actually paid to see (if they ran a check), otherwise fallback to clues[0]
+                    const logEntry = diligenceLog[Object.keys(diligenceLog).find(k => k.startsWith(selectedHolding.pitchId))];
+                    const traitDef = TRAITS[selectedHolding.trait];
+                    const clue = logEntry?.backgroundClue
+                      ?? traitDef?.backgroundClue?.[0]
+                      ?? "No notable operational concerns on record.";
+                    return (
+                      <div className="log-alert neutral">
+                        <ShieldAlert size={16} style={{ flexShrink: 0 }} />
+                        <p style={{ fontSize: "0.85rem", color: "white", margin: 0, lineHeight: "1.4" }}>
+                          {clue}
+                        </p>
+                      </div>
+                    );
+                  })() : (
                     <p style={{ fontSize: "0.85rem", color: "var(--color-success)", margin: "0.5rem 0" }}>
-                      ✓ Exemplary organization. No hidden operational risks, legal flaws, or negative founder traits.
+                      ✓ No notable operational concerns on record.
                     </p>
                   )}
                 </div>

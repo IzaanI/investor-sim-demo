@@ -67,6 +67,35 @@ export const NEWS_BANK = [
     detail: "Consumers are shifting discretionary spend towards high-end gym memberships and specialized dietary supplements.",
     relevantTraits: []
   },
+  // --- TURN 3 EVENTS (Includes Rebound and Positive Boost) ---
+  {
+    id: "news_vc_rebound",
+    turn: 3,
+    scope: "general",
+    category: "MARKETS",
+    impact: "MEDIUM",
+    timeString: "6 hours ago",
+    headline: "Venture Capital Funding Activity Rebounds",
+    detail: "Early-stage investment rounds show a 15% increase in deal volume compared to last quarter, signaling renewed interest in high-growth startups.",
+    relevantTraits: []
+  },
+  {
+    id: "news_preventive_subsidies",
+    turn: 3,
+    scope: "industry",
+    industry: "Health & Wellness",
+    category: "POLICY",
+    impact: "HIGH",
+    timeString: "10 mins ago",
+    headline: "Major Health Insurer Announces Subsidies for Wellness Hardware",
+    detail: "A leading private health provider will offer premium discounts to members using certified biometric devices, driving customer adoption rates.",
+    relevantTraits: [],
+    duration: 3,
+    macroModifiers: {
+      growthWeightModifier: 0.15,
+      declineWeightModifier: -0.10
+    }
+  },
   {
     id: "news_metric_fraud",
     turn: 3,
@@ -88,6 +117,35 @@ export const NEWS_BANK = [
     headline: "Serial Founders Command Higher Valuations",
     detail: "Data shows that founders with at least one successful prior exit raise seed rounds at a 25% premium on average.",
     relevantTraits: ["solid_prior_exit"]
+  },
+  // --- TURN 4 EVENTS (Includes Circadian Trend and Talent Fluff) ---
+  {
+    id: "news_epigenetic_trend",
+    turn: 4,
+    scope: "industry",
+    industry: "Health & Wellness",
+    category: "MARKETS",
+    impact: "MEDIUM",
+    timeString: "1 hour ago",
+    headline: "Viral Social Trend Sparks Surge in Epigenetic Bio-hacking",
+    detail: "Public interest in DNA-matched wellness tools hits record highs. Active consumer demand shifts toward personalized supplements and wellness hardware.",
+    relevantTraits: [],
+    duration: 4,
+    macroModifiers: {
+      growthWeightModifier: 0.10,
+      valueMultiplierModifier: 0.05
+    }
+  },
+  {
+    id: "news_talent_layoffs",
+    turn: 4,
+    scope: "general",
+    category: "ECONOMY",
+    impact: "LOW",
+    timeString: "1 day ago",
+    headline: "Tech Layoffs Expand Early-Stage Startup Talent Pool",
+    detail: "Engineering and product managers departing legacy platforms are increasingly joining early-stage ventures, easing structural recruiting bottlenecks.",
+    relevantTraits: []
   },
   {
     id: "news_key_man",
@@ -116,6 +174,23 @@ export const NEWS_BANK = [
     headline: "Private Equity Inflow to Supplement Brands Slows Down",
     detail: "M&A activity declines as institutional players search for high-growth sectors outside nutrition.",
     relevantTraits: []
+  },
+  // --- TURN 5 EVENTS (Includes R&D Tax Credits) ---
+  {
+    id: "news_tax_credits",
+    turn: 5,
+    scope: "general",
+    category: "POLICY",
+    impact: "HIGH",
+    timeString: "2 hours ago",
+    headline: "New Federal R&D Tax Credits Enacted for Tech Startups",
+    detail: "Bipartisan legislation allows early-stage companies to offset operational expenses against research tax credits, preserving cash runway for innovators.",
+    relevantTraits: [],
+    duration: 2,
+    macroModifiers: {
+      growthWeightModifier: 0.05,
+      valueMultiplierModifier: 0.03
+    }
   },
   {
     id: "news_retention_decay",
