@@ -342,5 +342,50 @@ export const PITCH_TEMPLATES = [
     market: "novelty food gifts",
     painPoint: "impersonal gift ideas",
     customerNoun: "gift shoppers"
+  },
+  {
+    id: "swag_juice",
+    businessNames: ["SwagJuice", "Swag's Mangoria", "BrayJuice", "Juice by Swag"],
+    industry: "Health & Wellness",
+    product: "a mango-flavored juice that treats constipation",
+    market: "direct-to-consumer laxatives",
+    painPoint: "slow bowel movements",
+    customerNoun: "constipation victims"
+  },
+  {
+    id: "spergreen",
+    businessNames: ["Spergreen", "Sperg McGreen", "Greens by McGann", "McGreen Sperg"],
+    industry: "Food & Beverage",
+    product: "a personalized vegan and vegetarian meal kit subscription",
+    market: "clean-eating subscription kits",
+    painPoint: "the lack of diverse vegan and vegetarian meal kit options",
+    customerNoun: "vegans and vegetarians"
+  },
+  {
+    id: "iqin_digital",
+    businessNames: ["iQiN", "iQiN Digital", "iQiN Inc.", "iQiN Built it"],
+    industry: "Health & Wellness",
+    product: "a custom web development service for medical institutions",
+    market: "medical digital marketing",
+    painPoint: "expensive digital marketing solutions in the medical space",
+    customerNoun: "medical practitioners and administrators"
+  },
+  {
+    id: "avery_max",
+    businessNames: ["AveryMax", "AveyrMax", "BaveryMax", "BaveyrMax"],
+    industry: "Health & Wellness",
+    product: "a fully featured medical assistance robot",
+    market: "senior hospitality tech",
+    painPoint: "expensive care-taker labor in senior homes",
+    customerNoun: "senior home operators"
+  },
+  {
+    id: "abou_bakes",
+    businessNames: ["AbouBakes", "AbouBaker", "Moussa Baker Inc.", "Moussa Baker Co."],
+    industry: "Food & Beverage",
+    product: "a BTC-powered public air fryer",
+    market: "public food cooking and reheating",
+    painPoint: "the lack of public cooking or reheating options",
+    customerNoun: "on-the-go professionals"
   }
 ];

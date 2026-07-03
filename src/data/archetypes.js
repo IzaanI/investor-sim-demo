@@ -1,7 +1,7 @@
 export const ARCHETYPES = {
   visionary: {
     label: "The Visionary",
-    tones: ["confident", "casual", "humorous"],
+    tones: ["confident", "casual", "passionate"],
     traitBias: [
       "key_man_risk",
       "solid_prior_exit",
@@ -37,7 +37,7 @@ export const ARCHETYPES = {
   },
   first_time_founder: {
     label: "The First-Timer",
-    tones: ["nervous", "casual", "humorous"],
+    tones: ["nervous", "passionate", "desperate"],
     traitBias: [
       "key_man_risk",
       "passionate_but_inexperienced",
@@ -49,7 +49,7 @@ export const ARCHETYPES = {
   },
   the_friend: {
     label: "The Friend",
-    tones: ["casual", "humorous", "nervous"],
+    tones: ["casual", "humorous", "passionate"],
     traitBias: [
       "bootstrapped_culture",
       "passionate_but_inexperienced",
@@ -61,7 +61,7 @@ export const ARCHETYPES = {
   },
   academic: {
     label: "The Academic",
-    tones: ["methodical", "nervous", "confident"],
+    tones: ["methodical", "nervous", "desperate"],
     traitBias: [
       "key_man_risk",
       "proprietary_tech",

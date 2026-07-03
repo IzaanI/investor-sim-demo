@@ -18,9 +18,9 @@ export const NEWS_BANK = [
     impact: "MEDIUM",
     timeString: "5 hours ago",
     headline: "Global Supply Chain Delays Continue",
-    detail: "New disruptions in key shipping lanes expected to impact wellness hardware container shipping through next 4 months.",
+    detail: "New disruptions in key shipping lanes expected to impact wellness hardware container shipping through next 2 quarters.",
     relevantTraits: [],
-    duration: 4,
+    duration: 6,
     macroModifiers: {
       declineWeightModifier: 0.15,
       growthWeightModifier: -0.05,
@@ -76,7 +76,7 @@ export const NEWS_BANK = [
     impact: "MEDIUM",
     timeString: "6 hours ago",
     headline: "Venture Capital Funding Activity Rebounds",
-    detail: "Early-stage investment rounds show a 15% increase in deal volume compared to last month, signaling renewed interest in high-growth startups.",
+    detail: "Early-stage investment rounds show a 15% increase in deal volume compared to last quarter, signaling renewed interest in high-growth startups.",
     relevantTraits: []
   },
   {
@@ -130,7 +130,7 @@ export const NEWS_BANK = [
     headline: "Viral Social Trend Sparks Surge in Epigenetic Bio-hacking",
     detail: "Public interest in DNA-matched wellness tools hits record highs. Active consumer demand shifts toward personalized supplements and wellness hardware.",
     relevantTraits: [],
-    duration: 4,
+    duration: 6,
     macroModifiers: {
       growthWeightModifier: 0.10,
       valueMultiplierModifier: 0.05
@@ -186,7 +186,7 @@ export const NEWS_BANK = [
     headline: "New Federal R&D Tax Credits Enacted for Tech Startups",
     detail: "Bipartisan legislation allows early-stage companies to offset operational expenses against research tax credits, preserving cash runway for innovators.",
     relevantTraits: [],
-    duration: 2,
+    duration: 3,
     macroModifiers: {
       growthWeightModifier: 0.05,
       valueMultiplierModifier: 0.03
@@ -202,7 +202,7 @@ export const NEWS_BANK = [
     headline: "Industry Audits Show Decaying Retention on Social Acquisition Channels",
     detail: "Marketing experts warn that while digital ad campaigns drive cheap trial conversions, consumer subscription churn by Month 2 has doubled.",
     relevantTraits: ["over_optimized_marketing"],
-    duration: 4,
+    duration: 6,
     macroModifiers: {
       declineWeightModifier: 0.25,
       growthWeightModifier: -0.15
@@ -249,7 +249,7 @@ export const NEWS_BANK = [
     headline: "Viral TikTok Food Trend Clears Grocery Shelves",
     detail: "A sudden viral video has driven unprecedented demand for artisan and unique pantry staples, boosting revenue for local F&B brands.",
     relevantTraits: ["over_optimized_marketing"],
-    duration: 2,
+    duration: 3,
     macroModifiers: {
       growthWeightModifier: 0.20,
       valueMultiplierModifier: 0.10
@@ -266,10 +266,143 @@ export const NEWS_BANK = [
     headline: "FDA Announces Surprise Inspections on Ghost Kitchens",
     detail: "Regulators are clamping down on decentralized cooking operations after a series of health code violations, causing panic among virtual brands.",
     relevantTraits: ["uncalculated_risk_taker", "questionable_legal_history"],
-    duration: 4,
+    duration: 6,
     macroModifiers: {
       declineWeightModifier: 0.25,
       growthWeightModifier: -0.10
     }
+  },
+  {
+    id: "markets_003",
+    minTurn: 3,
+    scope: "general",
+    category: "COMPETITION",
+    impact: "MEDIUM",
+    timeString: "5 hours ago",
+    headline: "Major Corporation Enters Several Startup Markets",
+    detail: "Industry analysts expect increased competition as established firms expand into traditionally startup-dominated sectors."
+  },
+  {
+    id: "expertise_001",
+    minTurn: 2,
+    scope: "general",
+    category: "INDUSTRY",
+    impact: "LOW",
+    timeString: "8 hours ago",
+    headline: "Industry Veterans Continue Outperforming New Entrants",
+    detail: "Companies led by experienced specialists appear better equipped to navigate changing markets.",
+    relevantTraits: ["deep_domain_expertise"]
+  },
+  {
+    id: "risk_001",
+    minTurn: 4,
+    scope: "general",
+    category: "MARKETS",
+    impact: "MEDIUM",
+    timeString: "1 hour ago",
+    headline: "Investors Grow Wary of High-Risk Expansion Strategies",
+    detail: "Aggressive growth plans have come under increased scrutiny following several high-profile failures.",
+    relevantTraits: ["uncalculated_risk_taker"]
+  },
+  {
+    id: "culture_001",
+    minTurn: 5,
+    scope: "general",
+    category: "WORKPLACE",
+    impact: "MEDIUM",
+    timeString: "4 hours ago",
+    headline: "Employee Satisfaction Emerges as Key Startup Success Metric",
+    detail: "Studies continue to link strong workplace culture with higher long-term company performance.",
+    relevantTraits: ["toxic_culture_rumors"]
+  },
+  {
+    id: "flavor_002",
+    minTurn: 3,
+    scope: "general",
+    category: "BUSINESS",
+    impact: "LOW",
+    timeString: "Today",
+    headline: "Study Finds Startup Founders Average 6.2 Hours of Sleep",
+    detail: "Experts disagree on whether the lack of sleep causes innovation or simply comes with it."
+  },
+  {
+    id: "flavor_003",
+    minTurn: 2,
+    scope: "general",
+    category: "WORKPLACE",
+    impact: "LOW",
+    timeString: "Yesterday",
+    headline: "Debate Continues Over Whether Standing Desks Actually Help",
+    detail: "After years of research, scientists remain unable to agree whether standing desks meaningfully improve workplace health."
+  },
+  {
+    id: "fluff_subscription_fatigue",
+    minTurn: 1,
+    scope: "general",
+    category: "MARKETS",
+    impact: "LOW",
+    timeString: "10 hours ago",
+    headline: "Experts Predict Subscription Businesses Are Dead",
+    detail: "Several analysts argue consumers are experiencing subscription fatigue."
+  },
+  {
+    id: "fluff_wellness_cure",
+    minTurn: 2,
+    scope: "general",
+    category: "HEALTH",
+    impact: "LOW",
+    timeString: "Yesterday",
+    headline: "Rumors Circulate that Health and Wellness Products may Become Obsolete Permanently",
+    detail: "Medical professionals working on miracle cure that fixes all health related issues."
+  },
+  {
+    id: "fluff_ceo_bankruptcy",
+    minTurn: 1,
+    scope: "general",
+    category: "BUSINESS",
+    impact: "LOW",
+    timeString: "2 hours ago",
+    headline: "CEO Brayden Mitch Files for Bankruptcy after Gambling away Life Savings",
+    detail: "Young founder loses big after putting his house and car on black."
+  },
+  {
+    id: "fluff_cs_graduate",
+    minTurn: 1,
+    scope: "general",
+    category: "CAREERS",
+    impact: "LOW",
+    timeString: "Today",
+    headline: "Recent University Graduate Spencer McGoon will make you Rethink Pursuing Computer Science",
+    detail: "\"I've been applying for 8 months and can't find anything. AI is taking over, dawg.\""
+  },
+  {
+    id: "fluff_youtuber_busted",
+    minTurn: 2,
+    scope: "general",
+    category: "INFLUENCERS",
+    impact: "LOW",
+    timeString: "Yesterday",
+    headline: "YouTuber tryShiv Busted for Created Fake Accounts to Inflate Subscribers",
+    detail: "Young immigrant YouTuber created countless emails to artificially increase subscriber count."
+  },
+  {
+    id: "fluff_battle_bettesworth",
+    minTurn: 3,
+    scope: "general",
+    category: "WORLD",
+    impact: "LOW",
+    timeString: "3 days ago",
+    headline: "New War Titled Battle of Bettesworth Seems Across the Horizon",
+    detail: "Experts claim tensions in the Mid-West may escalate uncontrollably."
+  },
+  {
+    id: "fluff_crypto_tool",
+    minTurn: 1,
+    scope: "general",
+    category: "FINTECH",
+    impact: "LOW",
+    timeString: "Today",
+    headline: "Cameroonian Entrepreneur Ab. U Baker Builds Bleeding Edge Crypto Tool",
+    detail: "Deployable Bitcoin wallet extension projected to release early next year."
   }
 ];

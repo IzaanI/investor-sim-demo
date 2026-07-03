@@ -20,11 +20,10 @@ export default function Header() {
     .reduce((sum, h) => sum + Math.round(h.investedAmount * h.currentValueMultiplier), 0);
   const netWorth = cash + activeHoldingsValue;
 
-  // Calculate Year and Quarter
-  // 52 turns total, 4 quarters of 13 turns each
+  // 52 turns total, 1 turn = 1 month. 3 turns = 1 quarter, 12 turns = 1 year.
   const totalTurns = 52;
-  const year = Math.floor((turn - 1) / totalTurns) + 1;
-  const quarter = Math.floor(((turn - 1) % totalTurns) / 13) + 1;
+  const year = Math.floor((turn - 1) / 12) + 1;
+  const quarter = Math.floor(((turn - 1) % 12) / 3) + 1;
 
   const isCashNegative = cash < 0;
   const isNetWorthDanger = netWorth < 200000;

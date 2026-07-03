@@ -304,6 +304,68 @@ export const SEGMENTS = {
       id: "intro_hum_user_5",
       tones: ["humorous"],
       text: "F students are the inventors. I dropped out of high school because I know {{customerNoun}} have been struggling with {{painPoint}} for too long."
+    },
+    // --- DESPERATE TONE ---
+    {
+      id: "intro_desperate_1",
+      tones: ["desperate"],
+      text: "Honestly, I'm at my wits' end. We've been trying to solve {{painPoint}} for months, and if we don't get funding soon, I don't know what we'll do."
+    },
+    {
+      id: "intro_desperate_2",
+      tones: ["desperate"],
+      text: "To be completely transparent, the situation in {{market}} is getting urgent, and {{painPoint}} is crushing our target users."
+    },
+    {
+      id: "intro_desperate_3",
+      tones: ["desperate"],
+      text: "I started {{companyName}} because I poured my life savings into it, and we are so close to cracking {{painPoint}} if we can just keep the lights on."
+    },
+    {
+      id: "intro_desperate_4",
+      tones: ["desperate"],
+      text: "Nobody else is willing to talk about how bad {{painPoint}} really is, and we're practically begging for a chance to fix it."
+    },
+    // --- PASSIONATE TONE ---
+    {
+      id: "intro_passionate_1",
+      tones: ["passionate"],
+      text: "I've seen firsthand what {{painPoint}} does to {{customerNoun}}, and I couldn't keep waiting for someone else to solve it."
+    },
+    {
+      id: "intro_passionate_2",
+      tones: ["passionate"],
+      text: "Every conversation I've had with {{customerNoun}} has reinforced the same thing: {{painPoint}} deserves a better solution."
+    },
+    {
+      id: "intro_passionate_3",
+      tones: ["passionate"],
+      text: "People have accepted {{painPoint}} as \"just the way things are\" in {{market}}, but I refuse to believe that's true."
+    },
+    {
+      id: "intro_passionate_4",
+      tones: ["passionate"],
+      text: "{{companyName}} exists because I genuinely believe {{painPoint}} shouldn't be something people simply learn to live with."
+    },
+    {
+      id: "intro_passionate_5",
+      tones: ["passionate"],
+      text: "The more I learned about {{market}}, the more obvious it became that {{painPoint}} was holding far too many people back."
+    },
+    {
+      id: "intro_passionate_6",
+      tones: ["passionate"],
+      text: "Some businesses are built to make money. {{companyName}} was built because {{painPoint}} deserved to be solved."
+    },
+    {
+      id: "intro_passionate_7",
+      tones: ["passionate"],
+      text: "I didn't start {{companyName}} because it sounded like a good business idea. I started it because {{painPoint}} affected people I care about."
+    },
+    {
+      id: "intro_passionate_8",
+      tones: ["passionate"],
+      text: "What keeps me motivated every day isn't the business itself—it's knowing that {{painPoint}} is still affecting thousands of {{customerNoun}}."
     }
   ],
 
@@ -489,6 +551,53 @@ export const SEGMENTS = {
       id: "body_casual_4",
       tones: ["casual"],
       text: "So we put {{product}} out there, and the reception has been super chill. We're currently sitting at {{metric}}."
+    },
+    // --- DESPERATE TONE ---
+    {
+      id: "body_desperate_1",
+      tones: ["desperate"],
+      text: "We built {{product}}, but honestly, our runway is dangerously short despite hitting {{growthStr}} growth."
+    },
+    {
+      id: "body_desperate_2",
+      tones: ["desperate"],
+      text: "Our product is {{product}}. We've managed to reach {{metric}} and generate {{revenueStr}}, but we are operating on absolute fumes."
+    },
+    {
+      id: "body_desperate_3",
+      tones: ["desperate"],
+      text: "We developed {{product}} to survive. I know the metrics of {{metric}} aren't massive, but we did it with zero marketing budget because we couldn't afford it."
+    },
+    {
+      id: "body_desperate_4",
+      tones: ["desperate"],
+      text: "Please look at what we've built with {{product}}. Even though we're struggling, we've managed to pull in {{growthStr}} growth."
+    },
+    // --- PASSIONATE TONE ---
+    {
+      id: "body_passionate_1",
+      tones: ["passionate"],
+      text: "That's why we built {{product}}. Every step of its development has been focused on giving {{customerNoun}} a solution they can genuinely rely on."
+    },
+    {
+      id: "body_passionate_2",
+      tones: ["passionate"],
+      text: "Watching {{product}} make a real difference for our customers has been the most rewarding part of building {{companyName}}. Reaching {{metric}} only confirms we're moving in the right direction."
+    },
+    {
+      id: "body_passionate_3",
+      tones: ["passionate"],
+      text: "Since introducing {{product}}, we've generated {{revenueStr}}, but what excites me even more is hearing how it's helping real people overcome {{painPoint}}."
+    },
+    {
+      id: "body_passionate_4",
+      tones: ["passionate"],
+      text: "We created {{product}} because we believed {{customerNoun}} deserved something better. Growing by {{growthStr}} tells us we're not the only ones who think so."
+    },
+    {
+      id: "body_passionate_5",
+      tones: ["passionate"],
+      text: "Building {{product}} has been an incredible journey. Every new customer reminds us why solving {{painPoint}} is worth the effort."
     }
   ],
 
@@ -674,6 +783,58 @@ export const SEGMENTS = {
       id: "close_casual_4",
       tones: ["casual"],
       text: "No pressure at all, but we're closing this round soon and would be stoked to have you guys involved."
+    },
+    // --- DESPERATE TONE ---
+    {
+      id: "close_desperate_1",
+      tones: ["desperate"],
+      text: "We need this capital immediately. Without it, {{companyName}} won't survive the next month."
+    },
+    {
+      id: "close_desperate_2",
+      tones: ["desperate"],
+      text: "Please, if you believe in what we are doing, this is our last resort to keep building."
+    },
+    {
+      id: "close_desperate_3",
+      tones: ["desperate"],
+      text: "We are offering very favorable terms because we desperately need the cash to continue operations."
+    },
+    {
+      id: "close_desperate_4",
+      tones: ["desperate"],
+      text: "I know this is a high-risk situation, but if we don't close this round, everything we worked for goes to zero."
+    },
+    // --- PASSIONATE TONE ---
+    {
+      id: "close_passionate_1",
+      tones: ["passionate"],
+      text: "I truly believe {{companyName}} can make a meaningful impact, and I'd love for you to help us make that happen."
+    },
+    {
+      id: "close_passionate_2",
+      tones: ["passionate"],
+      text: "This isn't just an investment in {{product}}, it's an investment in solving a problem that's been ignored for far too long."
+    },
+    {
+      id: "close_passionate_3",
+      tones: ["passionate"],
+      text: "We've poured everything we have into building {{companyName}}. I hope you'll join us for what comes next."
+    },
+    {
+      id: "close_passionate_4",
+      tones: ["passionate"],
+      text: "Whether this becomes a great investment or not, I know we're building something that matters. I'd be honored to have you along for the journey."
+    },
+    {
+      id: "close_passionate_5",
+      tones: ["passionate"],
+      text: "I wake up every morning excited to work on this company. I hope after hearing our story, you can see why."
+    },
+    {
+      id: "close_passionate_6",
+      tones: ["passionate"],
+      text: "Thank you for giving me the opportunity to share what we're building. I genuinely believe the best chapters of {{companyName}} are still ahead."
     }
   ]
 };
