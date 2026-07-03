@@ -7,6 +7,7 @@ export const TRAITS = {
     category: "legal",
     backgroundClue: [
       "Public records show the founder was named in multiple civil disputes over the past seven years.",
+      "Mentions of founder early in career suggest potential history of abusing employees in the workplace to increase operational efficiency.",
       "A prior company associated with this founder was dissolved under contested circumstances. Court filings are partially sealed."
     ],
     outcomeNudge: { growth: -0.15, decline: 0.25, volatile: 0.1 }
@@ -18,6 +19,7 @@ export const TRAITS = {
     category: "personality",
     backgroundClue: [
       "Sector contacts describe the founder as someone who moves fast and rarely pauses for legal or compliance review.",
+      "Industry insiders recall the founder taking loans to buy stock when experiencing resource shortages.",
       "A former colleague noted in a public forum that the founder has a pattern of launching before regulatory clearance."
     ],
     outcomeNudge: { growth: 0.1, decline: 0.2, volatile: 0.4 }
@@ -29,6 +31,7 @@ export const TRAITS = {
     category: "financial",
     backgroundClue: [
       "A data provider cross-referencing app store ratings and web traffic suggests active user counts may be significantly overstated.",
+      "Experts in industry claim that they have only seen reported sales margins this high in the top 1% of companies.",
       "Industry contacts familiar with this company's space say the reported figures are inconsistent with typical conversion rates at this stage."
     ],
     outcomeNudge: { growth: -0.3, decline: 0.35, volatile: 0.0 }
@@ -40,6 +43,7 @@ export const TRAITS = {
     category: "personality",
     backgroundClue: [
       "The founder completed their undergraduate degree two years ago and has no prior company leadership on record.",
+      "Early business documentation indicates that 40% of the executive team consists of high-school dropouts with big dreams.",
       "LinkedIn and public profiles show strong domain knowledge but no management or operational track record."
     ],
     outcomeNudge: { growth: -0.05, decline: 0.1, volatile: 0.15 }
@@ -51,6 +55,7 @@ export const TRAITS = {
     category: "structure",
     backgroundClue: [
       "Public records show no named co-founders or senior hires in any prior filing associated with this company.",
+      "Founder tends to do the work themself when team performance is not up to standard.",
       "A LinkedIn search returns only one employee associated with the company. No engineering or operational hires are listed."
     ],
     outcomeNudge: { growth: 0.05, decline: 0.15, volatile: 0.25 }
@@ -62,7 +67,8 @@ export const TRAITS = {
     category: "process",
     backgroundClue: [
       "Ad spend data from a third-party tool shows unusually high paid acquisition relative to the company's reported revenue.",
-      "A consumer review aggregator shows strong initial ratings followed by a sharp drop-off in reviews after 60 days — a common pattern in high-churn subscription businesses."
+      "Online testimonials reveal a 50/50 split of 5 star and 1 star reviews.",
+      "A consumer review aggregator shows strong initial ratings followed by a sharp drop-off in reviews after 60 days."
     ],
     outcomeNudge: { growth: -0.1, decline: 0.1, volatile: 0.1 }
   },
@@ -73,6 +79,7 @@ export const TRAITS = {
     category: "personality",
     backgroundClue: [
       "Public records show the founder stepped away from their last two ventures citing 'exhaustion' before the two-year mark.",
+      "Interview with founder's partner reveals that it is usual to only get 4 hours of sleep per night because 'the company needs me.'",
       "Industry whispers suggest the founder struggles to delegate and frequently bottlenecks critical operations."
     ],
     outcomeNudge: { growth: -0.15, decline: 0.20, volatile: 0.10 }
@@ -84,6 +91,7 @@ export const TRAITS = {
     category: "process",
     backgroundClue: [
       "A quick search on employee review sites reveals multiple allegations of a hostile work environment and high turnover.",
+      "Glassdoor insight suggests that the number of layoffs for performance reasons is less than the number of employees who leave for other reasons.",
       "Three senior engineers have departed in the last six months, citing fundamental disagreements with leadership."
     ],
     outcomeNudge: { growth: -0.20, decline: 0.30, volatile: 0.15 }
@@ -154,6 +162,7 @@ export const TRAITS = {
     category: "history",
     backgroundClue: [
       "The founder's previous company was acquired three years ago. The transaction returned capital to early investors.",
+      "A public records check reveals at least 2 members of the C-suite in this business have been involved in successful exits.",
       "Press records confirm a successful exit in an adjacent sector. The founder was listed as co-founder and CTO."
     ],
     outcomeNudge: { growth: 0.15, decline: -0.1, volatile: -0.05 }
@@ -165,6 +174,7 @@ export const TRAITS = {
     category: "technology",
     backgroundClue: [
       "Public patent registries show two active, approved utility patents assigned directly to this company.",
+      "Previous executives confirm that company plans to pursue unique routes compared to others in the industry.",
       "Technical advisers confirm the core algorithm is highly defensible and not reliant on public APIs."
     ],
     outcomeNudge: { growth: 0.15, decline: -0.10, volatile: -0.05 }
@@ -176,6 +186,7 @@ export const TRAITS = {
     category: "financial",
     backgroundClue: [
       "Interviews with vendor contacts show the team maintains extremely low overhead and is close to operational breakeven.",
+      "Marketing department insiders suggest that operating costs are unlike those they've ever seen.",
       "Financial audits confirm a customer acquisition payback period under three months."
     ],
     outcomeNudge: { growth: 0.10, decline: -0.10, volatile: 0.00 }
@@ -187,6 +198,7 @@ export const TRAITS = {
     category: "technology",
     backgroundClue: [
       "The founder has spent over a decade in this specific niche, holding senior technical roles at two major competitors.",
+      "Old colleagues claim that the founder contributed to ground-breaking research in the sector.",
       "Publications in industry journals confirm the founder is a recognized thought leader in this specialized field."
     ],
     outcomeNudge: { growth: 0.20, decline: -0.10, volatile: -0.05 }
