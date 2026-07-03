@@ -17,7 +17,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
       <div>
         <div className="sidebar-logo">
           <BarChart2 size={24} style={{ color: "var(--color-accent-light)" }} />
-          <span>Capitalist.io</span>
+          <span>Apex Capitalist</span>
         </div>
         
         <nav className="sidebar-nav">
