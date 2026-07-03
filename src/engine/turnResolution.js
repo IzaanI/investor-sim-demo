@@ -411,7 +411,7 @@ export function resolveTurn(state, operatingCost = 50000) {
           history: [
             ...(holding.history || []),
             {
-              turn: state.turn + 1,
+              turn: state.turn,
               outcomeType: "swap",
               multiplier: 1.0,
               value: Math.round(holding.investedAmount * holding.currentValueMultiplier),

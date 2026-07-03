@@ -331,23 +331,53 @@ export const useGameStore = create((set, get) => ({
       if (h.pitchId === event.pitchId && h.investedAmount === event.investedAmount && h.status === "active") {
         if (effectType === "accept_follow_on") {
           nextCash -= event.eventAsk;
+          const currentValuation = (h.valuationAtInvestment || (h.investedAmount / (h.equityPercent / 100))) * (h.currentValueMultiplier || 1);
+          const addedEquity = (event.eventAsk / currentValuation) * 100;
+          const nextEquity = Math.min(100, Number((h.equityPercent + addedEquity).toFixed(2)));
           return {
             ...h,
             investedAmount: h.investedAmount + event.eventAsk,
+            equityPercent: nextEquity,
             capitalContributions: [
               ...(h.capitalContributions || [{ amount: h.investedAmount, turn: "Start", type: "Initial Investment" }]),
               { amount: event.eventAsk, turn: get().turn, type: "Follow-On Funding" }
+            ],
+            history: [
+              ...(h.history || []),
+              {
+                turn: get().turn,
+                outcomeType: "funding",
+                multiplier: 1.0,
+                value: Math.round((h.investedAmount + event.eventAsk) * h.currentValueMultiplier),
+                changePercent: 0,
+                note: `Injected follow-on capital. Equity: ${h.equityPercent}% ➔ ${nextEquity}%`
+              }
             ]
           };
         } else if (effectType === "acknowledge_offer_accepted") {
           // Cash was already deducted when offer was made
           const offerAmount = event.options.find(o => o.effectType === effectType)?.offerAmount || 0;
+          const currentValuation = (h.valuationAtInvestment || (h.investedAmount / (h.equityPercent / 100))) * (h.currentValueMultiplier || 1);
+          const addedEquity = (offerAmount / currentValuation) * 100;
+          const nextEquity = Math.min(100, Number((h.equityPercent + addedEquity).toFixed(2)));
           return {
             ...h,
             investedAmount: h.investedAmount + offerAmount,
+            equityPercent: nextEquity,
             capitalContributions: [
               ...(h.capitalContributions || [{ amount: h.investedAmount, turn: "Start", type: "Initial Investment" }]),
               { amount: offerAmount, turn: get().turn, type: "Proactive Offer" }
+            ],
+            history: [
+              ...(h.history || []),
+              {
+                turn: get().turn,
+                outcomeType: "funding",
+                multiplier: 1.0,
+                value: Math.round((h.investedAmount + offerAmount) * h.currentValueMultiplier),
+                changePercent: 0,
+                note: `Proactive offer accepted. Equity: ${h.equityPercent}% ➔ ${nextEquity}%`
+              }
             ]
           };
         } else if (effectType === "decline_follow_on") {
@@ -377,12 +407,27 @@ export const useGameStore = create((set, get) => ({
           };
         } else if (effectType === "accept_distress") {
           nextCash -= event.eventAsk;
+          const currentValuation = (h.valuationAtInvestment || (h.investedAmount / (h.equityPercent / 100))) * (h.currentValueMultiplier || 1);
+          const addedEquity = (event.eventAsk / currentValuation) * 100;
+          const nextEquity = Math.min(100, Number((h.equityPercent + addedEquity).toFixed(2)));
           return {
             ...h,
             investedAmount: h.investedAmount + event.eventAsk,
+            equityPercent: nextEquity,
             capitalContributions: [
               ...(h.capitalContributions || [{ amount: h.investedAmount, turn: "Start", type: "Initial Investment" }]),
               { amount: event.eventAsk, turn: get().turn, type: "Emergency Capital" }
+            ],
+            history: [
+              ...(h.history || []),
+              {
+                turn: get().turn,
+                outcomeType: "funding",
+                multiplier: 1.0,
+                value: Math.round((h.investedAmount + event.eventAsk) * h.currentValueMultiplier),
+                changePercent: 0,
+                note: `Injected emergency capital. Equity: ${h.equityPercent}% ➔ ${nextEquity}%`
+              }
             ]
           };
         } else if (effectType === "decline_distress") {
