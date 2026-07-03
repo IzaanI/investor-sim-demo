@@ -112,10 +112,19 @@ function pickTrait(archetypeKey) {
 /**
  * Rolls a single pitch instance from a template using the combinatorial engine.
  */
-export function rollPitchInstance(template, drawnSegments, netWorth = 1000000) {
-  // Select a name at random from the template's possible names
+export function rollPitchInstance(template, drawnSegments, usedBusinessNames, netWorth = 1000000) {
+  // 1. Deck system for Business Names
   const nameOptions = template.businessNames || [template.businessName || "Unknown Startup"];
-  const businessName = nameOptions[Math.floor(Math.random() * nameOptions.length)];
+  if (!usedBusinessNames[template.id]) usedBusinessNames[template.id] = [];
+  
+  let availableNames = nameOptions.filter(n => !usedBusinessNames[template.id].includes(n));
+  if (availableNames.length === 0) {
+    usedBusinessNames[template.id] = []; // Reshuffle
+    availableNames = nameOptions;
+  }
+  
+  const businessName = availableNames[Math.floor(Math.random() * availableNames.length)];
+  usedBusinessNames[template.id].push(businessName);
 
   // Pick a random founder archetype key
   const archetypeKeys = Object.keys(ARCHETYPES);
@@ -164,7 +173,7 @@ export function rollPitchInstance(template, drawnSegments, netWorth = 1000000) {
 /**
  * Generates active pitches for the current turn.
  */
-export function generatePitchesForTurn(drawnSegments, seenTemplates, netWorth = 1000000, turnNumber = 1) {
+export function generatePitchesForTurn(drawnSegments, seenTemplates, usedBusinessNames, netWorth = 1000000, turnNumber = 1) {
   let count = 3;
   if (turnNumber === 1) {
     count = 1;
@@ -209,7 +218,7 @@ export function generatePitchesForTurn(drawnSegments, seenTemplates, netWorth = 
     weightedPool.splice(selectedIndex, 1);
   }
 
-  return selectedTemplates.map(template => rollPitchInstance(template, drawnSegments, netWorth));
+  return selectedTemplates.map(template => rollPitchInstance(template, drawnSegments, usedBusinessNames, netWorth));
 }
 
 /**
@@ -579,9 +588,10 @@ export function resolveTurn(state, operatingCost = 50000) {
   let nextNews = [];
   let nextDrawnSegments = state.drawnSegments ? JSON.parse(JSON.stringify(state.drawnSegments)) : { intro: [], body: [], close: [] };
   let nextSeenTemplates = state.seenTemplates ? { ...state.seenTemplates } : {};
+  let nextUsedBusinessNames = state.usedBusinessNames ? { ...state.usedBusinessNames } : {};
 
   if (!nextGameOver && !isDemoFinished) {
-    nextPitches = generatePitchesForTurn(nextDrawnSegments, nextSeenTemplates, nextNetWorth, nextTurn);
+    nextPitches = generatePitchesForTurn(nextDrawnSegments, nextSeenTemplates, nextUsedBusinessNames, nextNetWorth, nextTurn);
     const staticNews = getNewsForTurn(nextTurn, nextActiveNewsEffects);
 
     // Generate company-specific headlines, capped so total news ≤ 3
@@ -620,7 +630,9 @@ export function resolveTurn(state, operatingCost = 50000) {
     demoFinished: isDemoFinished,
     diligenceLog: {},
     backgroundChecksRemaining: 1,
+    pinnedNewsIds: [...(state.pinnedNewsIds || [])],
     drawnSegments: nextDrawnSegments,
-    seenTemplates: nextSeenTemplates
+    seenTemplates: nextSeenTemplates,
+    usedBusinessNames: nextUsedBusinessNames
   };
 }

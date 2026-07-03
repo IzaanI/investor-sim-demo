@@ -11,8 +11,9 @@ const createInitialState = () => {
   const chosenIndustry = INDUSTRIES[Math.floor(Math.random() * INDUSTRIES.length)];
   const drawnSegments = { intro: [], body: [], close: [] };
   const seenTemplates = {};
+  const usedBusinessNames = {};
   
-  const initialPitches = generatePitchesForTurn(drawnSegments, seenTemplates, INITIAL_CASH, 1);
+  const initialPitches = generatePitchesForTurn(drawnSegments, seenTemplates, usedBusinessNames, INITIAL_CASH, 1);
   const initialNews = getNewsForTurn(1, []);
   const initialActiveNews = [];
   initialNews.forEach(newsItem => {
@@ -50,7 +51,8 @@ const createInitialState = () => {
     pinnedNewsIds: [],
     backgroundChecksRemaining: 1,
     drawnSegments,
-    seenTemplates
+    seenTemplates,
+    usedBusinessNames
   };
 };
 
