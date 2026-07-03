@@ -57,7 +57,7 @@ export default function PitchPanel() {
 
   // Background check cost for the selected pitch
   const bgCheckCost = selectedPitch
-    ? Math.max(10000, Math.round((selectedPitch.ask * 0.08) / 5000) * 5000)
+    ? Math.max(10000, Math.round((selectedPitch.ask * 0.05) / 5000) * 5000)
     : 0;
 
   return (

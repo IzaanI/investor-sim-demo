@@ -124,8 +124,8 @@ export const useGameStore = create((set, get) => ({
 
     if (currentLog.backgroundChecked) return; // already run
 
-    // Cost: 8% of ask, rounded to nearest $5k, minimum $10k
-    const cost = Math.max(10000, Math.round((pitch.ask * 0.08) / 5000) * 5000);
+    // Cost: 5% of ask, rounded to nearest $5k, minimum $10k
+    const cost = Math.max(10000, Math.round((pitch.ask * 0.05) / 5000) * 5000);
     if (cash < cost) return; // can't afford it
 
     // Pick one backgroundClue from the pitch's trait
