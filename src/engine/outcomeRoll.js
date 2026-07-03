@@ -77,6 +77,10 @@ export function rollHoldingOutcome(holding, activeNewsEffects = []) {
   // Apply macro multiplier modifier silently
   multiplier = Math.max(0.1, multiplier + multiplierModifier);
 
+  // Ensure outcomeType label matches reality if macro modifiers flipped it
+  if (outcomeType === "decline" && multiplier >= 1.0) outcomeType = "growth";
+  if (outcomeType === "growth" && multiplier < 1.0) outcomeType = "decline";
+
   // Calculate new value multiplier
   let nextValueMultiplier = currentValueMultiplier * multiplier;
   let isFailed = false;
