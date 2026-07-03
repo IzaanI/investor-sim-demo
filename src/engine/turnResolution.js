@@ -130,8 +130,13 @@ export function rollPitchInstance(template, drawnSegments, usedBusinessNames, ne
   const archetypeKeys = Object.keys(ARCHETYPES);
   const selectedArchetypeKey = archetypeKeys[Math.floor(Math.random() * archetypeKeys.length)];
 
-  // 1. Random ask $50k–$500k (nearest $5k)
-  const askRaw = 50000 + Math.random() * 450000;
+  // 1. Dynamic max ask based on Net Worth (scales up every $250k above $1M)
+  const baseMaxAsk = 500000;
+  const scalingSteps = Math.floor(Math.max(0, netWorth - 1000000) / 250000);
+  const maxAsk = baseMaxAsk + (scalingSteps * 125000);
+  
+  const minAsk = 50000;
+  const askRaw = minAsk + Math.random() * (maxAsk - minAsk);
   const ask = Math.round(askRaw / 5000) * 5000;
 
   // 2. Valuation 5–15× ask (nearest $25k)
