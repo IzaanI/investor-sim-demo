@@ -219,5 +219,57 @@ export const NEWS_BANK = [
     headline: "State Attorneys General Launch Clean Label Investigation",
     detail: "Consumer protection agencies warn of imminent crackdowns on clean-label startups making wellness claims without clinical support.",
     relevantTraits: ["uncalculated_risk_taker", "questionable_legal_history"]
+  },
+  // ---------- FOOD & BEVERAGE NEWS ----------
+  {
+    id: "news_fb_aluminum",
+    turn: 2,
+    scope: "industry",
+    industry: "Food & Beverage",
+    category: "SUPPLY CHAIN",
+    impact: "HIGH",
+    timeString: "10 hours ago",
+    headline: "Global Aluminum Shortage Hits Beverage Startups",
+    detail: "A massive shortage in raw aluminum is driving up can production costs. Beverage startups face narrowing margins or delayed rollouts.",
+    relevantTraits: [],
+    duration: 3,
+    macroModifiers: {
+      declineWeightModifier: 0.15,
+      valueMultiplierModifier: -0.05
+    }
+  },
+  {
+    id: "news_fb_tiktok",
+    turn: 3,
+    scope: "industry",
+    industry: "Food & Beverage",
+    category: "MARKETING",
+    impact: "HIGH",
+    timeString: "1 hour ago",
+    headline: "Viral TikTok Food Trend Clears Grocery Shelves",
+    detail: "A sudden viral video has driven unprecedented demand for artisan and unique pantry staples, boosting revenue for local F&B brands.",
+    relevantTraits: ["over_optimized_marketing"],
+    duration: 2,
+    macroModifiers: {
+      growthWeightModifier: 0.20,
+      valueMultiplierModifier: 0.10
+    }
+  },
+  {
+    id: "news_fb_fda",
+    turn: 4,
+    scope: "industry",
+    industry: "Food & Beverage",
+    category: "REGULATORY",
+    impact: "HIGH",
+    timeString: "3 hours ago",
+    headline: "FDA Announces Surprise Inspections on Ghost Kitchens",
+    detail: "Regulators are clamping down on decentralized cooking operations after a series of health code violations, causing panic among virtual brands.",
+    relevantTraits: ["uncalculated_risk_taker", "questionable_legal_history"],
+    duration: 4,
+    macroModifiers: {
+      declineWeightModifier: 0.25,
+      growthWeightModifier: -0.10
+    }
   }
 ];

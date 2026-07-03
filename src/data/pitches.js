@@ -179,5 +179,168 @@ export const PITCH_TEMPLATES = [
     market: "experiential fitness",
     painPoint: "boring exercise routines",
     customerNoun: "urban professionals"
+  },
+  // ---------- FOOD & BEVERAGE ----------
+  {
+    id: "fb_001",
+    businessNames: ["Harvest Hearth", "Oak & Oven", "Golden Grain", "The Daily Loaf", "Crust & Co."],
+    industry: "Food & Beverage",
+    product: "an artisan sourdough bakery",
+    market: "local bakeries",
+    painPoint: "limited access to fresh handcrafted bread",
+    customerNoun: "local families"
+  },
+  {
+    id: "fb_002",
+    businessNames: ["FreshFork", "PrepPlate", "Kitchenly", "ReadyRoots", "Home Harvest"],
+    industry: "Food & Beverage",
+    product: "a healthy meal kit delivery service",
+    market: "meal kit subscriptions",
+    painPoint: "lack of time for home cooking",
+    customerNoun: "busy professionals"
+  },
+  {
+    id: "fb_003",
+    businessNames: ["Bean Voyage", "Roast Republic", "Morning Roast", "Drift Coffee", "North Bean"],
+    industry: "Food & Beverage",
+    product: "a specialty coffee roastery",
+    market: "premium coffee",
+    painPoint: "generic mass-produced coffee",
+    customerNoun: "coffee enthusiasts"
+  },
+  {
+    id: "fb_004",
+    businessNames: ["Craft Barrel", "Copper Tap", "Hopsmith", "Malt Trail", "North Brew"],
+    industry: "Food & Beverage",
+    product: "a craft brewery",
+    market: "craft beer",
+    painPoint: "limited locally brewed options",
+    customerNoun: "beer lovers"
+  },
+  {
+    id: "fb_005",
+    businessNames: ["Pure Press", "Juice Junction", "Squeeze Society", "Fresh Flow", "Daily Greens"],
+    industry: "Food & Beverage",
+    product: "a cold-pressed juice company",
+    market: "healthy beverages",
+    painPoint: "sugary drink alternatives",
+    customerNoun: "health-conscious consumers"
+  },
+  {
+    id: "fb_006",
+    businessNames: ["Spud Soda", "Potato Pop", "FizzTater", "MashUp Drinks", "Tuber Tonic"],
+    industry: "Food & Beverage",
+    product: "a potato-flavoured sparkling beverage",
+    market: "novelty soft drinks",
+    painPoint: "boring beverage choices",
+    customerNoun: "adventurous foodies"
+  },
+  {
+    id: "fb_007",
+    businessNames: ["Midnight Pickles", "Crunch Club", "BrineTime", "Pickle Society", "Dill Deluxe"],
+    industry: "Food & Beverage",
+    product: "a gourmet pickle subscription",
+    market: "specialty preserved foods",
+    painPoint: "limited access to unique artisan pickles",
+    customerNoun: "pickle enthusiasts"
+  },
+  {
+    id: "fb_008",
+    businessNames: ["Toast Couture", "Fancy Toast", "Bread & Beyond", "Golden Slice", "Toast Lab"],
+    industry: "Food & Beverage",
+    product: "a gourmet toast café",
+    market: "casual dining",
+    painPoint: "uninspired breakfast options",
+    customerNoun: "urban professionals"
+  },
+  {
+    id: "fb_009",
+    businessNames: ["Sauce Boss", "Dip Dynasty", "Pour Decisions", "Condiment Kings", "The Sauce Co."],
+    industry: "Food & Beverage",
+    product: "a premium dipping sauce company",
+    market: "specialty condiments",
+    painPoint: "bland packaged sauces",
+    customerNoun: "home cooks"
+  },
+  {
+    id: "fb_010",
+    businessNames: ["SoupCycle", "The Daily Broth", "Ladle Co.", "Sip Soup", "Broth Brothers"],
+    industry: "Food & Beverage",
+    product: "a soup subscription service",
+    market: "prepared meals",
+    painPoint: "unhealthy convenience lunches",
+    customerNoun: "office workers"
+  },
+  {
+    id: "fb_011",
+    businessNames: ["Cereal After Dark", "Midnight Crunch", "Bowl Society", "Crunch Club", "Serial Cereal"],
+    industry: "Food & Beverage",
+    product: "a late-night cereal restaurant",
+    market: "late-night dining",
+    painPoint: "limited late-night comfort food",
+    customerNoun: "college students"
+  },
+  {
+    id: "fb_012",
+    businessNames: ["Bread Pillow", "Loaf Lounge", "Nap Bakery", "Soft Slice", "Crust Comfort"],
+    industry: "Food & Beverage",
+    product: "bread-shaped pillows sold through bakeries",
+    market: "bakery merchandise",
+    painPoint: "forgettable bakery branding",
+    customerNoun: "bakery customers"
+  },
+  {
+    id: "fb_013",
+    businessNames: ["Mustard Museum Café", "Yellow Table", "The Mustard Bar", "Dijon Dreams", "Spread Love"],
+    industry: "Food & Beverage",
+    product: "a mustard-themed restaurant",
+    market: "casual dining",
+    painPoint: "forgettable restaurant experiences",
+    customerNoun: "tourists"
+  },
+  {
+    id: "fb_014",
+    businessNames: ["Grandma's Cookie Jar", "Borrowed Cookies", "Neighbour's Batch", "Cookie Collective", "The Secret Recipe"],
+    industry: "Food & Beverage",
+    product: "a cookie bakery claiming every recipe came from someone's grandmother",
+    market: "artisan desserts",
+    painPoint: "mass-produced baked goods",
+    customerNoun: "dessert lovers"
+  },
+  {
+    id: "fb_015",
+    businessNames: ["Extreme Popcorn", "Kernel Chaos", "Popocalypse", "Crunch Cannon", "Pop Lab"],
+    industry: "Food & Beverage",
+    product: "a gourmet popcorn company featuring bizarre flavour combinations",
+    market: "snack foods",
+    painPoint: "predictable popcorn flavours",
+    customerNoun: "moviegoers"
+  },
+  {
+    id: "fb_016",
+    businessNames: ["The Fancy Ice Cube Co.", "Crystal Cubes", "Cube Society", "Pure Chill", "Ice Reserve"],
+    industry: "Food & Beverage",
+    product: "handcrafted premium cocktail ice",
+    market: "luxury bar supplies",
+    painPoint: "low-quality drink presentation",
+    customerNoun: "cocktail enthusiasts"
+  },
+  {
+    id: "fb_017",
+    businessNames: ["Burrito Insurance", "Wrap Warranty", "Safe Burrito", "Roll Protect", "Tortilla Shield"],
+    industry: "Food & Beverage",
+    product: "an optional replacement guarantee for dropped burritos",
+    market: "fast food",
+    painPoint: "fear of dropping expensive meals",
+    customerNoun: "burrito lovers"
+  },
+  {
+    id: "fb_018",
+    businessNames: ["Emotional Support Potatoes", "Spud Buddy", "Comfort Tater", "The Friendly Potato", "Tuber Therapy"],
+    industry: "Food & Beverage",
+    product: "custom potatoes with encouraging messages printed on them",
+    market: "novelty food gifts",
+    painPoint: "impersonal gift ideas",
+    customerNoun: "gift shoppers"
   }
 ];

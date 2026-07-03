@@ -164,7 +164,7 @@ export function rollPitchInstance(template, drawnSegments, netWorth = 1000000) {
 /**
  * Generates active pitches for the current turn.
  */
-export function generatePitchesForTurn(industry, drawnSegments, seenTemplates, netWorth = 1000000, turnNumber = 1) {
+export function generatePitchesForTurn(drawnSegments, seenTemplates, netWorth = 1000000, turnNumber = 1) {
   let count = 3;
   if (turnNumber === 1) {
     count = 1;
@@ -174,7 +174,7 @@ export function generatePitchesForTurn(industry, drawnSegments, seenTemplates, n
     count = Math.random() < 0.5 ? 2 : 3;
   }
 
-  const filtered = PITCH_TEMPLATES.filter(p => p.industry === industry);
+  const filtered = PITCH_TEMPLATES; // Draw from all industries
   
   // Weighted Selection System
   const weightedPool = filtered.map(template => {
@@ -215,10 +215,9 @@ export function generatePitchesForTurn(industry, drawnSegments, seenTemplates, n
 /**
  * Gets news items for the current turn from the static bank.
  */
-export function getNewsForTurn(turn, industry, activeNewsEffects = []) {
+export function getNewsForTurn(turn, activeNewsEffects = []) {
   return NEWS_BANK.filter(news => {
     if (news.turn !== turn) return false;
-    if (news.scope === "industry" && news.industry !== industry) return false;
     return true;
   });
 }
@@ -582,8 +581,8 @@ export function resolveTurn(state, operatingCost = 50000) {
   let nextSeenTemplates = state.seenTemplates ? { ...state.seenTemplates } : {};
 
   if (!nextGameOver && !isDemoFinished) {
-    nextPitches = generatePitchesForTurn(state.industry, nextDrawnSegments, nextSeenTemplates, nextNetWorth, nextTurn);
-    const staticNews = getNewsForTurn(nextTurn, state.industry, nextActiveNewsEffects);
+    nextPitches = generatePitchesForTurn(nextDrawnSegments, nextSeenTemplates, nextNetWorth, nextTurn);
+    const staticNews = getNewsForTurn(nextTurn, nextActiveNewsEffects);
 
     // Generate company-specific headlines, capped so total news ≤ 3
     const remainingSlots = Math.max(0, 3 - staticNews.length);

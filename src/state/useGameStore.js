@@ -5,14 +5,15 @@ import { TRAITS } from "../data/traits";
 const SAVE_KEY = "investor_game_save_v5";
 const SAVE_VERSION = 5;
 const INITIAL_CASH = 1000000; // $1,000,000 starting cash
-const DEMO_INDUSTRY = "Health & Wellness";
+const INDUSTRIES = ["Health & Wellness", "Food & Beverage"];
 
 const createInitialState = () => {
+  const chosenIndustry = INDUSTRIES[Math.floor(Math.random() * INDUSTRIES.length)];
   const drawnSegments = { intro: [], body: [], close: [] };
   const seenTemplates = {};
   
-  const initialPitches = generatePitchesForTurn(DEMO_INDUSTRY, drawnSegments, seenTemplates, INITIAL_CASH, 1);
-  const initialNews = getNewsForTurn(1, DEMO_INDUSTRY, []);
+  const initialPitches = generatePitchesForTurn(drawnSegments, seenTemplates, INITIAL_CASH, 1);
+  const initialNews = getNewsForTurn(1, []);
   const initialActiveNews = [];
   initialNews.forEach(newsItem => {
     if (newsItem.duration > 0) {
@@ -33,7 +34,7 @@ const createInitialState = () => {
     turn: 1,
     cash: INITIAL_CASH,
     netWorthHistory: [INITIAL_CASH],
-    industry: DEMO_INDUSTRY,
+    industry: chosenIndustry,
     portfolio: [],
     passedPitches: [],
     pendingOffers: [],
