@@ -327,7 +327,7 @@ export function resolveTurn(state, operatingCost = 50000) {
   // 1. Resolve pending exits
   nextPortfolio = nextPortfolio.map(holding => {
     if (holding.status === "exit_pending") {
-      const exitValue = Math.round(holding.investedAmount * holding.currentValueMultiplier);
+      const exitValue = Math.round(holding.valuationAtInvestment * holding.currentValueMultiplier * (holding.equityPercent / 100));
       nextCash += exitValue;
       return {
         ...holding,
@@ -342,8 +342,8 @@ export function resolveTurn(state, operatingCost = 50000) {
   nextPortfolio = nextPortfolio.map(holding => {
     if (holding.status === "active") {
       const { outcomeType, multiplier, newValueMultiplier, isFailed } = rollHoldingOutcome(holding, state.activeNewsEffects);
-      const prevValue = Math.round(holding.investedAmount * holding.currentValueMultiplier);
-      const nextValue = Math.round(holding.investedAmount * newValueMultiplier);
+      const prevValue = Math.round(holding.valuationAtInvestment * holding.currentValueMultiplier * (holding.equityPercent / 100));
+      const nextValue = Math.round(holding.valuationAtInvestment * newValueMultiplier * (holding.equityPercent / 100));
 
       const historyLog = {
         turn: state.turn,
@@ -441,7 +441,7 @@ export function resolveTurn(state, operatingCost = 50000) {
               turn: state.turn,
               outcomeType: "swap",
               multiplier: 1.0,
-              value: Math.round(holding.investedAmount * holding.currentValueMultiplier),
+              value: Math.round(holding.valuationAtInvestment * holding.currentValueMultiplier * (holding.equityPercent / 100)),
               changePercent: 0,
               note: `Leadership change: New CEO is ${newArchetypeLabel}.`
             }
@@ -586,7 +586,7 @@ export function resolveTurn(state, operatingCost = 50000) {
   // Net Worth = Spendable Cash + Current Value of all Active / Pending holdings
   const activeHoldingsValue = nextPortfolio
     .filter(h => h.status === "active" || h.status === "exit_pending")
-    .reduce((sum, h) => sum + Math.round(h.investedAmount * h.currentValueMultiplier), 0);
+    .reduce((sum, h) => sum + Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (h.equityPercent / 100)), 0);
 
   const nextNetWorth = Math.max(0, nextCash + activeHoldingsValue);
   const nextNetWorthHistory = [...state.netWorthHistory, nextNetWorth];

@@ -17,7 +17,7 @@ export default function Header() {
   // Recalculate current net worth
   const activeHoldingsValue = portfolio
     .filter(h => h.status === "active" || h.status === "exit_pending")
-    .reduce((sum, h) => sum + Math.round(h.investedAmount * h.currentValueMultiplier), 0);
+    .reduce((sum, h) => sum + Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (h.equityPercent / 100)), 0);
   const netWorth = cash + activeHoldingsValue;
 
   // 52 turns total, 1 turn = 1 month. 3 turns = 1 quarter, 12 turns = 1 year.

@@ -83,7 +83,7 @@ export default function PortfolioPanel() {
   const failedHoldings = portfolio.filter(h => h.status === "failed");
 
   const renderHoldingRow = (holding, index) => {
-    const currentValue = Math.round(holding.investedAmount * holding.currentValueMultiplier);
+    const currentValue = Math.round(holding.valuationAtInvestment * holding.currentValueMultiplier * (holding.equityPercent / 100));
     const isPositive = holding.currentValueMultiplier >= 1.0;
     const percentChange = Math.round((holding.currentValueMultiplier - 1) * 100);
 
@@ -279,7 +279,7 @@ export default function PortfolioPanel() {
                 <div style={{ textAlign: "right" }}>
                   <div className="card-stat-label">Current Value</div>
                   <strong style={{ fontSize: "1.4rem", color: selectedHolding.currentValueMultiplier >= 1.0 ? "var(--color-success)" : "var(--color-danger)" }}>
-                    {formatMoney(Math.round(selectedHolding.investedAmount * selectedHolding.currentValueMultiplier))}
+                    {formatMoney(Math.round(selectedHolding.valuationAtInvestment * selectedHolding.currentValueMultiplier * (selectedHolding.equityPercent / 100)))}
                   </strong>
                   <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
                     Turns Held: <strong style={{ color: "var(--text-primary)" }}>{selectedHolding.turnsHeld}</strong>

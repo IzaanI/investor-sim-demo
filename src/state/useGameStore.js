@@ -234,7 +234,7 @@ export const useGameStore = create((set, get) => ({
     const nextPortfolio = [newHolding, ...portfolio];
     const activeValue = nextPortfolio
       .filter(h => h.status === "active" || h.status === "exit_pending")
-      .reduce((sum, h) => sum + Math.round(h.investedAmount * h.currentValueMultiplier), 0);
+      .reduce((sum, h) => sum + Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (h.equityPercent / 100)), 0);
     
     const nextCash = cash - pitch.ask;
     const nextNetWorth = nextCash + activeValue;
@@ -351,7 +351,7 @@ export const useGameStore = create((set, get) => ({
                 turn: get().turn,
                 outcomeType: "funding",
                 multiplier: 1.0,
-                value: Math.round((h.investedAmount + event.eventAsk) * h.currentValueMultiplier),
+                value: Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (nextEquity / 100)),
                 changePercent: 0,
                 note: `Injected follow-on capital. Equity: ${h.equityPercent}% ➔ ${nextEquity}%`
               }
@@ -377,7 +377,7 @@ export const useGameStore = create((set, get) => ({
                 turn: get().turn,
                 outcomeType: "funding",
                 multiplier: 1.0,
-                value: Math.round((h.investedAmount + offerAmount) * h.currentValueMultiplier),
+                value: Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (nextEquity / 100)),
                 changePercent: 0,
                 note: `Proactive offer accepted. Equity: ${h.equityPercent}% ➔ ${nextEquity}%`
               }
@@ -395,7 +395,7 @@ export const useGameStore = create((set, get) => ({
                 turn: get().turn,
                 outcomeType: "dilution",
                 multiplier: 1.0,
-                value: Math.round(h.investedAmount * h.currentValueMultiplier),
+                value: Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (nextEquity / 100)),
                 changePercent: 0,
                 note: `Diluted from ${h.equityPercent}% to ${nextEquity}%`
               }
@@ -427,7 +427,7 @@ export const useGameStore = create((set, get) => ({
                 turn: get().turn,
                 outcomeType: "funding",
                 multiplier: 1.0,
-                value: Math.round((h.investedAmount + event.eventAsk) * h.currentValueMultiplier),
+                value: Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (nextEquity / 100)),
                 changePercent: 0,
                 note: `Injected emergency capital. Equity: ${h.equityPercent}% ➔ ${nextEquity}%`
               }
@@ -497,7 +497,7 @@ export const useGameStore = create((set, get) => ({
 
     const activeValue = nextPortfolio
       .filter(h => h.status === "active" || h.status === "exit_pending")
-      .reduce((sum, h) => sum + Math.round(h.investedAmount * h.currentValueMultiplier), 0);
+      .reduce((sum, h) => sum + Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (h.equityPercent / 100)), 0);
     const nextNetWorth = nextCash + activeValue;
     const nextNetWorthHistory = [...netWorthHistory.slice(0, -1), nextNetWorth];
 
