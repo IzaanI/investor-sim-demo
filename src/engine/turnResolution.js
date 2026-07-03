@@ -227,13 +227,35 @@ export function generatePitchesForTurn(drawnSegments, seenTemplates, usedBusines
 }
 
 /**
- * Gets news items for the current turn from the static bank.
+ * Generates ambient (static) news procedurally.
+ * Draws between 0 and 2 news items that haven't been seen yet, where minTurn <= turn.
  */
-export function getNewsForTurn(turn, activeNewsEffects = []) {
-  return NEWS_BANK.filter(news => {
-    if (news.turn !== turn) return false;
+export function generateAmbientNews(turn, seenNewsIds = []) {
+  let availableNews = NEWS_BANK.filter(news => {
+    if (seenNewsIds.includes(news.id)) return false;
+    if (news.minTurn && turn < news.minTurn) return false;
     return true;
   });
+
+  if (availableNews.length === 0) return [];
+  
+  // E.g., 20% for 0, 50% for 1, 30% for 2 (if available)
+  const roll = Math.random();
+  let count = 0;
+  if (roll > 0.70) count = 2;
+  else if (roll > 0.20) count = 1;
+
+  count = Math.min(count, availableNews.length);
+  if (count === 0) return [];
+
+  const chosen = [];
+  for (let i = 0; i < count; i++) {
+    const idx = Math.floor(Math.random() * availableNews.length);
+    chosen.push(availableNews[idx]);
+    availableNews.splice(idx, 1);
+  }
+  
+  return chosen;
 }
 
 /**
@@ -595,14 +617,21 @@ export function resolveTurn(state, operatingCost = 50000) {
   let nextSeenTemplates = state.seenTemplates ? { ...state.seenTemplates } : {};
   let nextUsedBusinessNames = state.usedBusinessNames ? { ...state.usedBusinessNames } : {};
 
+  let nextSeenNewsIds = [...(state.seenNewsIds || [])];
+
   if (!nextGameOver && !isDemoFinished) {
     nextPitches = generatePitchesForTurn(nextDrawnSegments, nextSeenTemplates, nextUsedBusinessNames, nextNetWorth, nextTurn);
-    const staticNews = getNewsForTurn(nextTurn, nextActiveNewsEffects);
+    const ambientNews = generateAmbientNews(nextTurn, nextSeenNewsIds);
+    ambientNews.forEach(news => nextSeenNewsIds.push(news.id));
 
-    // Generate company-specific headlines, capped so total news ≤ 3
-    const remainingSlots = Math.max(0, 3 - staticNews.length);
+    // Generate company-specific headlines
+    // Dynamic cap: base 2, plus 1 for every 3 active holdings
+    const activeHoldings = nextPortfolio.filter(h => h.status === "active");
+    const dynamicCap = 2 + Math.floor(activeHoldings.length / 3);
+    const remainingSlots = Math.max(0, dynamicCap - ambientNews.length);
+    
     const companyNews = generateCompanyNews(nextPortfolio, nextTurn, remainingSlots);
-    nextNews = [...staticNews, ...companyNews];
+    nextNews = [...ambientNews, ...companyNews];
 
     // Register newly triggered persistent news
     nextNews.forEach(newsItem => {
@@ -638,6 +667,7 @@ export function resolveTurn(state, operatingCost = 50000) {
     pinnedNewsIds: [...(state.pinnedNewsIds || [])],
     drawnSegments: nextDrawnSegments,
     seenTemplates: nextSeenTemplates,
-    usedBusinessNames: nextUsedBusinessNames
+    usedBusinessNames: nextUsedBusinessNames,
+    seenNewsIds: nextSeenNewsIds
   };
 }

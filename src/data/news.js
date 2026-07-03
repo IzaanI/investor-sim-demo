@@ -1,7 +1,7 @@
 export const NEWS_BANK = [
   {
     id: "news_macro_rates",
-    turn: 1,
+    minTurn: 2,
     scope: "general",
     category: "POLICY",
     impact: "MEDIUM",
@@ -12,13 +12,13 @@ export const NEWS_BANK = [
   },
   {
     id: "news_supply_chain",
-    turn: 1,
+    minTurn: 2,
     scope: "general",
     category: "ECONOMY",
     impact: "MEDIUM",
     timeString: "5 hours ago",
     headline: "Global Supply Chain Delays Continue",
-    detail: "New disruptions in key shipping lanes expected to impact wellness hardware container shipping through next 4 quarters.",
+    detail: "New disruptions in key shipping lanes expected to impact wellness hardware container shipping through next 4 months.",
     relevantTraits: [],
     duration: 4,
     macroModifiers: {
@@ -29,7 +29,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_wellness_claims",
-    turn: 1,
+    minTurn: 1,
     scope: "industry",
     industry: "Health & Wellness",
     category: "REGULATORY",
@@ -46,7 +46,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_legal_audits",
-    turn: 2,
+    minTurn: 3,
     scope: "general",
     category: "LEGAL",
     impact: "HIGH",
@@ -57,7 +57,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_wellness_boom",
-    turn: 2,
+    minTurn: 5,
     scope: "industry",
     industry: "Health & Wellness",
     category: "MARKETS",
@@ -70,18 +70,18 @@ export const NEWS_BANK = [
   // --- TURN 3 EVENTS (Includes Rebound and Positive Boost) ---
   {
     id: "news_vc_rebound",
-    turn: 3,
+    minTurn: 3,
     scope: "general",
     category: "MARKETS",
     impact: "MEDIUM",
     timeString: "6 hours ago",
     headline: "Venture Capital Funding Activity Rebounds",
-    detail: "Early-stage investment rounds show a 15% increase in deal volume compared to last quarter, signaling renewed interest in high-growth startups.",
+    detail: "Early-stage investment rounds show a 15% increase in deal volume compared to last month, signaling renewed interest in high-growth startups.",
     relevantTraits: []
   },
   {
     id: "news_preventive_subsidies",
-    turn: 3,
+    minTurn: 3,
     scope: "industry",
     industry: "Health & Wellness",
     category: "POLICY",
@@ -98,7 +98,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_metric_fraud",
-    turn: 3,
+    minTurn: 2,
     scope: "general",
     category: "FINANCIAL",
     impact: "HIGH",
@@ -109,7 +109,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_serial_founders",
-    turn: 3,
+    minTurn: 1,
     scope: "general",
     category: "MARKETS",
     impact: "MEDIUM",
@@ -121,7 +121,7 @@ export const NEWS_BANK = [
   // --- TURN 4 EVENTS (Includes Circadian Trend and Talent Fluff) ---
   {
     id: "news_epigenetic_trend",
-    turn: 4,
+    minTurn: 3,
     scope: "industry",
     industry: "Health & Wellness",
     category: "MARKETS",
@@ -138,7 +138,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_talent_layoffs",
-    turn: 4,
+    minTurn: 4,
     scope: "general",
     category: "ECONOMY",
     impact: "LOW",
@@ -149,7 +149,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_key_man",
-    turn: 4,
+    minTurn: 4,
     scope: "general",
     category: "MANAGEMENT",
     impact: "HIGH",
@@ -165,7 +165,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_pe_slowing",
-    turn: 4,
+    minTurn: 4,
     scope: "industry",
     industry: "Health & Wellness",
     category: "MARKETS",
@@ -178,7 +178,7 @@ export const NEWS_BANK = [
   // --- TURN 5 EVENTS (Includes R&D Tax Credits) ---
   {
     id: "news_tax_credits",
-    turn: 5,
+    minTurn: 3,
     scope: "general",
     category: "POLICY",
     impact: "HIGH",
@@ -194,7 +194,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_retention_decay",
-    turn: 5,
+    minTurn: 2,
     scope: "general",
     category: "MARKETING",
     impact: "HIGH",
@@ -210,7 +210,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_label_probe",
-    turn: 5,
+    minTurn: 4,
     scope: "industry",
     industry: "Health & Wellness",
     category: "REGULATORY",
@@ -223,7 +223,7 @@ export const NEWS_BANK = [
   // ---------- FOOD & BEVERAGE NEWS ----------
   {
     id: "news_fb_aluminum",
-    turn: 2,
+    minTurn: 4,
     scope: "industry",
     industry: "Food & Beverage",
     category: "SUPPLY CHAIN",
@@ -240,7 +240,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_fb_tiktok",
-    turn: 3,
+    minTurn: 2,
     scope: "industry",
     industry: "Food & Beverage",
     category: "MARKETING",
@@ -257,7 +257,7 @@ export const NEWS_BANK = [
   },
   {
     id: "news_fb_fda",
-    turn: 4,
+    minTurn: 1,
     scope: "industry",
     industry: "Food & Beverage",
     category: "REGULATORY",

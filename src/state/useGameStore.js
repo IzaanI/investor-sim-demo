@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { generatePitchesForTurn, getNewsForTurn, resolveTurn } from "../engine/turnResolution";
+import { generatePitchesForTurn, generateAmbientNews, resolveTurn } from "../engine/turnResolution";
 import { TRAITS } from "../data/traits";
 
 const SAVE_KEY = "investor_game_save_v5";
@@ -12,9 +12,11 @@ const createInitialState = () => {
   const drawnSegments = { intro: [], body: [], close: [] };
   const seenTemplates = {};
   const usedBusinessNames = {};
+  const seenNewsIds = [];
   
   const initialPitches = generatePitchesForTurn(drawnSegments, seenTemplates, usedBusinessNames, INITIAL_CASH, 1);
-  const initialNews = getNewsForTurn(1, []);
+  const initialNews = generateAmbientNews(1, seenNewsIds);
+  if (initialNews.length > 0) seenNewsIds.push(initialNews[0].id);
   const initialActiveNews = [];
   initialNews.forEach(newsItem => {
     if (newsItem.duration > 0) {
@@ -52,7 +54,8 @@ const createInitialState = () => {
     backgroundChecksRemaining: 1,
     drawnSegments,
     seenTemplates,
-    usedBusinessNames
+    usedBusinessNames,
+    seenNewsIds
   };
 };
 

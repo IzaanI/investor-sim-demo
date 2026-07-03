@@ -36,9 +36,9 @@ export const COMPANY_NEWS_TEMPLATES = {
     {
       category: "PARTNERSHIPS",
       headline: "{{companyName}} signs a multi-year distribution partnership with a regional retail chain.",
-      detail: "The deal significantly expands physical retail presence and is expected to materially accelerate revenue recognition over the coming quarters.",
+      detail: "The deal significantly expands physical retail presence and is expected to materially accelerate revenue recognition over the coming months.",
       actionable: true,
-      actionableDetail: "Distribution deals of this scope take time to show up in financials. The next 1-2 quarters will be the real test — but this is a strong signal.",
+      actionableDetail: "Distribution deals of this scope take time to show up in financials. The next 1-2 months will be the real test — but this is a strong signal.",
     },
   ],
   negative: [
@@ -52,14 +52,14 @@ export const COMPANY_NEWS_TEMPLATES = {
       headline: "Sources inside {{companyName}} report unusually high turnover among senior leadership.",
       detail: "Three executives have reportedly departed {{companyName}} in the past two months. Culture and strategic alignment concerns are being raised quietly.",
       actionable: true,
-      actionableDetail: "High leadership churn is one of the strongest early warning signs of organizational dysfunction. Review your exposure before next quarter.",
+      actionableDetail: "High leadership churn is one of the strongest early warning signs of organizational dysfunction. Review your exposure before next month.",
     },
     {
       category: "SOCIAL",
       headline: "A disgruntled ex-employee of {{companyName}} takes to social media with serious allegations.",
       detail: "A former team member posted a detailed thread accusing {{companyName}}'s founder of misrepresenting performance metrics to investors. The post is gaining traction.",
       actionable: true,
-      actionableDetail: "Reputation risk of this magnitude can accelerate valuation decline if left unaddressed. Consider whether you want exposure here heading into next quarter.",
+      actionableDetail: "Reputation risk of this magnitude can accelerate valuation decline if left unaddressed. Consider whether you want exposure here heading into next month.",
     },
     {
       category: "MARKET",
