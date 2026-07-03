@@ -194,6 +194,116 @@ export const SEGMENTS = {
       id: "intro_casual_4",
       tones: ["casual"],
       text: "Yeah, so the idea for {{companyName}} basically came from being super annoyed by {{painPoint}} every single day."
+    },
+    // --- USER SUBMITTED AGGRESSIVE ---
+    {
+      id: "intro_agg_user_1",
+      tones: ["aggressive"],
+      text: "I'm not asking whether {{painPoint}} is a real problem—we both know it is. The only question is who's going to profit from solving it."
+    },
+    {
+      id: "intro_agg_user_2",
+      tones: ["aggressive"],
+      text: "There are people who complain about {{painPoint}}, and there are people who build companies around fixing it. We chose the second option."
+    },
+    {
+      id: "intro_agg_user_3",
+      tones: ["aggressive"],
+      text: "Every day someone loses money because of {{painPoint}}. I'm here because we're done watching it happen."
+    },
+    {
+      id: "intro_agg_user_4",
+      tones: ["aggressive"],
+      text: "You don't build a company like {{companyName}} by playing it safe, and you don't invest in one by overthinking it."
+    },
+    // --- USER SUBMITTED METHODICAL ---
+    {
+      id: "intro_meth_user_1",
+      tones: ["methodical"],
+      text: "Our goal wasn't to reinvent the industry overnight—it was to build a better solution through careful iteration."
+    },
+    {
+      id: "intro_meth_user_2",
+      tones: ["methodical"],
+      text: "The data consistently pointed us toward the same conclusion: {{painPoint}} remains an overlooked problem in {{market}}."
+    },
+    {
+      id: "intro_meth_user_3",
+      tones: ["methodical"],
+      text: "Building {{companyName}} started with one simple question: why hasn't anyone solved {{painPoint}} properly?"
+    },
+    {
+      id: "intro_meth_user_4",
+      tones: ["methodical"],
+      text: "The opportunity became obvious once we analyzed how {{customerNoun}} currently deal with {{painPoint}}."
+    },
+    // --- USER SUBMITTED NERVOUS ---
+    {
+      id: "intro_nerv_user_1",
+      tones: ["nervous"],
+      text: "I know there are probably companies much bigger than ours pitching today, but {{painPoint}} is a real problem and I think we have a solution."
+    },
+    {
+      id: "intro_nerv_user_2",
+      tones: ["nervous"],
+      text: "{{companyName}} is the name, solving {{painPoint}} is the game! Sorry, that was cringey."
+    },
+    {
+      id: "intro_nerv_user_3",
+      tones: ["nervous"],
+      text: "Thanks for giving me your time. My company helps those dealing with {{painPoint}} and I really think we have a winner here!"
+    },
+    {
+      id: "intro_nerv_user_4",
+      tones: ["nervous"],
+      text: "My name is {{companyName}} - I mean my company name is {{companyName}}. Sorry. We are in the {{market}} industry and would like your funding."
+    },
+    // --- USER SUBMITTED CASUAL ---
+    {
+      id: "intro_cas_user_1",
+      tones: ["casual"],
+      text: "So here's the idea. I started because I got tired of dealing with {{painPoint}} myself. If you know any {{customerNoun}} dealing with this, then you gotta keep listening."
+    },
+    {
+      id: "intro_cas_user_2",
+      tones: ["casual"],
+      text: "Most people don't wake up planning to start a company, and honestly, neither did I. But here we are. {{companyName}} is my company, and I want to share it with someone who knows the pain of {{painPoint}}."
+    },
+    {
+      id: "intro_cas_user_3",
+      tones: ["casual"],
+      text: "The more we talked to {{customerNoun}}, the more obvious it became that somebody needed to fix this."
+    },
+    {
+      id: "intro_cas_user_4",
+      tones: ["casual"],
+      text: "I promise I'll keep this simple. We found a problem in the {{market}} sector, built something people actually wanted, and now we're looking to grow."
+    },
+    // --- USER SUBMITTED HUMOROUS ---
+    {
+      id: "intro_hum_user_1",
+      tones: ["humorous"],
+      text: "If a guy came to you claiming they had the solution to {{painPoint}}, would you hear them out? Perfect. I'm that guy, bro. Let me cook."
+    },
+    {
+      id: "intro_hum_user_2",
+      tones: ["humorous"],
+      text: "She said, \"it's either me or {{companyName}}.\" Let's just say I have a lot more blanket on me when I sleep than before. I'm serious about {{painPoint}}, man."
+    },
+    {
+      id: "intro_hum_user_3",
+      tones: ["humorous"],
+      text: "You are never gonna believe me, but we were actually friends back in 2nd grade! I've seen the same old problem in the {{market}} industry ever since, and I want us to partner up just like old times."
+    },
+    {
+      id: "intro_hum_user_4",
+      tones: ["humorous"],
+      text: "From the ripe age of 5 years old, I've been dreaming about becoming an astronaut. That is unfortunately still a dream, and I started {{companyName}} instead."
+    },
+    {
+      id: "intro_hum_user_5",
+      tones: ["humorous"],
+      text: "F students are the inventors. I dropped out of high school because I know {{customerNoun}} have been struggling with {{painPoint}} for too long."
     }
   ],
 

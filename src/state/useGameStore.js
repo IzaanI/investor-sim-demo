@@ -36,6 +36,7 @@ const createInitialState = () => {
     netWorthHistory: [INITIAL_CASH],
     industry: chosenIndustry,
     portfolio: [],
+    readPitches: [],
     passedPitches: [],
     pendingOffers: [],
     eventQueue: [],
@@ -80,6 +81,14 @@ export const useGameStore = create((set, get) => ({
     const freshState = createInitialState();
     set(freshState);
     localStorage.setItem(SAVE_KEY, JSON.stringify(freshState));
+  },
+
+  markPitchRead: (instanceId) => {
+    const { readPitches } = get();
+    if (!readPitches.includes(instanceId)) {
+      set({ readPitches: [...readPitches, instanceId] });
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+    }
   },
 
   nextTurn: () => {

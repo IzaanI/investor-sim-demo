@@ -35,14 +35,15 @@ export default function PitchPanel() {
   const runCOICheck = useGameStore(state => state.runCOICheck);
   const investInPitch = useGameStore(state => state.investInPitch);
   const dismissPitch = useGameStore(state => state.dismissPitch);
+  const readPitches = useGameStore(state => state.readPitches);
+  const markPitchRead = useGameStore(state => state.markPitchRead);
 
   const [selectedPitch, setSelectedPitch] = useState(null);
   const [pitchProgress, setPitchProgress] = useState(0);
-  const [readPitches, setReadPitches] = useState(new Set());
 
   const handleOpenPitch = (pitch) => {
     setSelectedPitch(pitch);
-    if (readPitches.has(pitch.instanceId)) {
+    if (readPitches.includes(pitch.instanceId)) {
       setPitchProgress(3);
     } else {
       setPitchProgress(0);
@@ -151,7 +152,7 @@ export default function PitchPanel() {
                     onClick={() => {
                       const next = pitchProgress + 1;
                       setPitchProgress(next);
-                      if (next === 3) setReadPitches(prev => new Set(prev).add(selectedPitch.instanceId));
+                      if (next === 3) markPitchRead(selectedPitch.instanceId);
                     }}
                     style={{ display: "inline-block", padding: "0.5rem 1.5rem", width: "auto" }}
                   >
