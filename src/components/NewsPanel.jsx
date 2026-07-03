@@ -71,7 +71,10 @@ export default function NewsPanel() {
                   fontWeight: "600",
                   textTransform: "uppercase"
                 }}>
-                  {isActive ? `${turnsRemaining} Quarters Left` : "Expired"}
+                  {(() => {
+                    const q = Math.ceil(turnsRemaining / 3);
+                    return isActive ? `${q} ${q === 1 ? "Quarter" : "Quarters"} Left` : "Expired";
+                  })()}
                 </span>
               )}
             </div>
