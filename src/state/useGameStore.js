@@ -55,7 +55,10 @@ const createInitialState = () => {
     drawnSegments,
     seenTemplates,
     usedBusinessNames,
-    seenNewsIds
+    seenNewsIds,
+    tutorialEnabled: true, // developer config to enable/disable tutorial entirely
+    tutorialActive: true,  // tracks whether tutorial is currently overlaying
+    tutorialStep: 1        // tracks current active step of the tutorial
   };
 };
 
@@ -149,6 +152,11 @@ export const useGameStore = create((set, get) => ({
         [pitchInstanceId]: newLog
       }
     });
+
+    const { tutorialActive, tutorialStep } = get();
+    if (tutorialActive && tutorialStep === 5) {
+      set({ tutorialStep: 5.5 });
+    }
 
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   },
@@ -247,6 +255,11 @@ export const useGameStore = create((set, get) => ({
       netWorthHistory: nextNetWorthHistory
     });
 
+    const { tutorialActive, tutorialStep } = get();
+    if (tutorialActive && tutorialStep === 6) {
+      set({ tutorialStep: 7 });
+    }
+
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   },
 
@@ -273,19 +286,21 @@ export const useGameStore = create((set, get) => ({
     const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
     if (!pitch) return;
 
+    const equityPercent = Number(((pitch.ask / pitch.valuation) * 100).toFixed(2));
     const ghostHolding = {
       pitchId: pitch.id,
       businessName: pitch.businessName,
       archetypeLabel: pitch.archetypeLabel,
       industry: pitch.industry,
       investedAmount: pitch.ask,
+      equityPercent,
       currentValueMultiplier: 1.0,
       turnsHeld: 0,
       status: "passed",
       trait: pitch.trait,
       outcomeWeights: pitch.outcomeWeights,
       history: [],
-      valuationAtPass: pitch.valuation
+      valuationAtInvestment: pitch.valuation
     };
 
     const updatedPitches = currentPitches.filter(p => p.instanceId !== pitchInstanceId);
@@ -532,6 +547,29 @@ export const useGameStore = create((set, get) => ({
     
     set({ pinnedNewsIds: nextPinned });
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
+
+  startTutorial: () => {
+    set({ tutorialActive: true, tutorialStep: 1 });
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
+
+  skipTutorial: () => {
+    set({ tutorialActive: false });
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
+
+  setTutorialStep: (step) => {
+    set({ tutorialStep: step });
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
+
+  nextTutorialStep: () => {
+    const { tutorialActive, tutorialStep } = get();
+    if (tutorialActive) {
+      set({ tutorialStep: tutorialStep + 1 });
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+    }
   }
 }));
 export default useGameStore;

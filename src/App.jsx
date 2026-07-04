@@ -6,6 +6,7 @@ import NewsPanel from "./components/NewsPanel";
 import PitchPanel from "./components/PitchPanel";
 import PortfolioPanel from "./components/PortfolioPanel";
 import EventModal from "./components/EventModal";
+import TutorialOverlay from "./components/TutorialOverlay";
 import { ArrowRight, AlertTriangle, Trophy, TrendingUp, RefreshCw } from "lucide-react";
 
 export default function App() {
@@ -19,7 +20,11 @@ export default function App() {
     eventQueue,
     startGame,
     nextTurn,
-    resetGame
+    resetGame,
+    tutorialActive,
+    tutorialStep,
+    skipTutorial,
+    tutorialEnabled
   } = useGameStore();
 
   const [activeTab, setActiveTab] = useState("news");
@@ -180,6 +185,9 @@ export default function App() {
   // 3. MAIN GAMEPLAY INTERFACE
   return (
     <div className="app-container">
+      {tutorialEnabled && tutorialActive && (
+        <TutorialOverlay activeTab={activeTab} />
+      )}
       {eventQueue && eventQueue.length > 0 && (
         <EventModal event={eventQueue[0]} />
       )}
@@ -195,10 +203,17 @@ export default function App() {
 
           {/* End Turn Widget */}
           <div className="next-turn-container">
-            <button className="next-turn-btn" onClick={() => {
-              nextTurn();
-              setActiveTab("news");
-            }}>
+            <button 
+              id="end-turn-btn"
+              className="next-turn-btn" 
+              onClick={() => {
+                nextTurn();
+                setActiveTab("news");
+                if (tutorialActive && tutorialStep === 8) {
+                  skipTutorial();
+                }
+              }}
+            >
               <span>End Turn {turn}</span>
               <ArrowRight size={18} />
             </button>

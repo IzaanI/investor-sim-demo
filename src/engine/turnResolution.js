@@ -112,7 +112,7 @@ function pickTrait(archetypeKey) {
 /**
  * Rolls a single pitch instance from a template using the combinatorial engine.
  */
-export function rollPitchInstance(template, drawnSegments, usedBusinessNames, netWorth = 1000000) {
+export function rollPitchInstance(template, drawnSegments, usedBusinessNames, netWorth = 1000000, turnNumber = 1) {
   // 1. Deck system for Business Names
   const nameOptions = template.businessNames || [template.businessName || "Unknown Startup"];
   if (!usedBusinessNames[template.id]) usedBusinessNames[template.id] = [];
@@ -128,7 +128,11 @@ export function rollPitchInstance(template, drawnSegments, usedBusinessNames, ne
 
   // Pick a random founder archetype key
   const archetypeKeys = Object.keys(ARCHETYPES);
-  const selectedArchetypeKey = archetypeKeys[Math.floor(Math.random() * archetypeKeys.length)];
+  let selectedArchetypeKey = archetypeKeys[Math.floor(Math.random() * archetypeKeys.length)];
+
+  if (turnNumber === 1) {
+    selectedArchetypeKey = "operator";
+  }
 
   // 1. Dynamic max ask based on Net Worth (scales up every $250k above $1M)
   const baseMaxAsk = 500000;
@@ -137,7 +141,11 @@ export function rollPitchInstance(template, drawnSegments, usedBusinessNames, ne
   
   const minAsk = 50000;
   const askRaw = minAsk + Math.random() * (maxAsk - minAsk);
-  const ask = Math.round(askRaw / 5000) * 5000;
+  let ask = Math.round(askRaw / 5000) * 5000;
+
+  if (turnNumber === 1) {
+    ask = 100000;
+  }
 
   // 2. Valuation 5–15× ask (nearest $25k)
   const multiplier = 5 + Math.random() * 10;
@@ -147,7 +155,12 @@ export function rollPitchInstance(template, drawnSegments, usedBusinessNames, ne
   const assembledParagraphs = assemblePitch(template, businessName, selectedArchetypeKey, drawnSegments, valuation);
 
   // 4. Pick one trait weighted by the selected archetype bias
-  const traitId = pickTrait(selectedArchetypeKey);
+  let traitId = pickTrait(selectedArchetypeKey);
+
+  if (turnNumber === 1) {
+    const safeTraits = ["efficient_operations", "niche_focus", "deep_domain_expertise", null];
+    traitId = safeTraits[Math.floor(Math.random() * safeTraits.length)];
+  }
 
   // 5. Outcome weights from trait nudge
   const baseWeights = { growth: 0.5, decline: 0.4, volatile: 0.1 };
@@ -223,7 +236,7 @@ export function generatePitchesForTurn(drawnSegments, seenTemplates, usedBusines
     weightedPool.splice(selectedIndex, 1);
   }
 
-  return selectedTemplates.map(template => rollPitchInstance(template, drawnSegments, usedBusinessNames, netWorth));
+  return selectedTemplates.map(template => rollPitchInstance(template, drawnSegments, usedBusinessNames, netWorth, turnNumber));
 }
 
 /**
@@ -231,6 +244,14 @@ export function generatePitchesForTurn(drawnSegments, seenTemplates, usedBusines
  * Draws between 0 and 2 news items that haven't been seen yet, where minTurn <= turn.
  */
 export function generateAmbientNews(turn, seenNewsIds = []) {
+  if (turn === 1) {
+    const nonNegativeNews = NEWS_BANK.filter(news => news.sentiment !== "negative");
+    if (nonNegativeNews.length > 0) {
+      const chosen = nonNegativeNews[Math.floor(Math.random() * nonNegativeNews.length)];
+      return [chosen];
+    }
+  }
+
   let availableNews = NEWS_BANK.filter(news => {
     if (seenNewsIds.includes(news.id)) return false;
     if (news.minTurn && turn < news.minTurn) return false;
@@ -368,7 +389,7 @@ export function resolveTurn(state, operatingCost = 50000) {
   let nextPassedPitches = (state.passedPitches || []).map(ghost => {
     if (ghost.status === "passed") {
       const { outcomeType, multiplier, newValueMultiplier, isFailed } = rollHoldingOutcome(ghost, state.activeNewsEffects);
-      const nextValue = Math.round(ghost.investedAmount * newValueMultiplier);
+      const nextValue = Math.round(ghost.valuationAtInvestment * newValueMultiplier * (ghost.equityPercent / 100));
 
       const historyLog = {
         turn: state.turn,

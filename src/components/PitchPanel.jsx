@@ -41,12 +41,22 @@ export default function PitchPanel() {
   const [selectedPitch, setSelectedPitch] = useState(null);
   const [pitchProgress, setPitchProgress] = useState(0);
 
+  const tutorialActive = useGameStore(state => state.tutorialActive);
+  const tutorialStep = useGameStore(state => state.tutorialStep);
+  const setTutorialStep = useGameStore(state => state.setTutorialStep);
+
   const handleOpenPitch = (pitch) => {
     setSelectedPitch(pitch);
     if (readPitches.includes(pitch.instanceId)) {
       setPitchProgress(3);
+      if (tutorialActive && tutorialStep === 3) {
+        setTutorialStep(5);
+      }
     } else {
       setPitchProgress(0);
+      if (tutorialActive && tutorialStep === 3) {
+        setTutorialStep(4);
+      }
     }
   };
   const handleClosePitch = () => setSelectedPitch(null);
@@ -71,8 +81,8 @@ export default function PitchPanel() {
 
       {currentPitches.length > 0 ? (
         <div className="card-grid">
-          {currentPitches.map((pitch) => (
-            <div className="game-card" key={pitch.instanceId}>
+          {currentPitches.map((pitch, idx) => (
+            <div className="game-card" key={pitch.instanceId} id={idx === 0 ? "first-pitch-card" : undefined}>
               <div className="card-header">
                 <h3 className="card-title">{pitch.businessName}</h3>
               </div>
@@ -112,7 +122,7 @@ export default function PitchPanel() {
       {/* Modal */}
       {selectedPitch && activeLog && (
         <div className="modal-overlay" onClick={handleClosePitch}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "680px" }}>
+          <div className="modal-content" id="pitch-modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "680px" }}>
             <div className="modal-header">
               <div>
                 <h2 className="card-title" style={{ fontSize: "1.6rem", marginTop: "0.25rem" }}>
@@ -125,41 +135,48 @@ export default function PitchPanel() {
             </div>
 
             <div className="modal-body">
-              {/* Assembled pitch — joined up to pitchProgress */}
-              <div style={{
-                borderLeft: "3px solid var(--color-accent-light)",
-                paddingLeft: "1.25rem",
-                marginBottom: "1.75rem"
-              }}>
-                {(selectedPitch.assembledParagraphs || []).slice(0, pitchProgress + 1).map((paragraph, idx) => (
-                  <p key={idx} style={{
-                    fontSize: "1rem",
-                    lineHeight: "1.8",
-                    color: "#ffffff",
-                    margin: idx === 0 ? 0 : "1rem 0 0 0",
-                    textShadow: "0 1px 2px rgba(0,0,0,0.15)",
-                    animation: "fadeIn 0.5s ease-out"
-                  }}>
-                    <TypewriterText text={paragraph} forceComplete={idx < pitchProgress || pitchProgress >= 3} />
-                  </p>
-                ))}
-              </div>
-
-              {pitchProgress < 3 && (
-                <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-                  <button 
-                    className="card-action-btn" 
-                    onClick={() => {
-                      const next = pitchProgress + 1;
-                      setPitchProgress(next);
-                      if (next === 3) markPitchRead(selectedPitch.instanceId);
-                    }}
-                    style={{ display: "inline-block", padding: "0.5rem 1.5rem", width: "auto" }}
-                  >
-                    <span>{pitchProgress === 2 ? "Review Terms" : "Continue Listening..."}</span>
-                  </button>
+              <div id="pitch-tutorial-review-wrapper">
+                {/* Assembled pitch — joined up to pitchProgress */}
+                <div id="pitch-modal-text" style={{
+                  borderLeft: "3px solid var(--color-accent-light)",
+                  paddingLeft: "1.25rem",
+                  marginBottom: "1.75rem"
+                }}>
+                  {(selectedPitch.assembledParagraphs || []).slice(0, pitchProgress + 1).map((paragraph, idx) => (
+                    <p key={idx} style={{
+                      fontSize: "1rem",
+                      lineHeight: "1.8",
+                      color: "#ffffff",
+                      margin: idx === 0 ? 0 : "1rem 0 0 0",
+                      textShadow: "0 1px 2px rgba(0,0,0,0.15)",
+                      animation: "fadeIn 0.5s ease-out"
+                    }}>
+                      <TypewriterText text={paragraph} forceComplete={idx < pitchProgress || pitchProgress >= 3} />
+                    </p>
+                  ))}
                 </div>
-              )}
+
+                {pitchProgress < 3 && (
+                  <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+                    <button 
+                      className="card-action-btn" 
+                      onClick={() => {
+                        const next = pitchProgress + 1;
+                        setPitchProgress(next);
+                        if (next === 3) {
+                          markPitchRead(selectedPitch.instanceId);
+                          if (tutorialActive && tutorialStep === 4) {
+                            setTutorialStep(5);
+                          }
+                        }
+                      }}
+                      style={{ display: "inline-block", padding: "0.5rem 1.5rem", width: "auto" }}
+                    >
+                      <span>{pitchProgress === 2 ? "Review Terms" : "Continue Listening..."}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
 
               {/* Reveal UI when pitch is finished */}
               {pitchProgress >= 3 && (
@@ -192,6 +209,7 @@ export default function PitchPanel() {
 
                 {!activeLog.backgroundChecked ? (
                   <button
+                    id="diligence-btn-bgcheck"
                     className="diligence-btn"
                     disabled={cash < bgCheckCost || backgroundChecksRemaining < 1}
                     onClick={() => conductBackgroundCheck(selectedPitch.instanceId)}
@@ -210,7 +228,7 @@ export default function PitchPanel() {
                     </span>
                   </button>
                 ) : (
-                  <div className="diligence-log-box" style={{ marginTop: "0.5rem" }}>
+                  <div id="diligence-bgcheck-results" className="diligence-log-box" style={{ marginTop: "0.5rem" }}>
                     <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
                       <FileText size={16} style={{ flexShrink: 0, marginTop: "0.15rem", color: "var(--color-accent-light)" }} />
                       <p style={{ fontSize: "0.9rem", lineHeight: "1.6", color: "var(--text-secondary)", margin: 0 }}>
@@ -270,6 +288,7 @@ export default function PitchPanel() {
                   Pass Deal
                 </button>
                 <button
+                  id="pitch-invest-btn"
                   className="decision-btn invest"
                   disabled={cash < selectedPitch.ask}
                   onClick={() => {

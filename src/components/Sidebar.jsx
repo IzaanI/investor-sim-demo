@@ -12,6 +12,21 @@ export default function Sidebar({ activeTab, setActiveTab }) {
     }
   };
 
+  const tutorialActive = useGameStore(state => state.tutorialActive);
+  const tutorialStep = useGameStore(state => state.tutorialStep);
+  const setTutorialStep = useGameStore(state => state.setTutorialStep);
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    if (tutorialActive) {
+      if (tab === "pitches" && tutorialStep === 2) {
+        setTutorialStep(3);
+      } else if (tab === "portfolio" && tutorialStep === 7) {
+        setTutorialStep(8);
+      }
+    }
+  };
+
   return (
     <aside className="sidebar">
       <div>
@@ -22,24 +37,27 @@ export default function Sidebar({ activeTab, setActiveTab }) {
         
         <nav className="sidebar-nav">
           <button 
+            id="sidebar-tab-news"
             className={`nav-item ${activeTab === "news" ? "active" : ""}`}
-            onClick={() => setActiveTab("news")}
+            onClick={() => handleTabClick("news")}
           >
             <Newspaper size={18} />
             <span>News</span>
           </button>
           
           <button 
+            id="sidebar-tab-pitches"
             className={`nav-item ${activeTab === "pitches" ? "active" : ""}`}
-            onClick={() => setActiveTab("pitches")}
+            onClick={() => handleTabClick("pitches")}
           >
             <Users size={18} />
             <span>Pitches</span>
           </button>
           
           <button 
+            id="sidebar-tab-portfolio"
             className={`nav-item ${activeTab === "portfolio" ? "active" : ""}`}
-            onClick={() => setActiveTab("portfolio")}
+            onClick={() => handleTabClick("portfolio")}
           >
             <Briefcase size={18} />
             <span>Portfolio</span>

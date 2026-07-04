@@ -122,7 +122,7 @@ export default function NewsPanel() {
   };
 
   return (
-    <div className="news-panel">
+    <div className="news-panel" id="news-panel">
       {pinnedNews.length > 0 && (
         <div style={{ marginBottom: "2.5rem" }}>
           <div className="panel-title-container" style={{ borderBottom: "1px solid rgba(56, 189, 248, 0.2)", paddingBottom: "0.5rem" }}>
