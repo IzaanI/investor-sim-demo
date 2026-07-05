@@ -28,19 +28,22 @@ export default function PortfolioPanel() {
   const renderHistoryChart = (history) => {
     if (!history || history.length === 0) return null;
 
-    const points = [{ multiplier: 1.0, turn: "Start" }, ...history];
+    const points = [
+      { value: selectedHolding.investedAmount, turn: "Start" },
+      ...history
+    ];
     const width = 500;
     const height = 100;
     const padding = 10;
 
-    const maxMult = Math.max(...points.map(p => p.multiplier), 1.5);
-    const minMult = Math.min(...points.map(p => p.multiplier), 0.5);
-    const multRange = maxMult - minMult || 1;
+    const maxVal = Math.max(...points.map(p => p.value), selectedHolding.investedAmount * 1.5);
+    const minVal = Math.min(...points.map(p => p.value), selectedHolding.investedAmount * 0.5);
+    const valRange = maxVal - minVal || 1;
 
     const coords = points.map((p, index) => {
       const x = padding + (index / (points.length - 1)) * (width - 2 * padding);
       // In SVG, Y coordinates go downwards, so we subtract from height
-      const y = height - padding - ((p.multiplier - minMult) / multRange) * (height - 2 * padding);
+      const y = height - padding - ((p.value - minVal) / valRange) * (height - 2 * padding);
       return `${x},${y}`;
     });
 
@@ -71,8 +74,8 @@ export default function PortfolioPanel() {
           })}
         </svg>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.65rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>
-          <span>Investment Start ({formatMoney(selectedHolding.investedAmount)})</span>
-          <span>Current Value ({formatMoney(Math.round(selectedHolding.investedAmount * points[points.length - 1].multiplier))})</span>
+          <span>Investment Start ({formatMoney(points[0].value)})</span>
+          <span>Current Value ({formatMoney(points[points.length - 1].value)})</span>
         </div>
       </div>
     );
@@ -102,7 +105,7 @@ export default function PortfolioPanel() {
         <div>
           <div className="portfolio-cell-header">Capital Invested</div>
           <div>{formatMoney(holding.investedAmount)}</div>
-          <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{holding.equityPercent}% Equity</div>
+          <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{Number(holding.equityPercent).toFixed(2)}% Equity</div>
         </div>
 
         <div>
@@ -264,7 +267,7 @@ export default function PortfolioPanel() {
                 <div style={{ minWidth: "150px" }}>
                   <div className="card-stat-label">Total Invested</div>
                   <strong style={{ fontSize: "1.1rem" }}>{formatMoney(selectedHolding.investedAmount)}</strong>
-                  <div style={{ fontSize: "0.7rem", color: "var(--text-secondary)", marginBottom: "0.25rem" }}>for {selectedHolding.equityPercent}% equity</div>
+                  <div style={{ fontSize: "0.7rem", color: "var(--text-secondary)", marginBottom: "0.25rem" }}>for {Number(selectedHolding.equityPercent).toFixed(2)}% equity</div>
                   {selectedHolding.capitalContributions && selectedHolding.capitalContributions.length > 1 && (
                     <div style={{ marginTop: "0.5rem", fontSize: "0.65rem", color: "var(--text-secondary)", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "0.3rem" }}>
                       {selectedHolding.capitalContributions.map((contrib, idx) => (

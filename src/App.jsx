@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useGameStore from "./state/useGameStore";
 import Sidebar from "./components/Sidebar";
+import MobileNav from "./components/MobileNav";
 import Header, { formatMoney } from "./components/Header";
 import NewsPanel from "./components/NewsPanel";
 import PitchPanel from "./components/PitchPanel";
@@ -40,7 +41,13 @@ export default function App() {
     .reduce((sum, h) => sum + Math.round(h.investedAmount * h.currentValueMultiplier), 0);
   const currentNetWorth = cash + activeHoldingsValue;
 
-  const maxNetWorth = Math.max(...netWorthHistory, 10000000);
+  const activeHoldingsList = portfolio.filter(h => h.status === "active");
+  const exitPendingList = portfolio.filter(h => h.status === "exit_pending");
+  const hasActiveVentures = activeHoldingsList.length > 0;
+  const hasExitPending = exitPendingList.length > 0;
+  const isLiquidityCrisis = cash < 0 && hasActiveVentures && !hasExitPending;
+
+  const maxNetWorth = Math.max(...netWorthHistory, 1000000);
   const totalInvestments = portfolio.length;
   const successfulExits = portfolio.filter(h => h.status === "exited" && (h.exitValue || 0) > h.investedAmount).length;
 
@@ -134,8 +141,9 @@ export default function App() {
 
   // 2. DEMO COMPLETED SCREEN (52 Turns reached)
   if (demoFinished) {
-    const totalProfit = currentNetWorth - 10000000;
-    const profitPercent = ((totalProfit / 10000000) * 100).toFixed(1);
+    const startingNetWorth = netWorthHistory[0] || 1000000;
+    const totalProfit = currentNetWorth - startingNetWorth;
+    const profitPercent = ((totalProfit / startingNetWorth) * 100).toFixed(1);
     const hasProfit = totalProfit >= 0;
 
     return (
@@ -146,7 +154,7 @@ export default function App() {
             Demo Completed
           </h1>
           <p className="game-over-desc">
-            Venture period concluded. You have successfully managed the portfolio through Year 1. Here is your final performance record as Managing Partner.
+            Venture period concluded. You have successfully managed the portfolio through a 52 month term. Here is your final performance record as Managing Partner.
           </p>
 
           <div className="game-over-stats">
@@ -191,6 +199,7 @@ export default function App() {
       {eventQueue && eventQueue.length > 0 && (
         <EventModal event={eventQueue[0]} />
       )}
+      <MobileNav activeTab={activeTab} setActiveTab={setActiveTab} />
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <main className="main-viewport">
@@ -205,7 +214,8 @@ export default function App() {
           <div className="next-turn-container">
             <button 
               id="end-turn-btn"
-              className="next-turn-btn" 
+              className={`next-turn-btn ${isLiquidityCrisis ? "liquidity-crisis-disabled" : ""}`} 
+              disabled={isLiquidityCrisis}
               onClick={() => {
                 nextTurn();
                 setActiveTab("news");
@@ -213,9 +223,25 @@ export default function App() {
                   skipTutorial();
                 }
               }}
+              style={isLiquidityCrisis ? {
+                background: "rgba(239, 68, 68, 0.15)",
+                border: "1px solid rgba(239, 68, 68, 0.5)",
+                color: "var(--color-danger)",
+                cursor: "not-allowed",
+                boxShadow: "none"
+              } : {}}
             >
-              <span>End Turn {turn}</span>
-              <ArrowRight size={18} />
+              {isLiquidityCrisis ? (
+                <>
+                  <span>Liquidity Crisis: Queue Exit in Portfolio</span>
+                  <AlertTriangle size={18} style={{ marginLeft: "0.5rem" }} />
+                </>
+              ) : (
+                <>
+                  <span>End Turn {turn}</span>
+                  <ArrowRight size={18} />
+                </>
+              )}
             </button>
           </div>
         </div>

@@ -15,62 +15,62 @@ export default function TutorialOverlay({ activeTab }) {
   // Dialog dialogues
   const steps = {
     1: {
-      title: "Dreamy • Executive Robot Assistant",
-      text: "Welcome to the firm, Director. I'm Dreamy, your Executive Robot Assistant. Let me get you up to speed.",
+      title: "Onboarding Tutorial",
+      text: "Welcome to the firm, Director. I'm Dreamy, your Executive Robot Assistant. Thanks again for offering the firm your investment expertise. Let me get you up to speed.",
       targetId: null,
       btnLabel: "Begin Onboarding"
     },
     1.5: {
-      title: "Dreamy • Market Intelligence",
-      text: "Recall that you are in this position because your investment expertise is quite valuable. Before starting each day, glance over the breaking news to gain market intelligence. Headlines often inform key market indicators.",
+      title: "Onboarding Tutorial",
+      text: "Before starting each day, glance over the breaking news to gain market intelligence. Some headlines can inform key market indicators, so pin any that seem helpful to remember.",
       targetId: "news-panel",
       btnLabel: "Review Deal Flow"
     },
     2: {
-      title: "Dreamy • Source Deals",
-      text: "We have founders waiting to pitch you. Head over to the Pitches tab.",
+      title: "Onboarding Tutorial",
+      text: "We have our first founder waiting to pitch their business to you. Head over to the Pitches tab.",
       targetId: "sidebar-tab-pitches",
       btnLabel: null // user must click the tab to advance
     },
     3: {
-      title: "Dreamy • Deal Pipeline",
-      text: "This is a live pitch. Open the first one up to hear them out.",
+      title: "Onboarding Tutorial",
+      text: "This is a live pitch. Note the ask amount and business valuation, and press 'Read More' when you are ready.",
       targetId: "first-pitch-card",
       btnLabel: null // user must click the first pitch card
     },
     4: {
-      title: "Dreamy • Evaluate Pitch",
-      text: "Pay close attention to the presentation of the pitch. Each founder has a unique personality, and you should factor that into your judgement as to whether they are worth our money.",
+      title: "Onboarding Tutorial",
+      text: "Pay close attention to the presentation of the pitch. Each founder has a unique personality, and you should factor that into your judgement when deciding if they are worth our money.",
       targetId: "pitch-tutorial-review-wrapper",
       btnLabel: null // advanced automatically when typewriter finish sets progress to 3
     },
     5: {
-      title: "Dreamy • Diligence Check",
+      title: "Onboarding Tutorial",
       text: "Background checks can offer key insights at a small cost. We are limited to one background check per turn. Run one now!",
       targetId: "diligence-btn-bgcheck",
       btnLabel: null // advanced on background check click
     },
     5.5: {
-      title: "Dreamy • Diligence Results",
-      text: "Here are the results of the background check. Review the findings carefully to see if there are any red flags. When you're ready, let's proceed to the decision.",
+      title: "Onboarding Tutorial",
+      text: "Here are the results of the background check. Review the findings carefully to see what information was found.",
       targetId: "diligence-bgcheck-results",
       btnLabel: "Proceed to Decision"
     },
     6: {
-      title: "Dreamy • Investment Decision",
-      text: "Now that you've done your diligence, let's pull the trigger. Make the investment.",
+      title: "Onboarding Tutorial",
+      text: "Now that you've done your diligence, let's invest in our first company!",
       targetId: "pitch-invest-btn",
       btnLabel: null // advanced on investment click
     },
     7: {
-      title: "Dreamy • Portfolio Management",
-      text: "Congratulations. The company is now in your Portfolio. You can track their valuation and manage buyout offers or crises there.",
+      title: "Onboarding Tutorial",
+      text: "Congratulations! The company is now in your Portfolio. You can track performance and manage company events here.",
       targetId: "sidebar-tab-portfolio",
       btnLabel: null // user must click the portfolio tab
     },
     8: {
-      title: "Dreamy • Turn Resolution",
-      text: "When you're done with the current day, click 'End Turn'. Just remember that keeping the lights on costs us $10,000 every single turn, so don't bleed out. Good luck, director.",
+      title: "Onboarding Tutorial",
+      text: "When you're done with the current day, click 'End Turn'. Be mindful that our facility takes $10,000 each turn to cover operating costs, so don't bleed out. Good luck, director.",
       targetId: "end-turn-btn",
       btnLabel: "Finish Tutorial"
     }
@@ -86,7 +86,11 @@ export default function TutorialOverlay({ activeTab }) {
     }
 
     const updateCoords = () => {
-      const el = document.getElementById(currentStepData.targetId);
+      let targetId = currentStepData.targetId;
+      if (window.innerWidth <= 768 && targetId && targetId.startsWith("sidebar-tab")) {
+        targetId = "hamburger-menu-btn";
+      }
+      const el = document.getElementById(targetId);
       if (el) {
         const rect = el.getBoundingClientRect();
         // Add a slight padding to the spotlight box for visual breathing room
@@ -165,9 +169,21 @@ export default function TutorialOverlay({ activeTab }) {
       };
     }
 
-    const { top, left, width, height } = coords;
-    const viewportHeight = window.innerHeight;
     const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    if (viewportWidth <= 768) {
+      const isBottomHalf = coords && (coords.top + coords.height / 2) > viewportHeight / 2;
+      return {
+        position: "fixed",
+        top: isBottomHalf ? "16px" : "auto",
+        bottom: isBottomHalf ? "auto" : "16px",
+        left: "5%",
+        width: "90%",
+        zIndex: 10000
+      };
+    }
+
+    const { top, left, width, height } = coords;
 
     // Default to putting it below the spotlight
     let placementStyle = {
@@ -215,12 +231,23 @@ export default function TutorialOverlay({ activeTab }) {
       }
     }
 
-    // Special override for the End Turn button to place it to the left so it doesn't cover it
+    // Special override for diligence steps to place tooltip on the right of the pitch box
+    if (currentStepData.targetId && currentStepData.targetId.startsWith("diligence-")) {
+      placementStyle = {
+        position: "absolute",
+        top: `${top - 20}px`,
+        left: `${left + width + 16}px`,
+        width: "320px",
+        zIndex: 10000
+      };
+    }
+
+    // Special override for the End Turn button to place the dialog above it
     if (currentStepData.targetId === "end-turn-btn") {
       placementStyle = {
         position: "absolute",
-        top: `${top + (height / 2) - 180}px`,
-        left: `${left - 360}px`,
+        top: `${top - 250}px`,
+        left: `${left -130}px`,
         width: "340px",
         zIndex: 10000
       };

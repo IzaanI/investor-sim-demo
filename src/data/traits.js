@@ -104,7 +104,8 @@ export const TRAITS = {
     severity: "neutral",
     category: "process",
     backgroundClue: [
-      "Multiple sources in the investor community confirm this deal has been circulating for several months.",
+      "Multiple sources in the investor community confirm this deal has been circulating for a few months.",
+      "Similar pitches that occured recently suggest that the founder is only interested in an investor that believes in the product.",
       "Two other firms received the same deck within the past six weeks. The round has not closed."
     ],
     outcomeNudge: { growth: 0.0, decline: 0.0, volatile: 0.0 }
@@ -116,6 +117,7 @@ export const TRAITS = {
     category: "history",
     backgroundClue: [
       "Company registry shows the founders funded operations through consulting revenues for the first eighteen months.",
+      "Publications around company culture indicate that founder strives to maintain 0-debt for as long as possible.",
       "Cap table shows zero outside institutional investors prior to this current seed round."
     ],
     outcomeNudge: { growth: 0.0, decline: 0.0, volatile: 0.0 }
@@ -137,7 +139,7 @@ export const TRAITS = {
     severity: "neutral",
     category: "structure",
     backgroundClue: [
-      "The company was incorporated by a single individual with no current plans to expand the executive team.",
+      "The company was incorporated by a solo entrepreneur with no intentions to hire a large executive team.",
       "All equity is concentrated in a single individual, with no co-founder or technical lead on the cap table."
     ],
     outcomeNudge: { growth: -0.05, decline: 0.0, volatile: 0.05 }
@@ -148,7 +150,8 @@ export const TRAITS = {
     severity: "neutral",
     category: "history",
     backgroundClue: [
-      "The company's domain name originally hosted a completely different business model just eighteen months ago.",
+      "The company's original domain name changed 8 months ago after discovering a comapny had a similar name.",
+      "When introducing new products or services, the company prefers to pivot instead of persisting if there are no short-term forecastable results.",
       "Archived versions of their website show they initially targeted enterprise before recently pivoting to consumer."
     ],
     outcomeNudge: { growth: 0.05, decline: 0.05, volatile: 0.10 }

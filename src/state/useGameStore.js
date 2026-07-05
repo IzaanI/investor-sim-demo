@@ -127,8 +127,8 @@ export const useGameStore = create((set, get) => ({
 
     if (currentLog.backgroundChecked) return; // already run
 
-    // Cost: 5% of ask, rounded to nearest $5k, minimum $10k
-    const cost = Math.max(10000, Math.round((pitch.ask * 0.05) / 5000) * 5000);
+    // Cost: 5% of ask, rounded to nearest $5k, minimum $5k
+    const cost = Math.max(5000, Math.round((pitch.ask * 0.05) / 5000) * 5000);
     if (cash < cost) return; // can't afford it
 
     // Pick one backgroundClue from the pitch's trait
@@ -207,7 +207,7 @@ export const useGameStore = create((set, get) => ({
     const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
     if (!pitch || cash < pitch.ask) return;
 
-    const equityPercent = Number(((pitch.ask / pitch.valuation) * 100).toFixed(2));
+    const equityPercent = (pitch.ask / pitch.valuation) * 100;
     const logEntry = diligenceLog[pitchInstanceId];
 
     const hasConflict = portfolio.some(h => h.pitchId === pitch.id && h.status === "active");
@@ -286,7 +286,7 @@ export const useGameStore = create((set, get) => ({
     const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
     if (!pitch) return;
 
-    const equityPercent = Number(((pitch.ask / pitch.valuation) * 100).toFixed(2));
+    const equityPercent = (pitch.ask / pitch.valuation) * 100;
     const ghostHolding = {
       pitchId: pitch.id,
       businessName: pitch.businessName,
@@ -349,12 +349,14 @@ export const useGameStore = create((set, get) => ({
       if (h.pitchId === event.pitchId && h.investedAmount === event.investedAmount && h.status === "active") {
         if (effectType === "accept_follow_on") {
           nextCash -= event.eventAsk;
-          const currentValuation = (h.valuationAtInvestment || (h.investedAmount / (h.equityPercent / 100))) * (h.currentValueMultiplier || 1);
-          const addedEquity = (event.eventAsk / currentValuation) * 100;
-          const nextEquity = Math.min(100, Number((h.equityPercent + addedEquity).toFixed(2)));
+          const uproundFactor = 1.35 + Math.random() * 0.15;
+          const nextMultiplier = h.currentValueMultiplier * uproundFactor;
+          const nextEquity = h.equityPercent; // maintained pro-rata
+          const nextValue = Math.round(h.valuationAtInvestment * nextMultiplier * (nextEquity / 100));
           return {
             ...h,
             investedAmount: h.investedAmount + event.eventAsk,
+            currentValueMultiplier: nextMultiplier,
             equityPercent: nextEquity,
             capitalContributions: [
               ...(h.capitalContributions || [{ amount: h.investedAmount, turn: "Start", type: "Initial Investment" }]),
@@ -365,10 +367,10 @@ export const useGameStore = create((set, get) => ({
               {
                 turn: get().turn,
                 outcomeType: "funding",
-                multiplier: 1.0,
-                value: Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (nextEquity / 100)),
-                changePercent: 0,
-                note: `Injected follow-on capital. Equity: ${h.equityPercent}% ➔ ${nextEquity}%`
+                multiplier: uproundFactor,
+                value: nextValue,
+                changePercent: Math.round((uproundFactor - 1) * 100),
+                note: `Maintained ${Number(nextEquity).toFixed(1)}% equity in a ${Number(uproundFactor).toFixed(2)}x Series A up-round.`
               }
             ]
           };
@@ -377,7 +379,7 @@ export const useGameStore = create((set, get) => ({
           const offerAmount = event.options.find(o => o.effectType === effectType)?.offerAmount || 0;
           const currentValuation = (h.valuationAtInvestment || (h.investedAmount / (h.equityPercent / 100))) * (h.currentValueMultiplier || 1);
           const addedEquity = (offerAmount / currentValuation) * 100;
-          const nextEquity = Math.min(100, Number((h.equityPercent + addedEquity).toFixed(2)));
+          const nextEquity = Math.min(100, h.equityPercent + addedEquity);
           return {
             ...h,
             investedAmount: h.investedAmount + offerAmount,
@@ -394,25 +396,28 @@ export const useGameStore = create((set, get) => ({
                 multiplier: 1.0,
                 value: Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (nextEquity / 100)),
                 changePercent: 0,
-                note: `Proactive offer accepted. Equity: ${h.equityPercent}% ➔ ${nextEquity}%`
+                note: `Proactive offer accepted. Equity: ${Number(h.equityPercent).toFixed(1)}% ➔ ${Number(nextEquity).toFixed(1)}%`
               }
             ]
           };
         } else if (effectType === "decline_follow_on") {
-          const dilutionFactor = 0.65 + Math.random() * 0.1;
-          const nextEquity = Number((h.equityPercent * dilutionFactor).toFixed(2));
+          const uproundFactor = 1.35 + Math.random() * 0.15;
+          const nextMultiplier = h.currentValueMultiplier * uproundFactor;
+          const nextEquity = h.equityPercent / uproundFactor;
+          const nextValue = Math.round(h.valuationAtInvestment * nextMultiplier * (nextEquity / 100));
           return {
             ...h,
+            currentValueMultiplier: nextMultiplier,
             equityPercent: nextEquity,
             history: [
               ...(h.history || []),
               {
                 turn: get().turn,
                 outcomeType: "dilution",
-                multiplier: 1.0,
-                value: Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (nextEquity / 100)),
+                multiplier: uproundFactor,
+                value: nextValue,
                 changePercent: 0,
-                note: `Diluted from ${h.equityPercent}% to ${nextEquity}%`
+                note: `Diluted from ${Number(h.equityPercent).toFixed(1)}% to ${Number(nextEquity).toFixed(1)}% in a ${Number(uproundFactor).toFixed(2)}x Series A up-round (value preserved).`
               }
             ]
           };
@@ -427,7 +432,7 @@ export const useGameStore = create((set, get) => ({
           nextCash -= event.eventAsk;
           const currentValuation = (h.valuationAtInvestment || (h.investedAmount / (h.equityPercent / 100))) * (h.currentValueMultiplier || 1);
           const addedEquity = (event.eventAsk / currentValuation) * 100;
-          const nextEquity = Math.min(100, Number((h.equityPercent + addedEquity).toFixed(2)));
+          const nextEquity = Math.min(100, h.equityPercent + addedEquity);
           return {
             ...h,
             investedAmount: h.investedAmount + event.eventAsk,
@@ -444,7 +449,7 @@ export const useGameStore = create((set, get) => ({
                 multiplier: 1.0,
                 value: Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (nextEquity / 100)),
                 changePercent: 0,
-                note: `Injected emergency capital. Equity: ${h.equityPercent}% ➔ ${nextEquity}%`
+                note: `Injected emergency capital. Equity: ${Number(h.equityPercent).toFixed(1)}% ➔ ${Number(nextEquity).toFixed(1)}%`
               }
             ]
           };

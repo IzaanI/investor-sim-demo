@@ -210,12 +210,12 @@ export const PITCH_TEMPLATES = [
   },
   {
     id: "fb_004",
-    businessNames: ["Craft Barrel", "Copper Tap", "Hopsmith", "Malt Trail", "North Brew"],
+    businessNames: ["Shrimp Barrel", "Shrimp's Galore", "Shrimpsmith", "Shrimp N' Scoop", "Simply Shrimp"],
     industry: "Food & Beverage",
-    product: "a craft brewery",
-    market: "craft beer",
-    painPoint: "limited locally brewed options",
-    customerNoun: "beer lovers"
+    product: "loaded shrimp bowls",
+    market: "seafood casual dining",
+    painPoint: "lack of exciting seafood options",
+    customerNoun: "seafood lovers"
   },
   {
     id: "fb_005",
@@ -358,7 +358,7 @@ export const PITCH_TEMPLATES = [
     industry: "Food & Beverage",
     product: "a personalized vegan and vegetarian meal kit subscription",
     market: "clean-eating subscription kits",
-    painPoint: "the lack of diverse vegan and vegetarian meal kit options",
+    painPoint: "lack of diverse vegan and vegetarian meal kit options",
     customerNoun: "vegans and vegetarians"
   },
   {
@@ -380,12 +380,21 @@ export const PITCH_TEMPLATES = [
     customerNoun: "senior home operators"
   },
   {
+    id: "needly",
+    businessNames: ["Needly", "Needly Inc.", "Needly Solutions", "Needly Co.", "Needly Tech"],
+    industry: "Health & Wellness",
+    product: "self-sterilizing needles and syringes",
+    market: "medical device manufacturing",
+    painPoint: "high cost of sterilization and disposal of medical needles",
+    customerNoun: "medical practitioners and hospitals"
+  },
+  {
     id: "abou_bakes",
     businessNames: ["AbouBakes", "AbouBaker", "Moussa Baker Inc.", "Moussa Baker Co."],
     industry: "Food & Beverage",
     product: "a BTC-powered public air fryer",
     market: "public food cooking and reheating",
-    painPoint: "the lack of public cooking or reheating options",
+    painPoint: "lack of public cooking or reheating options",
     customerNoun: "on-the-go professionals"
   }
 ];

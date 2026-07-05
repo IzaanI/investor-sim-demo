@@ -22,6 +22,20 @@ export default function NewsPanel() {
     })
     .filter(Boolean);
 
+  const getNewsImage = (news) => {
+    if (news.scope === "company") {
+      return "/news_company.png";
+    }
+    if (news.scope === "industry") {
+      return "/news_industry.png";
+    }
+    const cat = (news.category || "").toUpperCase();
+    if (cat === "POLICY" || cat === "REGULATORY" || cat === "LEGAL") {
+      return "/news_regulatory.png";
+    }
+    return "/news_market.png";
+  };
+
   const renderNewsCard = (news, isPinnedSection = false) => {
     const isPinned = pinnedNewsIds.includes(news.id);
     const activeEffect = activeNewsEffects.find(a => a.id === news.id);
@@ -38,8 +52,18 @@ export default function NewsPanel() {
 
     return (
       <div className={`news-card ${isPinned ? "pinned" : ""}`} key={`${news.id}_${isPinnedSection ? "pinned" : "current"}`}>
-        <div className="news-image-placeholder" style={news.sentiment ? { color: sentimentColor, opacity: 0.8 } : {}}>
-          {news.sentiment === "positive" ? <TrendingUp size={24} /> : news.sentiment === "negative" ? <TrendingDown size={24} /> : <Activity size={24} />}
+        <div className="news-image-placeholder" style={{ padding: 0 }}>
+          <img 
+            src={getNewsImage(news)} 
+            alt={news.category} 
+            style={{ 
+              width: "100%", 
+              height: "100%", 
+              objectFit: "cover", 
+              display: "block",
+              transition: "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
+            }} 
+          />
         </div>
         <div className="news-body">
           <div>
