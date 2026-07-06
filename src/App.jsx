@@ -38,7 +38,7 @@ export default function App() {
   // Recalculate portfolio value and net worth for summary screens
   const activeHoldingsValue = portfolio
     .filter(h => h.status === "active" || h.status === "exit_pending")
-    .reduce((sum, h) => sum + Math.round(h.investedAmount * h.currentValueMultiplier), 0);
+    .reduce((sum, h) => sum + Math.round(h.valuationAtInvestment * h.currentValueMultiplier * (h.equityPercent / 100)), 0);
   const currentNetWorth = cash + activeHoldingsValue;
 
   const activeHoldingsList = portfolio.filter(h => h.status === "active");

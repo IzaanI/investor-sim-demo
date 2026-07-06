@@ -86,9 +86,11 @@ export default function PortfolioPanel() {
   const failedHoldings = portfolio.filter(h => h.status === "failed");
 
   const renderHoldingRow = (holding, index) => {
-    const currentValue = Math.round(holding.valuationAtInvestment * holding.currentValueMultiplier * (holding.equityPercent / 100));
-    const isPositive = holding.currentValueMultiplier >= 1.0;
-    const percentChange = Math.round((holding.currentValueMultiplier - 1) * 100);
+    const currentValue = holding.status === "exited"
+      ? (holding.exitValue || Math.round(holding.valuationAtInvestment * holding.currentValueMultiplier * (holding.equityPercent / 100)))
+      : Math.round(holding.valuationAtInvestment * holding.currentValueMultiplier * (holding.equityPercent / 100));
+    const percentChange = Math.round(((currentValue - holding.investedAmount) / holding.investedAmount) * 100);
+    const isPositive = percentChange >= 0;
 
     return (
       <div 

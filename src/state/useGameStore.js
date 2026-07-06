@@ -350,7 +350,8 @@ export const useGameStore = create((set, get) => ({
         if (effectType === "accept_follow_on") {
           nextCash -= event.eventAsk;
           const uproundFactor = 1.35 + Math.random() * 0.15;
-          const nextMultiplier = h.currentValueMultiplier * uproundFactor;
+          const initialCapitalBase = h.valuationAtInvestment * (h.equityPercent / 100);
+          const nextMultiplier = (h.currentValueMultiplier * uproundFactor) + (event.eventAsk / initialCapitalBase);
           const nextEquity = h.equityPercent; // maintained pro-rata
           const nextValue = Math.round(h.valuationAtInvestment * nextMultiplier * (nextEquity / 100));
           return {

@@ -644,6 +644,11 @@ export const SEGMENTS = {
       tones: ["confident"],
       text: "This isn't about chasing quick wins, it's about building a company that will still matter years from now."
     },
+    {
+      id: "close_confident_user_5",
+      tones: ["confident"],
+      text: "This investment is as much of an opportunity for you as it is for us. Capitalize on it now and I will make sure you won't regret it."
+    },
 
     // --- METHODICAL TONE ---
     {
@@ -665,6 +670,11 @@ export const SEGMENTS = {
       id: "close_methodical_4",
       tones: ["methodical"],
       text: "Our financial projections show a clear path to profitability once this capital is deployed."
+    },
+    {
+      id: "close_methodical_5",
+      tones: ["methodical"],
+      text: "Getting a return on your investment is our top priority. Our short-term roadmap demonstrates exactly how your funding will get us there."
     },
 
     // --- AGGRESSIVE TONE ---
@@ -696,7 +706,7 @@ export const SEGMENTS = {
     {
       id: "close_aggressive_3",
       tones: ["aggressive"],
-      text: "This deal is moving fast. If you want in on {{companyName}}, I need a commitment by next week."
+      text: "This deal is moving fast. If you don't offer us your money today, we have a line-up of smarter investors who will."
     },
     {
       id: "close_aggressive_4",
@@ -733,7 +743,7 @@ export const SEGMENTS = {
     {
       id: "close_humorous_3",
       tones: ["humorous"],
-      text: "If you don't invest in {{companyName}}, my developer might cry, and we really can't afford the downtime."
+      text: "My team is celebrating right now because I already told them that you said yes, so do me a favor!"
     },
     {
       id: "close_humorous_4",
@@ -783,6 +793,11 @@ export const SEGMENTS = {
       id: "close_casual_4",
       tones: ["casual"],
       text: "No pressure at all, but we're closing this round soon and would be stoked to have you guys involved."
+    },
+    {
+      id: "close_casual_5",
+      tones: ["casual"],
+      text: "If you've been in the space for some time, then you know that no one can truly guarantee you your money back. I'm guaranteeing you a fun time and a great learning experience!"
     },
     // --- DESPERATE TONE ---
     {
