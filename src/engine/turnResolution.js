@@ -126,9 +126,9 @@ export function rollPitchInstance(template, drawnSegments, usedBusinessNames, ne
   const businessName = availableNames[Math.floor(Math.random() * availableNames.length)];
   usedBusinessNames[template.id].push(businessName);
 
-  // Pick founder archetype key (template specific or random)
+  // Pick a random founder archetype key
   const archetypeKeys = Object.keys(ARCHETYPES);
-  let selectedArchetypeKey = template.archetype || archetypeKeys[Math.floor(Math.random() * archetypeKeys.length)];
+  let selectedArchetypeKey = archetypeKeys[Math.floor(Math.random() * archetypeKeys.length)];
 
   if (turnNumber === 1) {
     selectedArchetypeKey = "operator";
