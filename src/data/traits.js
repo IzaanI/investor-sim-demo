@@ -150,7 +150,7 @@ export const TRAITS = {
     severity: "neutral",
     category: "history",
     backgroundClue: [
-      "The company's original domain name changed 8 months ago after discovering a comapny had a similar name.",
+      "The company's original domain name changed 8 months ago after discovering a company had a similar name.",
       "When introducing new products or services, the company prefers to pivot instead of persisting if there are no short-term forecastable results.",
       "Archived versions of their website show they initially targeted enterprise before recently pivoting to consumer."
     ],

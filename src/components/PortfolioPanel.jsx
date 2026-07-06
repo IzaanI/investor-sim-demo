@@ -3,6 +3,7 @@ import { useGameStore } from "../state/useGameStore";
 import { formatMoney } from "./Header";
 import { TRAITS } from "../data/traits";
 import { Briefcase, ArrowUpRight, TrendingDown, Clock, ShieldAlert, BarChart3, X } from "lucide-react";
+import sounds from "../utils/sounds";
 
 export default function PortfolioPanel() {
   const portfolio = useGameStore(state => state.portfolio);
@@ -16,11 +17,13 @@ export default function PortfolioPanel() {
   const [followOnAmount, setFollowOnAmount] = useState(10000);
 
   const handleOpenDetails = (holding) => {
+    sounds.modalOpen();
     setSelectedHolding(holding);
     setFollowOnAmount(Math.max(10000, Math.min(50000, cash)));
   };
 
   const handleCloseDetails = () => {
+    sounds.modalClose();
     setSelectedHolding(null);
   };
 
@@ -132,7 +135,7 @@ export default function PortfolioPanel() {
             <button 
               className="card-action-btn"
               style={{ padding: "0.4rem 0.8rem", fontSize: "0.7rem", width: "auto", display: "inline-block" }}
-              onClick={() => exitHolding(holding.pitchId, holding.investedAmount)}
+              onClick={() => { sounds.queueExit(); exitHolding(holding.pitchId, holding.investedAmount); }}
             >
               Queue Exit
             </button>
@@ -335,6 +338,7 @@ export default function PortfolioPanel() {
                         className="decision-btn invest" 
                         style={{ padding: "0.5rem", fontSize: "0.85rem", marginTop: "0.5rem" }}
                         onClick={() => {
+                          sounds.click();
                           proposeFollowOn(selectedHolding.pitchId, selectedHolding.investedAmount, followOnAmount);
                           handleCloseDetails();
                         }}

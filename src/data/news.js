@@ -342,8 +342,8 @@ export const NEWS_BANK = [
     category: "MARKETS",
     impact: "LOW",
     timeString: "10 hours ago",
-    headline: "Experts Predict Subscription Businesses Are Dead",
-    detail: "Several analysts argue consumers are experiencing subscription fatigue."
+    headline: "Experts Predict AI takeover by year 2030",
+    detail: "Several analysts argue how long before artificial entities start defying human orders."
   },
   {
     id: "fluff_wellness_cure",

@@ -144,7 +144,7 @@ export const SEGMENTS = {
     {
       id: "intro_humorous_3",
       tones: ["humorous"],
-      text: "They say money can't buy happiness, but it can fund {{companyName}}, which is basically the same thing when you look at {{painPoint}}."
+      text: "They say money can't buy happiness, but it definitely can fund {{companyName}}. We want to make {{painPoint}} a thing of the past!"
     },
     {
       id: "intro_humorous_4",

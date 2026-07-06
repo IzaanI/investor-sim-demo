@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useGameStore from "./state/useGameStore";
 import Sidebar from "./components/Sidebar";
 import MobileNav from "./components/MobileNav";
@@ -9,6 +9,7 @@ import PortfolioPanel from "./components/PortfolioPanel";
 import EventModal from "./components/EventModal";
 import TutorialOverlay from "./components/TutorialOverlay";
 import { ArrowRight, AlertTriangle, Trophy, TrendingUp, RefreshCw } from "lucide-react";
+import sounds from "./utils/sounds";
 
 export default function App() {
   const {
@@ -50,6 +51,35 @@ export default function App() {
   const maxNetWorth = Math.max(...netWorthHistory, 1000000);
   const totalInvestments = portfolio.length;
   const successfulExits = portfolio.filter(h => h.status === "exited" && (h.exitValue || 0) > h.investedAmount).length;
+
+  // One-shot sound effects for dramatic state changes
+  const playedGameOver   = useRef(false);
+  const playedVictory    = useRef(false);
+  const playedCrisis     = useRef(false);
+
+  useEffect(() => {
+    if (gameOver && !playedGameOver.current) {
+      playedGameOver.current = true;
+      sounds.gameOver();
+    }
+  }, [gameOver]);
+
+  useEffect(() => {
+    if (demoFinished && !playedVictory.current) {
+      playedVictory.current = true;
+      sounds.victory();
+    }
+  }, [demoFinished]);
+
+  useEffect(() => {
+    if (isLiquidityCrisis && !playedCrisis.current) {
+      playedCrisis.current = true;
+      sounds.liquidityCrisis();
+    }
+    if (!isLiquidityCrisis) {
+      playedCrisis.current = false; // Reset so it fires again next time
+    }
+  }, [isLiquidityCrisis]);
 
   // Helper to render the net worth progression chart on end-screens
   const renderNetWorthChart = () => {
@@ -217,6 +247,7 @@ export default function App() {
               className={`next-turn-btn ${isLiquidityCrisis ? "liquidity-crisis-disabled" : ""}`} 
               disabled={isLiquidityCrisis}
               onClick={() => {
+                sounds.endTurn();
                 nextTurn();
                 setActiveTab("news");
                 if (tutorialActive && tutorialStep === 8) {

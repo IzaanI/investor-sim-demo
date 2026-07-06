@@ -1,14 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AlertCircle, DollarSign, ShieldAlert } from "lucide-react";
 import { useGameStore } from "../state/useGameStore";
+import sounds from "../utils/sounds";
 
 export default function EventModal({ event }) {
   const cash = useGameStore(state => state.cash);
   const resolveEventOption = useGameStore(state => state.resolveEventOption);
 
   const handleSelectOption = (effectType) => {
+    // Map effectType to the right sound
+    if (effectType === "accept_follow_on" || effectType === "accept_distress") {
+      sounds.acceptFollowOn();
+    } else if (effectType === "decline_follow_on" || effectType === "decline_distress") {
+      sounds.declineFollowOn();
+    } else if (effectType === "accept_buyout") {
+      sounds.buyout();
+    } else if (effectType === "decline_buyout") {
+      sounds.declineFollowOn();
+    } else {
+      sounds.click();
+    }
     resolveEventOption(event.id, effectType);
   };
+
+  // Play notification sound when the modal first appears
+  useEffect(() => {
+    sounds.eventModal();
+  }, []);
 
   let title = "Portfolio Event";
   let icon = <AlertCircle size={24} />;

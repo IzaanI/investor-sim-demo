@@ -37,7 +37,7 @@ export default function Header() {
       </div>
 
       <div className="header-stat">
-        <span className="stat-label">Cash (Spendable)</span>
+        <span className="stat-label">Cash</span>
         <span className={`stat-value cash ${isCashNegative ? "liquidity-crunch" : ""}`}>{formatMoney(cash)}</span>
         <span className="stat-subtext">Ready to deploy</span>
       </div>

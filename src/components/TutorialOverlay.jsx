@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useGameStore } from "../state/useGameStore";
 import { formatMoney } from "./Header";
 import { HelpCircle, ChevronRight, X } from "lucide-react";
+import sounds from "../utils/sounds";
 
 export default function TutorialOverlay({ activeTab }) {
   const tutorialActive = useGameStore(state => state.tutorialActive);
@@ -143,6 +144,7 @@ export default function TutorialOverlay({ activeTab }) {
   };
 
   const handleNextBtn = () => {
+    sounds.tutorialAdvance();
     if (tutorialStep === 1) {
       setTutorialStep(1.5);
     } else if (tutorialStep === 1.5) {

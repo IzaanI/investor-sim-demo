@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useGameStore } from "../state/useGameStore";
 import { formatMoney } from "./Header";
 import { Search, TrendingUp, X, FileText } from "lucide-react";
+import sounds from "../utils/sounds";
 
 function TypewriterText({ text, typingSpeed = 15, forceComplete }) {
   const [displayedText, setDisplayedText] = useState(forceComplete ? text : "");
+  const lastTickTime = useRef(0);
   
   useEffect(() => {
     if (forceComplete) {
@@ -14,9 +16,19 @@ function TypewriterText({ text, typingSpeed = 15, forceComplete }) {
     
     let i = 0;
     const intervalId = setInterval(() => {
+      const char = text[i];
       setDisplayedText(text.slice(0, i + 1));
       i++;
       if (i >= text.length) clearInterval(intervalId);
+
+      // Play a speech tick at most once every 150ms, and skip spaces/punctuation
+      const now = Date.now();
+      if (char && char !== " " && char !== "," && char !== "." && char !== "!" && char !== "?") {
+        if (now - lastTickTime.current >= 100) {
+          sounds.tick();
+          lastTickTime.current = now;
+        }
+      }
     }, typingSpeed);
     
     return () => clearInterval(intervalId);
@@ -46,6 +58,7 @@ export default function PitchPanel() {
   const setTutorialStep = useGameStore(state => state.setTutorialStep);
 
   const handleOpenPitch = (pitch) => {
+    sounds.modalOpen();
     setSelectedPitch(pitch);
     if (readPitches.includes(pitch.instanceId)) {
       setPitchProgress(3);
@@ -59,7 +72,10 @@ export default function PitchPanel() {
       }
     }
   };
-  const handleClosePitch = () => setSelectedPitch(null);
+  const handleClosePitch = () => {
+    sounds.modalClose();
+    setSelectedPitch(null);
+  };
 
   const activeLog = selectedPitch
     ? diligenceLog[selectedPitch.instanceId] || { backgroundChecked: false, backgroundClue: null, coiChecked: false, coiWarning: null, hasConflict: false }
@@ -161,6 +177,7 @@ export default function PitchPanel() {
                     <button 
                       className="card-action-btn" 
                       onClick={() => {
+                        sounds.click();
                         const next = pitchProgress + 1;
                         setPitchProgress(next);
                         if (next === 3) {
@@ -212,7 +229,7 @@ export default function PitchPanel() {
                     id="diligence-btn-bgcheck"
                     className="diligence-btn"
                     disabled={cash < bgCheckCost || backgroundChecksRemaining < 1}
-                    onClick={() => conductBackgroundCheck(selectedPitch.instanceId)}
+                    onClick={() => { sounds.backgroundCheck(); conductBackgroundCheck(selectedPitch.instanceId); }}
                     style={{ marginTop: "0.5rem" }}
                   >
                     <span className="diligence-btn-title">
@@ -250,7 +267,7 @@ export default function PitchPanel() {
                   <button
                     className="diligence-btn"
                     disabled={cash < 1000}
-                    onClick={() => runCOICheck(selectedPitch.instanceId)}
+                    onClick={() => { sounds.coiCheck(); runCOICheck(selectedPitch.instanceId); }}
                     style={{ marginTop: "0.5rem" }}
                   >
                     <span className="diligence-btn-title">
@@ -281,6 +298,7 @@ export default function PitchPanel() {
                 <button
                   className="decision-btn pass"
                   onClick={() => {
+                    sounds.pass();
                     dismissPitch(selectedPitch.instanceId);
                     handleClosePitch();
                   }}
@@ -292,6 +310,7 @@ export default function PitchPanel() {
                   className="decision-btn invest"
                   disabled={cash < selectedPitch.ask}
                   onClick={() => {
+                    sounds.invest();
                     investInPitch(selectedPitch.instanceId);
                     handleClosePitch();
                   }}

@@ -2,6 +2,7 @@ import React from "react";
 import { useGameStore } from "../state/useGameStore";
 import { Newspaper, Activity, Pin, PinOff, Zap, TrendingUp, TrendingDown } from "lucide-react";
 import { NEWS_BANK } from "../data/news.js";
+import sounds from "../utils/sounds";
 
 export default function NewsPanel() {
   const currentNews = useGameStore(state => state.currentNews);
@@ -128,6 +129,7 @@ export default function NewsPanel() {
           <button
             onClick={(e) => {
               e.stopPropagation();
+              sounds.pinNews();
               togglePinNews(news.id);
             }}
             style={{
