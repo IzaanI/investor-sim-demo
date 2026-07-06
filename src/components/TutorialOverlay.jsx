@@ -34,7 +34,7 @@ export default function TutorialOverlay({ activeTab }) {
     },
     3: {
       title: "Onboarding Tutorial",
-      text: "This is a live pitch. Note the ask amount and business valuation, and press 'Read More' when you are ready.",
+      text: "This is a live pitch. Note the ask amount and business valuation, and press 'Read Pitch' when you are ready.",
       targetId: "first-pitch-card",
       btnLabel: null // user must click the first pitch card
     },

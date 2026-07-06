@@ -191,7 +191,7 @@ export function rollPitchInstance(template, drawnSegments, usedBusinessNames, ne
 /**
  * Generates active pitches for the current turn.
  */
-export function generatePitchesForTurn(drawnSegments, seenTemplates, usedBusinessNames, netWorth = 1000000, turnNumber = 1) {
+export function generatePitchesForTurn(drawnSegments, seenTemplates, usedBusinessNames, netWorth = 1000000, turnNumber = 1, portfolio = [], passedPitches = []) {
   let count = 3;
   if (turnNumber === 1) {
     count = 1;
@@ -201,7 +201,11 @@ export function generatePitchesForTurn(drawnSegments, seenTemplates, usedBusines
     count = Math.random() < 0.5 ? 2 : 3;
   }
 
-  const filtered = PITCH_TEMPLATES; // Draw from all industries
+  const existingIds = new Set([
+    ...portfolio.map(h => h.pitchId),
+    ...passedPitches.map(h => h.pitchId)
+  ]);
+  const filtered = PITCH_TEMPLATES.filter(t => !existingIds.has(t.id));
   
   // Weighted Selection System
   const weightedPool = filtered.map(template => {
@@ -641,7 +645,7 @@ export function resolveTurn(state, operatingCost = 50000) {
   let nextSeenNewsIds = [...(state.seenNewsIds || [])];
 
   if (!nextGameOver && !isDemoFinished) {
-    nextPitches = generatePitchesForTurn(nextDrawnSegments, nextSeenTemplates, nextUsedBusinessNames, nextNetWorth, nextTurn);
+    nextPitches = generatePitchesForTurn(nextDrawnSegments, nextSeenTemplates, nextUsedBusinessNames, nextNetWorth, nextTurn, nextPortfolio, nextPassedPitches);
     const ambientNews = generateAmbientNews(nextTurn, nextSeenNewsIds);
     ambientNews.forEach(news => nextSeenNewsIds.push(news.id));
 
