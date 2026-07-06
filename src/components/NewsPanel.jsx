@@ -23,17 +23,23 @@ export default function NewsPanel() {
     .filter(Boolean);
 
   const getNewsImage = (news) => {
-    if (news.scope === "company") {
-      return "/news_company.png";
-    }
-    if (news.scope === "industry") {
-      return "/news_industry.png";
-    }
     const cat = (news.category || "").toUpperCase();
-    if (cat === "POLICY" || cat === "REGULATORY" || cat === "LEGAL") {
-      return "/news_regulatory.png";
-    }
-    return "/news_market.png";
+    if (cat === "POLICY" || cat === "REGULATORY") return "/news_policy.png";
+    if (cat === "ECONOMY") return "/news_economy.png";
+    if (cat === "LEGAL") return "/news_legal.png";
+    if (cat === "MARKETS" || cat === "MARKET") return "/news_market.png";
+    if (cat === "FINANCIAL") return "/news_financial.png";
+    if (cat === "MANAGEMENT" || cat === "INTERNAL" || cat === "WORKPLACE") return "/news_management.png";
+    if (cat === "MARKETING" || cat === "SOCIAL" || cat === "INFLUENCERS" || cat === "RUMOR") return "/news_marketing.png";
+    if (cat === "SUPPLY CHAIN" || cat === "OPERATIONS") return "/news_operations.png";
+    if (cat === "COMPETITION") return "/news_competition.png";
+    if (cat === "INDUSTRY" || cat === "BUSINESS") return "/news_industry.png";
+    if (cat === "HEALTH") return "/news_health.png";
+    if (cat === "WORLD") return "/news_world.png";
+    if (cat === "FINTECH") return "/news_fintech.png";
+    if (cat === "SPOTLIGHT" || cat === "PRESS" || cat === "PARTNERSHIPS" || cat === "TALENT") return "/news_spotlight.png";
+    if (cat === "MOMENTUM") return "/news_momentum.png";
+    return "/news_company.png"; // Fallback to general workspace
   };
 
   const renderNewsCard = (news, isPinnedSection = false) => {
