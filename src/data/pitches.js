@@ -396,5 +396,167 @@ export const PITCH_TEMPLATES = [
     market: "public food cooking and reheating",
     painPoint: "lack of public cooking or reheating options",
     customerNoun: "on-the-go professionals"
+  },
+
+  // =========================
+  // FOOD & BEVERAGE (USER ADDITIONS)
+  // =========================
+
+  {
+    id: "fb_019",
+    businessNames: ["FreshSight AI", "ProduceIQ", "Harvest Vision", "CropScan", "FreshLens"],
+    industry: "Food & Beverage",
+    archetype: "academic",
+    product: "an AI-powered produce inspection system",
+    market: "commercial food processing",
+    painPoint: "inconsistent quality control for fresh produce",
+    customerNoun: "food manufacturers"
+  },
+
+  {
+    id: "fb_020",
+    businessNames: ["Boardroom Bites", "Corporate Cravings", "Office Feast", "LunchLine", "Executive Eats"],
+    industry: "Food & Beverage",
+    archetype: "operator",
+    product: "a corporate catering service",
+    market: "business catering",
+    painPoint: "unreliable workplace catering",
+    customerNoun: "businesses"
+  },
+
+  {
+    id: "fb_021",
+    businessNames: ["FreshVault", "DairySafe", "ColdKeeper", "MilkLock", "Fridge+ Fresh"],
+    industry: "Food & Beverage",
+    archetype: "visionary",
+    product: "a specialized dairy preservation refrigerator",
+    market: "consumer kitchen appliances",
+    painPoint: "premature dairy spoilage",
+    customerNoun: "households"
+  },
+
+  {
+    id: "fb_022",
+    businessNames: ["HydraLock", "SipSecure", "AquaPrint", "BottleSafe", "FingerSip"],
+    industry: "Food & Beverage",
+    archetype: "first_time_founder",
+    product: "a fingerprint-locked reusable water bottle",
+    market: "premium drinkware",
+    painPoint: "shared or stolen water bottles",
+    customerNoun: "gym-goers"
+  },
+
+  {
+    id: "fb_023",
+    businessNames: ["SteriBath", "PureSoak", "KitchenCleanse", "Utensil Spa", "Clean Basin"],
+    industry: "Food & Beverage",
+    archetype: "academic",
+    product: "an antibacterial sanitizing bath for kitchen utensils",
+    market: "commercial kitchen hygiene",
+    painPoint: "bacteria buildup on frequently used utensils",
+    customerNoun: "restaurant owners"
+  },
+
+  {
+    id: "fb_024",
+    businessNames: ["FrostBowl", "ChillDish", "Polar Plate", "ColdCradle", "FreezeServe"],
+    industry: "Food & Beverage",
+    archetype: "visionary",
+    product: "a refreezable serving bowl that keeps food cold",
+    market: "kitchenware",
+    painPoint: "frozen desserts melting too quickly",
+    customerNoun: "home entertainers"
+  },
+
+  {
+    id: "fb_025",
+    businessNames: ["SpiceShot", "Pepper Revolver", "PowderBlast", "SeasonSix", "Flavor Cannon"],
+    industry: "Food & Beverage",
+    archetype: "hustler",
+    product: "a revolving handheld spice dispenser",
+    market: "kitchen gadgets",
+    painPoint: "messy and inconsistent spice seasoning",
+    customerNoun: "home cooks"
+  },
+
+  // =========================
+  // HEALTH & WELLNESS (USER ADDITIONS)
+  // =========================
+
+  {
+    id: "hw_013",
+    businessNames: ["VisionCheck", "EyeTest Home", "SightSimple", "OptiScan", "ClearView Kit"],
+    industry: "Health & Wellness",
+    archetype: "academic",
+    product: "an over-the-counter eye examination kit",
+    market: "consumer vision care",
+    painPoint: "limited access to routine eye exams",
+    customerNoun: "adults"
+  },
+
+  {
+    id: "hw_014",
+    businessNames: ["HearPods", "EchoBuds", "AudioAid", "SoundBridge", "DualHear"],
+    industry: "Health & Wellness",
+    archetype: "visionary",
+    product: "hearing aids that double as wireless earbuds",
+    market: "hearing assistance devices",
+    painPoint: "stigma surrounding traditional hearing aids",
+    customerNoun: "older adults"
+  },
+
+  {
+    id: "hw_015",
+    businessNames: ["PulseTherapy", "ReliefWave", "NeuroEase", "StimWell", "HomeStim"],
+    industry: "Health & Wellness",
+    archetype: "academic",
+    product: "a consumer electrotherapy kit",
+    market: "at-home pain management",
+    painPoint: "limited access to affordable physical therapy",
+    customerNoun: "chronic pain sufferers"
+  },
+
+  {
+    id: "hw_016",
+    businessNames: ["ExtraGrip", "BionicDigits", "GripPlus", "FingerFlex", "Extend Hand"],
+    industry: "Health & Wellness",
+    archetype: "visionary",
+    product: "attachable robotic assistive fingers",
+    market: "assistive mobility devices",
+    painPoint: "reduced hand dexterity",
+    customerNoun: "people with mobility impairments"
+  },
+
+  {
+    id: "hw_017",
+    businessNames: ["RepTrack", "LiftSense", "ArmCount", "FlexCounter", "GymPulse"],
+    industry: "Health & Wellness",
+    archetype: "operator",
+    product: "an arm-mounted exercise repetition counter",
+    market: "fitness wearables",
+    painPoint: "difficulty tracking workout repetitions",
+    customerNoun: "fitness enthusiasts"
+  },
+
+  {
+    id: "hw_018",
+    businessNames: ["SunShot", "SprayShield", "UV Blaster", "Screen Cannon", "SolarGuard"],
+    industry: "Health & Wellness",
+    archetype: "hustler",
+    product: "a handheld sunscreen applicator",
+    market: "sun protection products",
+    painPoint: "uneven sunscreen application",
+    customerNoun: "outdoor enthusiasts"
+  },
+
+  {
+    id: "hw_019",
+    businessNames: ["MediComb", "ScalpCare", "TreatTress", "HealBrush", "DermComb"],
+    industry: "Health & Wellness",
+    archetype: "visionary",
+    product: "a medicinal comb that dispenses scalp ointment through its teeth",
+    market: "scalp treatment products",
+    painPoint: "messy application of medicated scalp treatments",
+    customerNoun: "people with chronic scalp conditions"
   }
 ];
