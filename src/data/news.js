@@ -382,7 +382,7 @@ export const NEWS_BANK = [
     category: "INFLUENCERS",
     impact: "LOW",
     timeString: "Yesterday",
-    headline: "YouTuber tryShiv Busted for Created Fake Accounts to Inflate Subscribers",
+    headline: "YouTuber tryShiv Busted for Creating Fake Accounts to Inflate Subscribers",
     detail: "Young immigrant YouTuber created countless emails to artificially increase subscriber count."
   },
   {

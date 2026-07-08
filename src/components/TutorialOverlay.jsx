@@ -89,7 +89,13 @@ export default function TutorialOverlay({ activeTab }) {
     const updateCoords = () => {
       let targetId = currentStepData.targetId;
       if (window.innerWidth <= 768 && targetId && targetId.startsWith("sidebar-tab")) {
-        targetId = "hamburger-menu-btn";
+        const mobileTabId = targetId.replace("sidebar-tab-", "mobile-tab-");
+        const mobileEl = document.getElementById(mobileTabId);
+        if (mobileEl) {
+          targetId = mobileTabId;
+        } else {
+          targetId = "hamburger-menu-btn";
+        }
       }
       const el = document.getElementById(targetId);
       if (el) {
@@ -112,12 +118,19 @@ export default function TutorialOverlay({ activeTab }) {
     const timer1 = setTimeout(updateCoords, 100);
     const timer2 = setTimeout(updateCoords, 500);
 
+    const handleClick = () => {
+      // Small timeout to let React render state updates (e.g. menu open/close)
+      setTimeout(updateCoords, 50);
+    };
+
+    window.addEventListener("click", handleClick);
     window.addEventListener("resize", updateCoords);
     window.addEventListener("scroll", updateCoords, true); // Use capture phase so scrolling scrollable panels triggers update
 
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
+      window.removeEventListener("click", handleClick);
       window.removeEventListener("resize", updateCoords);
       window.removeEventListener("scroll", updateCoords, true);
     };
