@@ -319,7 +319,7 @@ export const SEGMENTS = {
     {
       id: "intro_desperate_3",
       tones: ["desperate"],
-      text: "I started {{companyName}} because I poured my life savings into it, and we are so close to cracking {{painPoint}} if we can just keep the lights on."
+      text: "I poured my life savings into {{companyName}}, and we are so close to cracking {{painPoint}} if we can just make ends meet."
     },
     {
       id: "intro_desperate_4",

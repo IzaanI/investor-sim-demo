@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useGameStore } from "../state/useGameStore";
 import { formatMoney } from "./Header";
 import { HelpCircle, ChevronRight, X } from "lucide-react";
@@ -79,8 +79,11 @@ export default function TutorialOverlay({ activeTab }) {
 
   const currentStepData = steps[tutorialStep];
 
+  const hasScrolledForStep = useRef(false);
+
   // Track target coords
   useEffect(() => {
+    hasScrolledForStep.current = false;
     if (!tutorialActive || !currentStepData || !currentStepData.targetId) {
       setCoords(null);
       return;
@@ -99,6 +102,12 @@ export default function TutorialOverlay({ activeTab }) {
       }
       const el = document.getElementById(targetId);
       if (el) {
+        // Scroll the target element into view exactly once when first detected
+        if (!hasScrolledForStep.current) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          hasScrolledForStep.current = true;
+        }
+
         const rect = el.getBoundingClientRect();
         // Add a slight padding to the spotlight box for visual breathing room
         const padding = 8;
