@@ -90,6 +90,15 @@ export const PITCH_TEMPLATES = [
     customerNoun: "healthy snackers"
   },
   {
+    id: "Bagwhole",
+    businessNames: ["Bagwhole", "Build-A-Bagel", "Bageler", "W Hole", "Hole Foods"],
+    industry: "Health & Wellness",
+    product: "a machine that creates bagels by punching holes into bread",
+    market: "breakfast devices",
+    painPoint: "high cost of bagels",
+    customerNoun: "money conscious bagel enjoyers"
+  },
+  {
     id: "pulse_cardio",
     businessNames: ["Pulse Cardio", "ArteriaRing", "CardioSphere", "VascularFit", "PulseLoop"],
     industry: "Health & Wellness",
@@ -410,6 +419,16 @@ export const PITCH_TEMPLATES = [
     market: "commercial food processing",
     painPoint: "inconsistent quality control for fresh produce",
     customerNoun: "food manufacturers"
+  },
+
+  {
+    id: "Muscle Bar",
+    businessNames: ["Muscle Bar", "Smoothie Strength", "Post Workout", "Slurpin' Strong", "Carbs After Cardio"],
+    industry: "Food & Beverage",
+    product: "smoothie bar specialized for post-workout nutrition",
+    market: "post-workout nutrition",
+    painPoint: "lack of macro-friendly drink spots",
+    customerNoun: "thirsty gym-goers trying to maximize gains"
   },
 
   {
