@@ -178,6 +178,8 @@ export function rollPitchInstance(template, drawnSegments, usedBusinessNames, ne
     instanceId: `${template.id}_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
     businessName,
     industry: template.industry,
+    product: template.product,
+    customerNoun: template.customerNoun,
     archetypeKey: selectedArchetypeKey,
     archetypeLabel: ARCHETYPES[selectedArchetypeKey]?.label ?? selectedArchetypeKey,
     assembledParagraphs,
@@ -302,18 +304,27 @@ function generateCompanyNews(portfolio, nextTurn, limit = 3) {
     // Resolve market from holding (fall back gracefully)
     const market = holding.industry || "emerging";
 
+    const product = holding.product || "product";
+    const customerNoun = holding.customerNoun || "customers";
+
     const headline = template.headline
       .replace(/\{\{companyName\}\}/g, holding.businessName)
-      .replace(/\{\{market\}\}/g, market);
+      .replace(/\{\{market\}\}/g, market)
+      .replace(/\{\{product\}\}/g, product)
+      .replace(/\{\{customerNoun\}\}/g, customerNoun);
 
     const detail = template.detail
       .replace(/\{\{companyName\}\}/g, holding.businessName)
-      .replace(/\{\{market\}\}/g, market);
+      .replace(/\{\{market\}\}/g, market)
+      .replace(/\{\{product\}\}/g, product)
+      .replace(/\{\{customerNoun\}\}/g, customerNoun);
 
     const actionableDetail = template.actionableDetail
       ? template.actionableDetail
           .replace(/\{\{companyName\}\}/g, holding.businessName)
           .replace(/\{\{market\}\}/g, market)
+          .replace(/\{\{product\}\}/g, product)
+          .replace(/\{\{customerNoun\}\}/g, customerNoun)
       : null;
 
     companyHeadlines.push({
@@ -445,7 +456,7 @@ export function resolveTurn(state, operatingCost = 50000) {
           investedAmount: holding.investedAmount,
           businessName: holding.businessName,
           type: "founder_swap",
-          promptText: `The original founder of ${holding.businessName} has stepped down. A new CEO has taken the reins, changing the company's culture.`,
+          promptText: `The current founder of ${holding.businessName} has stepped down. A new CEO will guide the company, changing its culture.`,
           options: [{ id: "ok", label: "Noted", effectType: "acknowledge_founder_swap" }]
         });
 
@@ -484,7 +495,7 @@ export function resolveTurn(state, operatingCost = 50000) {
           investedAmount: holding.investedAmount,
           businessName: holding.businessName,
           type: "lawsuit",
-          promptText: `CONFLICT OF INTEREST LAWSUIT: The founder of ${holding.businessName} discovered your investment in a direct competitor. They are threatening to dissolve the partnership unless you settle out of court for $150,000.`,
+          promptText: `The founder of ${holding.businessName} discovered your investment in a direct competitor. They are threatening to dissolve the partnership unless you settle out of court for $150,000.`,
           eventAsk: 150000,
           buyoutAmount: 0,
           options: [

@@ -696,7 +696,7 @@ export const SEGMENTS = {
     {
       id: "close_aggressive_user_2",
       tones: ["aggressive"],
-      text: "My team knows that {{companyName}} is going to make us richer than Elon Musk, Jeff Bezos, and even Shivin Jain. Join us while you still can."
+      text: "My team knows that {{companyName}} is going to make a lucky investor very rich. Join us while you still can."
     },
     {
       id: "close_aggressive_user_3",

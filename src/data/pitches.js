@@ -136,6 +136,15 @@ export const PITCH_TEMPLATES = [
     customerNoun: "busy professionals"
   },
   {
+    id: "ShivMart",
+    businessNames: ["ShivMart", "Shiv's Masala Mart", "Shiv's Masala Market", "Spices by Shiv", "Shiv Likes it Spicy"],
+    industry: "Health & Wellness",
+    product: "a market exclusively for curry spices",
+    market: "spices and seasonings",
+    painPoint: "no dedicated spice market",
+    customerNoun: "curry enthusiasts"
+  },
+  {
     id: "hw_007",
     businessNames: ["ZenSock", "ToeBalance", "SockSense", "GroundedFeet", "CalmStep"],
     industry: "Health & Wellness",

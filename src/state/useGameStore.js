@@ -215,6 +215,8 @@ export const useGameStore = create((set, get) => ({
     const newHolding = {
       pitchId: pitch.id,
       businessName: pitch.businessName,
+      product: pitch.product,
+      customerNoun: pitch.customerNoun,
       archetypeLabel: pitch.archetypeLabel,
       backgroundChecked: logEntry?.backgroundChecked || false,
       backgroundClue: logEntry?.backgroundClue || null,
