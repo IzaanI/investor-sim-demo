@@ -6,7 +6,7 @@ export const ARCHETYPES = {
       "key_man_risk",
       "solid_prior_exit",
       "proprietary_tech",
-      "proprietary_tech",
+      "bootstrapped_culture",
       "history_of_burn_out",
       "deep_domain_expertise"
     ]
@@ -15,9 +15,9 @@ export const ARCHETYPES = {
     label: "The Operator",
     tones: ["methodical", "aggressive", "confident"],
     traitBias: [
-      "over_optimized_marketing",
+      "shops_deal",
       "efficient_operations",
-      "efficient_operations",
+      "questionable_legal_history",
       "niche_focus",
       "toxic_culture",
       "deep_domain_expertise"
@@ -31,8 +31,8 @@ export const ARCHETYPES = {
       "shops_deal",
       "bootstrapped_culture",
       "solid_prior_exit",
-      "history_of_burn_out",
-      "pivot_history"
+      "toxic_culture",
+      "questionable_legal_history"
     ]
   },
   first_time_founder: {
@@ -56,7 +56,7 @@ export const ARCHETYPES = {
       "niche_focus",
       "shops_deal",
       "solo_founder",
-      "toxic_culture"
+      "efficient_operations"
     ]
   },
   academic: {
@@ -65,7 +65,7 @@ export const ARCHETYPES = {
     traitBias: [
       "key_man_risk",
       "proprietary_tech",
-      "questionable_legal_history",
+      "passionate_but_inexperienced",
       "bootstrapped_culture",
       "pivot_history",
       "strong_advisory_board"

@@ -181,6 +181,15 @@ export const PITCH_TEMPLATES = [
     customerNoun: "families"
   },
   {
+    id: "Employed by Hayden",
+    businessNames: ["Employed by Hayden", "Hayden Codes", "Hayden Codez", "Hayden Pro"],
+    industry: "Health & Wellness",
+    product: "a personalized course to help computer science graduates find jobs",
+    market: "computer science employment",
+    painPoint: "saturated computer science field",
+    customerNoun: "computer science graduates"
+  },
+  {
     id: "hw_011",
     businessNames: ["AuraScan", "SpiritMetrics", "EnergySync", "VibeSense", "QuantumAura"],
     industry: "Health & Wellness",

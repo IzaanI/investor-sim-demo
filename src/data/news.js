@@ -6,8 +6,8 @@ export const NEWS_BANK = [
     category: "POLICY",
     impact: "MEDIUM",
     timeString: "1 day ago",
-    headline: "Interest Rates Held Steady by Central Bank",
-    detail: "Central bank signals potential rate cuts in early next year as inflation shows signs of cooling. Markets react positively to the stability.",
+    headline: "Central Bank Holds Interest Rates Steady",
+    detail: "Banks suggest interest rates might drop next year as prices stop rising so fast. Businesses are reacting positively to the stability.",
     relevantTraits: []
   },
   {
@@ -17,8 +17,8 @@ export const NEWS_BANK = [
     category: "ECONOMY",
     impact: "MEDIUM",
     timeString: "5 hours ago",
-    headline: "Global Supply Chain Delays Continue",
-    detail: "New disruptions in key shipping lanes expected to impact wellness hardware container shipping through next 2 quarters.",
+    headline: "Shipping Delays Impact Businesses Worldwide",
+    detail: "New complications with international shipping routes are expected to delay deliveries of equipment and hardware for the next six months.",
     relevantTraits: [],
     duration: 6,
     macroModifiers: {
@@ -35,8 +35,8 @@ export const NEWS_BANK = [
     category: "REGULATORY",
     impact: "HIGH",
     timeString: "2 hours ago",
-    headline: "Regulators Probing Unsubstantiated Health Claims in Supplements",
-    detail: "The Federal Trade Commission warns that wellness startups making clinical claims without peer-reviewed studies will face heavy audits and fines.",
+    headline: "Government Cracks Down on Fake Health Claims",
+    detail: "Regulators are warning wellness startups that they will face massive fines if they make medical promises without real scientific proof.",
     relevantTraits: ["uncalculated_risk_taker"],
     duration: 3,
     macroModifiers: {
@@ -51,8 +51,8 @@ export const NEWS_BANK = [
     category: "LEGAL",
     impact: "HIGH",
     timeString: "3 hours ago",
-    headline: "Venture Capitalists Increase Background Audits on Founders",
-    detail: "Following a series of corporate frauds, top firms are mandating rigorous legal background checks prior to term sheet execution.",
+    headline: "Investors Start Running Deeper Background Checks on Founders",
+    detail: "After several high-profile startup scams, major investors are demanding strict legal background checks before handing over any money.",
     relevantTraits: ["questionable_legal_history"]
   },
   {
@@ -63,8 +63,8 @@ export const NEWS_BANK = [
     category: "MARKETS",
     impact: "MEDIUM",
     timeString: "8 hours ago",
-    headline: "Boutique Wellness Sector Outperforms Traditional Retail",
-    detail: "Consumers are shifting discretionary spend towards high-end gym memberships and specialized dietary supplements.",
+    headline: "Specialty Health and Fitness Businesses are Booming",
+    detail: "People are spending more of their extra cash on premium gym memberships and specialized health products instead of traditional shopping.",
     relevantTraits: []
   },
   // --- TURN 3 EVENTS (Includes Rebound and Positive Boost) ---
@@ -75,8 +75,8 @@ export const NEWS_BANK = [
     category: "MARKETS",
     impact: "MEDIUM",
     timeString: "6 hours ago",
-    headline: "Venture Capital Funding Activity Rebounds",
-    detail: "Early-stage investment rounds show a 15% increase in deal volume compared to last quarter, signaling renewed interest in high-growth startups.",
+    headline: "Startup Funding Bounces Back",
+    detail: "The number of investments in new businesses has jumped 15% since last quarter, showing that investors are eager to fund young startups again.",
     relevantTraits: []
   },
   {
@@ -87,8 +87,8 @@ export const NEWS_BANK = [
     category: "POLICY",
     impact: "HIGH",
     timeString: "10 mins ago",
-    headline: "Major Health Insurer Announces Subsidies for Wellness Hardware",
-    detail: "A leading private health provider will offer premium discounts to members using certified biometric devices, driving customer adoption rates.",
+    headline: "Major Health Insurance Company Announces Subsidies for Fitness Devices",
+    detail: "A major insurance provider is now offering discounts to customers who use approved health trackers, giving a huge boost to fitness tech companies.",
     relevantTraits: [],
     duration: 3,
     macroModifiers: {
@@ -103,8 +103,8 @@ export const NEWS_BANK = [
     category: "FINANCIAL",
     impact: "HIGH",
     timeString: "1 hour ago",
-    headline: "Auditing Firm Warns of Inflated Startup User Metrics",
-    detail: "A major accounting firm reports that up to 30% of early-stage SaaS and subscription startups are overstating active user counts.",
+    headline: "Report Warns that Startups are Increasingly Inflating Customer Metrics",
+    detail: "A major accounting group found that up to 30% of new software companies might be lying about how many active customers they actually have.",
     relevantTraits: ["inflated_metrics"]
   },
   {
@@ -114,8 +114,8 @@ export const NEWS_BANK = [
     category: "MARKETS",
     impact: "MEDIUM",
     timeString: "12 hours ago",
-    headline: "Serial Founders Command Higher Valuations",
-    detail: "Data shows that founders with at least one successful prior exit raise seed rounds at a 25% premium on average.",
+    headline: "2nd-Time Founders With Past Success Are Raising More Money Than Ever Before",
+    detail: "Data shows that entrepreneurs who have already built and sold a successful company are getting 25% more money from investors.",
     relevantTraits: ["solid_prior_exit"]
   },
   // --- TURN 4 EVENTS (Includes Circadian Trend and Talent Fluff) ---
@@ -127,8 +127,8 @@ export const NEWS_BANK = [
     category: "MARKETS",
     impact: "MEDIUM",
     timeString: "1 hour ago",
-    headline: "Viral Social Trend Sparks Surge in Epigenetic Bio-hacking",
-    detail: "Public interest in DNA-matched wellness tools hits record highs. Active consumer demand shifts toward personalized supplements and wellness hardware.",
+    headline: "Viral Social Trend Sparks Surge in Personalized Health Tech",
+    detail: "Public interest in DNA-matched wellness tools hits record highs. People are rushing to buy personalized supplements and health tracking hardware.",
     relevantTraits: [],
     duration: 6,
     macroModifiers: {
@@ -143,8 +143,8 @@ export const NEWS_BANK = [
     category: "ECONOMY",
     impact: "LOW",
     timeString: "1 day ago",
-    headline: "Tech Layoffs Expand Early-Stage Startup Talent Pool",
-    detail: "Engineering and product managers departing legacy platforms are increasingly joining early-stage ventures, easing structural recruiting bottlenecks.",
+    headline: "Big Tech Layoffs Diversify Hiring Pool for Startups",
+    detail: "Engineers leaving massive tech companies are now joining smaller startups, making it much easier for young companies to find great talent.",
     relevantTraits: []
   },
   {
@@ -154,8 +154,8 @@ export const NEWS_BANK = [
     category: "MANAGEMENT",
     impact: "HIGH",
     timeString: "4 hours ago",
-    headline: "Startup Founders Struggle with Key Personnel Attrition",
-    detail: "Venture analysts report an increase in startup operational failures when core software systems and intellectual properties are concentrated in one developer.",
+    headline: "Recent Economic Downturn Hits Companies With Single Key Developers Hardest",
+    detail: "Analysts report that many startups are failing because they rely entirely on a single key developer to handle all of their technology.",
     relevantTraits: ["key_man_risk"],
     duration: 3,
     macroModifiers: {
@@ -171,8 +171,8 @@ export const NEWS_BANK = [
     category: "MARKETS",
     impact: "LOW",
     timeString: "2 days ago",
-    headline: "Private Equity Inflow to Supplement Brands Slows Down",
-    detail: "M&A activity declines as institutional players search for high-growth sectors outside nutrition.",
+    headline: "Large Private Equity Firms Are Investing Less in Nutrition Than Ever Before",
+    detail: "Large investment firms are buying fewer nutrition companies as they start looking for faster-growing industries to invest in.",
     relevantTraits: []
   },
   // --- TURN 5 EVENTS (Includes R&D Tax Credits) ---
@@ -183,8 +183,8 @@ export const NEWS_BANK = [
     category: "POLICY",
     impact: "HIGH",
     timeString: "2 hours ago",
-    headline: "New Federal R&D Tax Credits Enacted for Tech Startups",
-    detail: "Bipartisan legislation allows early-stage companies to offset operational expenses against research tax credits, preserving cash runway for innovators.",
+    headline: "New Tax Breaks Give Tech Startups a Helpful Boost",
+    detail: "Newly passed laws are giving generous tax discounts to small businesses that invent new tech, helping them save money to survive longer.",
     relevantTraits: [],
     duration: 3,
     macroModifiers: {
@@ -199,8 +199,8 @@ export const NEWS_BANK = [
     category: "MARKETING",
     impact: "HIGH",
     timeString: "2 hours ago",
-    headline: "Industry Audits Show Decaying Retention on Social Acquisition Channels",
-    detail: "Marketing experts warn that while digital ad campaigns drive cheap trial conversions, consumer subscription churn by Month 2 has doubled.",
+    headline: "Companies Are Losing Customers Brought In by Social Media Ads",
+    detail: "Marketing experts warn that while social media ads get cheap sign-ups, most of those new customers cancel their subscriptions almost immediately.",
     relevantTraits: ["over_optimized_marketing"],
     duration: 6,
     macroModifiers: {
@@ -216,8 +216,8 @@ export const NEWS_BANK = [
     category: "REGULATORY",
     impact: "HIGH",
     timeString: "5 hours ago",
-    headline: "State Attorneys General Launch Clean Label Investigation",
-    detail: "Consumer protection agencies warn of imminent crackdowns on clean-label startups making wellness claims without clinical support.",
+    headline: "State Governments Investigate 'Clean' Health Brands",
+    detail: "Consumer protection groups are threatening to crack down on health startups that sell 'clean' products but can't back up their health claims with real science.",
     relevantTraits: ["uncalculated_risk_taker", "questionable_legal_history"]
   },
   // ---------- FOOD & BEVERAGE NEWS ----------
@@ -377,13 +377,23 @@ export const NEWS_BANK = [
   },
   {
     id: "fluff_youtuber_busted",
-    minTurn: 2,
+    minTurn: 1,
     scope: "general",
     category: "INFLUENCERS",
     impact: "LOW",
     timeString: "Yesterday",
     headline: "YouTuber tryShiv Busted for Creating Fake Accounts to Inflate Subscribers",
-    detail: "Young immigrant YouTuber created countless emails to artificially increase subscriber count."
+    detail: "Young immigrant YouTuber exposed for creating countless emails to artificially increase subscriber count."
+  },
+  {
+    id: "fluff_hayden",
+    minTurn: 1,
+    scope: "general",
+    category: "INFLUENCERS",
+    impact: "LOW",
+    timeString: "Yesterday",
+    headline: "Popular YouTuber Hayden Recieves Backlash after Accidentally Posting a Video of Himself Playing League of Legends",
+    detail: "The young content creator is now facing criticism for not being a 'true gamer' and is being called out for his taste in video games."
   },
   {
     id: "fluff_battle_bettesworth",

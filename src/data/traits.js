@@ -31,7 +31,7 @@ export const TRAITS = {
     category: "financial",
     backgroundClue: [
       "A data provider cross-referencing app store ratings and web traffic suggests active user counts may be significantly overstated.",
-      "Experts in industry claim that they have only seen reported sales margins this high in the top 1% of companies.",
+      "Skeptical experts in industry claim that they have only seen reported sales margins this high in the top 1% of companies.",
       "Industry contacts familiar with this company's space say the reported figures are inconsistent with typical conversion rates at this stage."
     ],
     outcomeNudge: { growth: -0.3, decline: 0.35, volatile: 0.0 }
@@ -44,7 +44,7 @@ export const TRAITS = {
     backgroundClue: [
       "The founder completed their undergraduate degree two years ago and has no prior company leadership on record.",
       "Early business documentation indicates that 40% of the executive team consists of high-school dropouts with big dreams.",
-      "LinkedIn and public profiles show strong domain knowledge but no management or operational track record."
+      "LinkedIn and public profiles show strong domain knowledge but limited management or operational track record."
     ],
     outcomeNudge: { growth: -0.05, decline: 0.1, volatile: 0.15 }
   },
@@ -66,7 +66,7 @@ export const TRAITS = {
     severity: "mild",
     category: "process",
     backgroundClue: [
-      "Ad spend data from a third-party tool shows unusually high paid acquisition relative to the company's reported revenue.",
+      "Ad spend data from a third-party tool shows unusually high marketing costs relative to reported revenue.",
       "Online testimonials reveal a 50/50 split of 5 star and 1 star reviews.",
       "A consumer review aggregator shows strong initial ratings followed by a sharp drop-off in reviews after 60 days."
     ],
@@ -90,11 +90,11 @@ export const TRAITS = {
     severity: "severe",
     category: "process",
     backgroundClue: [
-      "A quick search on employee review sites reveals multiple allegations of a hostile work environment and high turnover.",
-      "Glassdoor insight suggests that the number of layoffs for performance reasons is less than the number of employees who leave for other reasons.",
+      "Results on employee review sites reveals multiple allegations of a hostile work environment and high turnover.",
+      "Glassdoor insight suggests that the CEO prioritizes getting work done over all else. 'Remember people, safety is #2,' one employee quoted in a review.",
       "Three senior engineers have departed in the last six months, citing fundamental disagreements with leadership."
     ],
-    outcomeNudge: { growth: -0.20, decline: 0.30, volatile: 0.15 }
+    outcomeNudge: { growth: 0.05, decline: 0.30, volatile: 0.25 }
   },
 
   // ─── NEUTRAL PROCESS TRAITS ────────────────────────────────────────────────
@@ -106,9 +106,9 @@ export const TRAITS = {
     backgroundClue: [
       "Multiple sources in the investor community confirm this deal has been circulating for a few months.",
       "Similar pitches that occured recently suggest that the founder is only interested in an investor that believes in the product.",
-      "Two other firms received the same deck within the past six weeks. The round has not closed."
+      "Company site reveals that the founding team is comprised exclusively of entrepreneurs of Indian descent."
     ],
-    outcomeNudge: { growth: 0.0, decline: 0.0, volatile: 0.0 }
+    outcomeNudge: { growth: 0.04, decline: 0.02, volatile: 0.0 }
   },
   bootstrapped_culture: {
     id: "bootstrapped_culture",
@@ -116,11 +116,11 @@ export const TRAITS = {
     severity: "neutral",
     category: "history",
     backgroundClue: [
-      "Company registry shows the founders funded operations through consulting revenues for the first eighteen months.",
+      "Company registry shows the founders strictly avoided external funding for the first eighteen months of operation.",
       "Publications around company culture indicate that founder strives to maintain 0-debt for as long as possible.",
-      "Cap table shows zero outside institutional investors prior to this current seed round."
+      "Cap table shows zero outside institutional investors prior to this current round."
     ],
-    outcomeNudge: { growth: 0.0, decline: 0.0, volatile: 0.0 }
+    outcomeNudge: { growth: 0.05, decline: 0.0, volatile: 0.05 }
   },
   niche_focus: {
     id: "niche_focus",
@@ -128,10 +128,10 @@ export const TRAITS = {
     severity: "neutral",
     category: "strategy",
     backgroundClue: [
-      "Ad diagnostics indicate the company operates strictly within a tight sub-demographic, with limited intent to expand adjacent lines.",
-      "Customer cohorts indicate high advocacy scores but within a restricted, highly specific user pool."
+      "Ad diagnostics indicate the company operates within a tight sub-demographic, with limited intent to expand outside their niche.",
+      "Insiders allege that the company recently rejected a partnership with a larger competitor to maintain their niche focus."
     ],
-    outcomeNudge: { growth: 0.0, decline: 0.0, volatile: 0.0 }
+    outcomeNudge: { growth: 0.05, decline: 0.03, volatile: 0.0 }
   },
   solo_founder: {
     id: "solo_founder",
@@ -152,9 +152,9 @@ export const TRAITS = {
     backgroundClue: [
       "The company's original domain name changed 8 months ago after discovering a company had a similar name.",
       "When introducing new products or services, the company prefers to pivot instead of persisting if there are no short-term forecastable results.",
-      "Archived versions of their website show they initially targeted enterprise before recently pivoting to consumer."
+      "Archived versions of the company website show they initially targeted enterprise before recently pivoting to consumer."
     ],
-    outcomeNudge: { growth: 0.05, decline: 0.05, volatile: 0.10 }
+    outcomeNudge: { growth: 0.05, decline: 0.05, volatile: 0.15 }
   },
 
   // ─── POSITIVE TRAITS ───────────────────────────────────────────────────────
@@ -168,7 +168,7 @@ export const TRAITS = {
       "A public records check reveals at least 2 members of the C-suite in this business have been involved in successful exits.",
       "Press records confirm a successful exit in an adjacent sector. The founder was listed as co-founder and CTO."
     ],
-    outcomeNudge: { growth: 0.15, decline: -0.1, volatile: -0.05 }
+    outcomeNudge: { growth: 0.17, decline: -0.10, volatile: 0.0}
   },
   proprietary_tech: {
     id: "proprietary_tech",
@@ -177,7 +177,7 @@ export const TRAITS = {
     category: "technology",
     backgroundClue: [
       "Public patent registries show two active, approved utility patents assigned directly to this company.",
-      "Previous executives confirm that company plans to pursue unique routes compared to others in the industry.",
+      "Previous executives confirm that the company possesses proprietary technology and plans on taking measures to protect it.",
       "Technical advisers confirm the core algorithm is highly defensible and not reliant on public APIs."
     ],
     outcomeNudge: { growth: 0.15, decline: -0.10, volatile: -0.05 }
@@ -213,7 +213,7 @@ export const TRAITS = {
     category: "structure",
     backgroundClue: [
       "The cap table includes two highly respected industry veterans who are actively providing strategic guidance.",
-      "Formal filings reveal a board of directors with a proven track record of shepherding companies through IPOs."
+      "Formal filings reveal a board of directors that offer advantageous industry expertise and network connections."
     ],
     outcomeNudge: { growth: 0.15, decline: -0.15, volatile: -0.05 }
   }

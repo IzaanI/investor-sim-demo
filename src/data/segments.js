@@ -43,7 +43,7 @@ export const SEGMENTS = {
     {
       id: "intro_confident_user_3",
       tones: ["confident"],
-      text: "Our team didn't come here with a dream—we came with results."
+      text: "Our team didn't come here with a dream-we came with results."
     },
     {
       id: "intro_confident_user_4",
@@ -193,13 +193,13 @@ export const SEGMENTS = {
     {
       id: "intro_casual_4",
       tones: ["casual"],
-      text: "Yeah, so the idea for {{companyName}} basically came from being super annoyed by {{painPoint}} every single day."
+      text: "So the idea for {{companyName}} basically came from being super annoyed by {{painPoint}} every single day."
     },
     // --- USER SUBMITTED AGGRESSIVE ---
     {
       id: "intro_agg_user_1",
       tones: ["aggressive"],
-      text: "I'm not asking whether {{painPoint}} is a real problem—we both know it is. The only question is who's going to profit from solving it."
+      text: "I'm not asking whether {{painPoint}} is a real problem, we both know it is. The only question is who's going to profit from solving it."
     },
     {
       id: "intro_agg_user_2",
@@ -220,7 +220,7 @@ export const SEGMENTS = {
     {
       id: "intro_meth_user_1",
       tones: ["methodical"],
-      text: "Our goal wasn't to reinvent the industry overnight—it was to build a better solution through careful iteration."
+      text: "Our goal wasn't to reinvent the industry overnight, it was to build a better solution through careful iteration."
     },
     {
       id: "intro_meth_user_2",
