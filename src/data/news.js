@@ -8,7 +8,14 @@ export const NEWS_BANK = [
     timeString: "1 day ago",
     headline: "Central Bank Holds Interest Rates Steady",
     detail: "Banks suggest interest rates might drop next year as prices stop rising so fast. Businesses are reacting positively to the stability.",
-    relevantTraits: []
+    relevantTraits: [],
+    founderCommentary: {
+      positive: "We have secured favorable debt terms now that interest rates are holding steady.",
+      negative: [
+        "Interest rates are not something we need to worry about right now.",
+        "I am expecting interest rates to rise significantly over the next year, which is why we need funding now."
+      ]
+    }
   },
   {
     id: "news_supply_chain",
@@ -20,6 +27,13 @@ export const NEWS_BANK = [
     headline: "Shipping Delays Impact Businesses Worldwide",
     detail: "New complications with international shipping routes are expected to delay deliveries of equipment and hardware for the next six months.",
     relevantTraits: [],
+    founderCommentary: {
+      positive: "We have a local supply agreement to avoid any global shipping delays.",
+      negative: [
+        "We use overseas suppliers to keep our costs as low as possible.",
+        "Global shipping times have never been faster, so we expect zero delays getting our product to market."
+      ]
+    },
     duration: 6,
     macroModifiers: {
       declineWeightModifier: 0.15,
@@ -53,7 +67,14 @@ export const NEWS_BANK = [
     timeString: "3 hours ago",
     headline: "Investors Start Running Deeper Background Checks on Founders",
     detail: "After several high-profile startup scams, major investors are demanding strict legal background checks before handing over any money.",
-    relevantTraits: ["questionable_legal_history"]
+    relevantTraits: ["questionable_legal_history"],
+    founderCommentary: {
+      positive: "Our financial and legal history is fully transparent for any required background checks.",
+      negative: [
+        "We try not to get slowed down by too much bureaucracy or red tape.",
+        "Investors lately don't seem to care about legal checks as long as the product is good."
+      ]
+    }
   },
   {
     id: "news_wellness_boom",
@@ -77,7 +98,14 @@ export const NEWS_BANK = [
     timeString: "6 hours ago",
     headline: "Startup Funding Bounces Back",
     detail: "The number of investments in new businesses has jumped 15% since last quarter, showing that investors are eager to fund young startups again.",
-    relevantTraits: []
+    relevantTraits: [],
+    founderCommentary: {
+      positive: "Even with funding picking back up, we are being careful about who we partner with.",
+      negative: [
+        "Investors are eager to fund startups again, so we expect our valuation to rise quickly.",
+        "Venture capital funding has completely dried up, so we are your only good investment opportunity."
+      ]
+    }
   },
   {
     id: "news_preventive_subsidies",
@@ -105,7 +133,14 @@ export const NEWS_BANK = [
     timeString: "1 hour ago",
     headline: "Report Warns that Startups are Increasingly Inflating Customer Metrics",
     detail: "A major accounting group found that up to 30% of new software companies might be lying about how many active customers they actually have.",
-    relevantTraits: ["inflated_metrics"]
+    relevantTraits: ["inflated_metrics"],
+    founderCommentary: {
+      positive: "We track standard revenue metrics instead of focusing purely on user counts.",
+      negative: [
+        "Our active user numbers are high, which is the main metric we care about right now.",
+        "Major accounting firms agree that high user counts like our's are a reliable startup metric."
+      ]
+    }
   },
   {
     id: "news_serial_founders",
@@ -145,7 +180,14 @@ export const NEWS_BANK = [
     timeString: "1 day ago",
     headline: "Big Tech Layoffs Diversify Hiring Pool for Startups",
     detail: "Engineers leaving massive tech companies are now joining smaller startups, making it much easier for young companies to find great talent.",
-    relevantTraits: []
+    relevantTraits: [],
+    founderCommentary: {
+      positive: "We have been able to hire some great engineers recently due to the larger tech layoffs.",
+      negative: [
+        "We keep our team very lean and rely mostly on our junior developers.",
+        "Big tech companies are poaching all the good engineers, but we still have a reliable team."
+      ]
+    }
   },
   {
     id: "news_key_man",
@@ -157,6 +199,13 @@ export const NEWS_BANK = [
     headline: "Recent Economic Downturn Hits Companies With Single Key Developers Hardest",
     detail: "Analysts report that many startups are failing because they rely entirely on a single key developer to handle all of their technology.",
     relevantTraits: ["key_man_risk"],
+    founderCommentary: {
+      positive: "Our team is cross-trained so we do not rely on just one person for our technology.",
+      negative: [
+        "Our lead developer is the only person who truly understands how our code works.",
+        "Startups perform best when all technical knowledge is concentrated in a single brilliant developer."
+      ]
+    },
     duration: 3,
     macroModifiers: {
       declineWeightModifier: 0.15,

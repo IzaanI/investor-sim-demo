@@ -112,7 +112,7 @@ function pickTrait(archetypeKey) {
 /**
  * Rolls a single pitch instance from a template using the combinatorial engine.
  */
-export function rollPitchInstance(template, drawnSegments, usedBusinessNames, netWorth = 1000000, turnNumber = 1) {
+export function rollPitchInstance(template, drawnSegments, usedBusinessNames, netWorth = 1000000, turnNumber = 1, activeNews = [], commentaryTracker = { positive: false, negative: false }) {
   // 1. Deck system for Business Names
   const nameOptions = template.businessNames || [template.businessName || "Unknown Startup"];
   if (!usedBusinessNames[template.id]) usedBusinessNames[template.id] = [];
@@ -173,6 +173,40 @@ export function rollPitchInstance(template, drawnSegments, usedBusinessNames, ne
     ? { growth: g / total, decline: d / total, volatile: v / total }
     : baseWeights;
 
+  // 6. Inject News Commentary (if any)
+  const NEGATIVE_TRAITS = [
+    "uncalculated_risk_taker",
+    "questionable_legal_history",
+    "inflated_metrics",
+    "naive_optimist",
+    "key_man_risk",
+    "over_optimized_marketing"
+  ];
+
+  for (const news of activeNews) {
+    if (news.founderCommentary && (news.scope === "general" || news.industry === template.industry)) {
+      if (Math.random() > 0.50) continue; // 50% chance to inject
+
+      const isNegative = NEGATIVE_TRAITS.includes(traitId);
+      
+      // Ensure we don't inject the same tone twice in one turn
+      if (isNegative && commentaryTracker.negative) continue;
+      if (!isNegative && commentaryTracker.positive) continue;
+
+      if (isNegative) commentaryTracker.negative = true;
+      else commentaryTracker.positive = true;
+
+      let commentaryRaw = isNegative ? news.founderCommentary.negative : news.founderCommentary.positive;
+      const commentaryString = Array.isArray(commentaryRaw) ? commentaryRaw[Math.floor(Math.random() * commentaryRaw.length)] : commentaryRaw;
+      if (assembledParagraphs.length > 0) {
+        // Prepend to the final paragraph (the Ask)
+        const lastIdx = assembledParagraphs.length - 1;
+        assembledParagraphs[lastIdx] = commentaryString + " " + assembledParagraphs[lastIdx];
+      }
+      break; // Only inject one commentary per pitch
+    }
+  }
+
   return {
     id: template.id,
     instanceId: `${template.id}_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
@@ -193,7 +227,7 @@ export function rollPitchInstance(template, drawnSegments, usedBusinessNames, ne
 /**
  * Generates active pitches for the current turn.
  */
-export function generatePitchesForTurn(drawnSegments, seenTemplates, usedBusinessNames, netWorth = 1000000, turnNumber = 1) {
+export function generatePitchesForTurn(drawnSegments, seenTemplates, usedBusinessNames, netWorth = 1000000, turnNumber = 1, activeNews = []) {
   let count = 3;
   if (turnNumber === 1) {
     count = 1;
@@ -238,7 +272,8 @@ export function generatePitchesForTurn(drawnSegments, seenTemplates, usedBusines
     weightedPool.splice(selectedIndex, 1);
   }
 
-  return selectedTemplates.map(template => rollPitchInstance(template, drawnSegments, usedBusinessNames, netWorth, turnNumber));
+  const commentaryTracker = { positive: false, negative: false };
+  return selectedTemplates.map(template => rollPitchInstance(template, drawnSegments, usedBusinessNames, netWorth, turnNumber, activeNews, commentaryTracker));
 }
 
 /**
@@ -652,7 +687,6 @@ export function resolveTurn(state, operatingCost = 50000) {
   let nextSeenNewsIds = [...(state.seenNewsIds || [])];
 
   if (!nextGameOver && !isDemoFinished) {
-    nextPitches = generatePitchesForTurn(nextDrawnSegments, nextSeenTemplates, nextUsedBusinessNames, nextNetWorth, nextTurn);
     const ambientNews = generateAmbientNews(nextTurn, nextSeenNewsIds);
     ambientNews.forEach(news => nextSeenNewsIds.push(news.id));
 
@@ -664,6 +698,8 @@ export function resolveTurn(state, operatingCost = 50000) {
     
     const companyNews = generateCompanyNews(nextPortfolio, nextTurn, remainingSlots);
     nextNews = [...ambientNews, ...companyNews];
+
+    nextPitches = generatePitchesForTurn(nextDrawnSegments, nextSeenTemplates, nextUsedBusinessNames, nextNetWorth, nextTurn, nextNews);
 
     // Register newly triggered persistent news
     nextNews.forEach(newsItem => {
