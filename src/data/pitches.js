@@ -190,6 +190,15 @@ export const PITCH_TEMPLATES = [
     customerNoun: "computer science graduates"
   },
   {
+    id: "JagPazzeria",
+    businessNames: ["JagPazzeria", "Jagpal Pies", "Sunil 73", "Jagpal 73", "Sunny Pies"],
+    industry: "Food & Beverage",
+    product: "pizzas that can be eaten cold and frozen",
+    market: "cold foods",
+    painPoint: "long pizza baking times",
+    customerNoun: "impatient italian cuisine enjoyers"
+  },
+  {
     id: "hw_011",
     businessNames: ["AuraScan", "SpiritMetrics", "EnergySync", "VibeSense", "QuantumAura"],
     industry: "Health & Wellness",

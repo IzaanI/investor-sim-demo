@@ -455,6 +455,16 @@ export const NEWS_BANK = [
     detail: "Experts claim tensions in the Mid-West may escalate uncontrollably."
   },
   {
+    id: "fluff_jagpal_minecraft",
+    minTurn: 3,
+    scope: "general",
+    category: "WORLD",
+    impact: "LOW",
+    timeString: "2 hours ago",
+    headline: "New Minecraft Mod Developed by Jagpal Inc. Takes Gaming World by Storm",
+    detail: "Popular survival crafting game, Minecraft, experiences surge in players after a new mod pack release."
+  },
+  {
     id: "fluff_crypto_tool",
     minTurn: 1,
     scope: "general",
