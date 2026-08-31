@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { generatePitchesForTurn, generateAmbientNews, resolveTurn } from "../engine/turnResolution";
 import { TRAITS } from "../data/traits";
+import { REPUTATION_THRESHOLDS } from "../data/reputationConfig";
 
 const SAVE_KEY = "investor_game_save_v5";
 const SAVE_VERSION = 5;
@@ -59,7 +60,11 @@ const createInitialState = () => {
     seenNewsIds,
     tutorialEnabled: true, // developer config to enable/disable tutorial entirely
     tutorialActive: true,  // tracks whether tutorial is currently overlaying
-    tutorialStep: 1        // tracks current active step of the tutorial
+    tutorialStep: 1,       // tracks current active step of the tutorial
+    reputation: 0,
+    bgCheckDiscountMultiplier: 1.0,
+    claimedReputationThresholds: [],
+    pendingReputationReward: null  // { type: "cash"|"discount", amount, threshold } — cleared after modal
   };
 };
 
@@ -92,6 +97,51 @@ export const useGameStore = create((set, get) => ({
     localStorage.setItem(SAVE_KEY, JSON.stringify(freshState));
   },
 
+  // Internal helper: apply a reputation delta, check thresholds, emit rewards.
+  // Must be called AFTER set() has been called with the latest state.
+  _applyReputationDelta: (delta) => {
+    const { reputation, claimedReputationThresholds, bgCheckDiscountMultiplier, cash } = get();
+    const oldRep = Math.max(0, Math.min(100, reputation));
+    const newRep = Math.max(0, Math.min(100, oldRep + delta));
+
+    let nextCash = cash;
+    let nextMultiplier = bgCheckDiscountMultiplier;
+    let nextClaimed = [...claimedReputationThresholds];
+    let pendingReward = null;
+
+    // Check every threshold crossed upward
+    for (const t of REPUTATION_THRESHOLDS) {
+      if (oldRep < t.threshold && newRep >= t.threshold && !nextClaimed.includes(t.threshold)) {
+        nextClaimed.push(t.threshold);
+        if (Math.random() < 0.5) {
+          // Cash reward
+          const amount = Math.round((t.cashMin + Math.random() * (t.cashMax - t.cashMin)) / 1000) * 1000;
+          nextCash += amount;
+          pendingReward = { type: "cash", amount, threshold: t.threshold };
+        } else {
+          // Discount reward — always 10% off current multiplier
+          nextMultiplier = Math.round(nextMultiplier * 0.9 * 1000) / 1000;
+          pendingReward = { type: "discount", amount: 10, threshold: t.threshold };
+        }
+        break; // Only one reward per turn; subsequent thresholds fire next crossing
+      }
+    }
+
+    set({
+      reputation: newRep,
+      cash: nextCash,
+      claimedReputationThresholds: nextClaimed,
+      bgCheckDiscountMultiplier: nextMultiplier,
+      ...(pendingReward ? { pendingReputationReward: pendingReward } : {})
+    });
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
+
+  clearPendingReputationReward: () => {
+    set({ pendingReputationReward: null });
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
+
   markPitchRead: (instanceId) => {
     const { readPitches } = get();
     if (!readPitches.includes(instanceId)) {
@@ -105,7 +155,17 @@ export const useGameStore = create((set, get) => ({
     if (state.gameOver || state.demoFinished) return;
 
     const nextStateValues = resolveTurn(state, 10000); // $10K operating cost per turn
-    set(nextStateValues);
+
+    // Extract reputation deltas before merging state
+    const { reputationDeltas, ...stateToApply } = nextStateValues;
+    set(stateToApply);
+
+    // Apply reputation deltas after state is updated
+    if (reputationDeltas && reputationDeltas.length > 0) {
+      for (const { delta } of reputationDeltas) {
+        get()._applyReputationDelta(delta);
+      }
+    }
 
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   },
@@ -125,7 +185,7 @@ export const useGameStore = create((set, get) => ({
   },
 
   conductBackgroundCheck: (pitchInstanceId) => {
-    const { cash, diligenceLog, currentPitches, backgroundChecksRemaining } = get();
+    const { cash, diligenceLog, currentPitches, backgroundChecksRemaining, bgCheckDiscountMultiplier } = get();
 
     if (backgroundChecksRemaining < 1) return; // out of checks for this turn
 
@@ -142,9 +202,10 @@ export const useGameStore = create((set, get) => ({
 
     if (currentLog.backgroundChecked) return; // already run
 
-    // Cost: 5% of ask, rounded to nearest $5k, minimum $5k
-    const cost = Math.max(5000, Math.round((pitch.ask * 0.05) / 5000) * 5000);
+    // Cost: 5% of ask × discount multiplier, rounded to nearest $1k, minimum $1k
+    const cost = Math.max(1000, Math.round((pitch.ask * 0.05 * (bgCheckDiscountMultiplier || 1.0)) / 1000) * 1000);
     if (cash < cost) return; // can't afford it
+
 
     // Pick one backgroundClue from the pitch's trait
     const traitDef = TRAITS[pitch.trait];
@@ -189,26 +250,24 @@ export const useGameStore = create((set, get) => ({
       hasConflict: false
     };
 
-    if (currentLog.coiChecked) return;
+    if (currentLog.coiChecked) return; // already run
 
-    const coiCost = 1000;
-    if (get().cash < coiCost) return;
+    // COI check is free, just set flag and check for conflict
+    const hasConflict = portfolio.some(h => h.pitchId === pitch.id && h.status === "active");
 
-    const conflict = portfolio.find(h => h.pitchId === pitch.id && h.status === "active");
-    const warning = conflict 
-      ? `CONFLICT OF INTEREST DETECTED: You already hold an active investment in ${conflict.businessName}, a direct competitor.`
-      : "Clear: No portfolio conflicts found.";
+    const newLog = {
+      ...currentLog,
+      coiChecked: true,
+      coiWarning: hasConflict
+        ? `Warning: You already hold shares in another ${pitch.industry} business. Investing here will trigger a Conflict of Interest lawsuit!`
+        : "No active portfolio conflicts detected in this market segment.",
+      hasConflict
+    };
 
     set({
-      cash: get().cash - coiCost,
       diligenceLog: {
         ...diligenceLog,
-        [pitchInstanceId]: {
-          ...currentLog,
-          coiChecked: true,
-          coiWarning: warning,
-          hasConflict: !!conflict
-        }
+        [pitchInstanceId]: newLog
       }
     });
 
@@ -216,10 +275,10 @@ export const useGameStore = create((set, get) => ({
   },
 
   passOnPitch: (pitchInstanceId) => {
-    const { currentPitches, passedPitches } = get();
+    const { currentPitches, passedPitches, diligenceLog } = get();
     const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
     if (!pitch) return;
-    
+
     const passedHolding = {
       pitchId: pitch.id,
       businessName: pitch.businessName,
@@ -239,11 +298,22 @@ export const useGameStore = create((set, get) => ({
       assembledParagraphs: pitch.assembledParagraphs,
       valuationAtInvestment: pitch.valuation
     };
-    
+
     set({
       currentPitches: currentPitches.filter(p => p.instanceId !== pitchInstanceId),
       passedPitches: [passedHolding, ...passedPitches]
     });
+
+    // +3 rep for dodging a red flag (BG check ran and surfaced a real clue on a risk trait)
+    const log = diligenceLog[pitchInstanceId];
+    const CLEAN_CLUE = "Nothing notable surfaced in the public record.";
+    const traitDef = pitch.trait ? TRAITS[pitch.trait] : null;
+    const isRedFlagTrait = traitDef && traitDef.severity !== "positive" && traitDef.severity !== "neutral";
+    if (log?.backgroundChecked && log?.backgroundClue && log.backgroundClue !== CLEAN_CLUE && isRedFlagTrait) {
+      get()._applyReputationDelta(3);
+    }
+
+
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   },
 
@@ -330,34 +400,9 @@ export const useGameStore = create((set, get) => ({
   },
 
   dismissPitch: (pitchInstanceId) => {
-    const { currentPitches, passedPitches } = get();
-    const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
-    if (!pitch) return;
-
-    const equityPercent = (pitch.ask / pitch.valuation) * 100;
-    const ghostHolding = {
-      pitchId: pitch.id,
-      businessName: pitch.businessName,
-      archetypeLabel: pitch.archetypeLabel,
-      industry: pitch.industry,
-      investedAmount: pitch.ask,
-      equityPercent,
-      currentValueMultiplier: 1.0,
-      turnsHeld: 0,
-      status: "passed",
-      trait: pitch.trait,
-      outcomeWeights: pitch.outcomeWeights,
-      history: [],
-      valuationAtInvestment: pitch.valuation
-    };
-
-    const updatedPitches = currentPitches.filter(p => p.instanceId !== pitchInstanceId);
-    set({ 
-      currentPitches: updatedPitches,
-      passedPitches: [ghostHolding, ...passedPitches]
-    });
-    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+    get().passOnPitch(pitchInstanceId);
   },
+
 
   proposeFollowOn: (pitchId, investedAmount, offerAmount) => {
     const { cash, portfolio, pendingOffers } = get();
@@ -392,6 +437,7 @@ export const useGameStore = create((set, get) => ({
 
     let nextCash = cash;
     let nextPortfolio = [...portfolio];
+    const reputationDeltasFromEvents = [];
 
     nextPortfolio = nextPortfolio.map(h => {
       if (h.pitchId === event.pitchId && h.investedAmount === event.investedAmount && h.status === "active") {
@@ -473,11 +519,19 @@ export const useGameStore = create((set, get) => ({
         } else if (effectType === "accept_buyout") {
           const safeBuyoutAmount = Number(event.buyoutAmount) || Math.round(h.investedAmount * 1.5);
           nextCash += safeBuyoutAmount;
+          // Reputation delta: +5 if buyout > invested, -3 if buyout < invested
+          if (safeBuyoutAmount > h.investedAmount) {
+            reputationDeltasFromEvents.push(5);
+          } else if (safeBuyoutAmount < h.investedAmount) {
+            reputationDeltasFromEvents.push(-3);
+          }
+
           return {
             ...h,
             status: "exited",
             exitValue: safeBuyoutAmount
           };
+
         } else if (effectType === "accept_distress") {
           nextCash -= event.eventAsk;
           const currentValuation = (h.valuationAtInvestment || (h.investedAmount / (h.equityPercent / 100))) * (h.currentValueMultiplier || 1);
@@ -584,6 +638,11 @@ export const useGameStore = create((set, get) => ({
       netWorthHistory: nextNetWorthHistory,
       gameOver: nextGameOver
     });
+
+    // Apply any reputation deltas collected during event resolution
+    for (const delta of reputationDeltasFromEvents) {
+      get()._applyReputationDelta(delta);
+    }
 
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   },

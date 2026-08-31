@@ -390,12 +390,20 @@ function generateCompanyNews(portfolio, nextTurn, limit = 3) {
 export function resolveTurn(state, operatingCost = 50000) {
   let nextCash = state.cash;
   let nextPortfolio = [...state.portfolio];
+  const reputationDeltas = [];
 
   // 1. Resolve pending exits
   nextPortfolio = nextPortfolio.map(holding => {
     if (holding.status === "exit_pending") {
       const exitValue = Math.round(holding.valuationAtInvestment * holding.currentValueMultiplier * (holding.equityPercent / 100));
       nextCash += exitValue;
+      // Reputation delta: +5 if profitable exit (exit value > invested), -3 if loss exit (exit value < invested)
+      if (exitValue > holding.investedAmount) {
+        reputationDeltas.push({ delta: 5, reason: "exit", pitchId: holding.pitchId });
+      } else if (exitValue < holding.investedAmount) {
+        reputationDeltas.push({ delta: -3, reason: "failed_exit", pitchId: holding.pitchId });
+      }
+
       return {
         ...holding,
         status: "exited",
@@ -419,6 +427,10 @@ export function resolveTurn(state, operatingCost = 50000) {
         value: nextValue,
         changePercent: Math.round((multiplier - 1) * 100)
       };
+
+      if (isFailed) {
+        reputationDeltas.push({ delta: -12, reason: "write_off", pitchId: holding.pitchId });
+      }
 
       return {
         ...holding,
@@ -740,6 +752,7 @@ export function resolveTurn(state, operatingCost = 50000) {
     drawnSegments: nextDrawnSegments,
     seenTemplates: nextSeenTemplates,
     usedBusinessNames: nextUsedBusinessNames,
-    seenNewsIds: nextSeenNewsIds
+    seenNewsIds: nextSeenNewsIds,
+    reputationDeltas
   };
 }

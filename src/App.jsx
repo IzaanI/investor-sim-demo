@@ -8,6 +8,7 @@ import PitchPanel from "./components/PitchPanel";
 import PortfolioPanel from "./components/PortfolioPanel";
 import EventModal from "./components/EventModal";
 import TutorialOverlay from "./components/TutorialOverlay";
+import ReputationRewardModal from "./components/ReputationRewardModal";
 import { ArrowRight, AlertTriangle, Trophy, TrendingUp, RefreshCw } from "lucide-react";
 import sounds from "./utils/sounds";
 
@@ -229,6 +230,7 @@ export default function App() {
       {eventQueue && eventQueue.length > 0 && (
         <EventModal event={eventQueue[0]} />
       )}
+      <ReputationRewardModal />
       <MobileNav activeTab={activeTab} setActiveTab={setActiveTab} />
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 

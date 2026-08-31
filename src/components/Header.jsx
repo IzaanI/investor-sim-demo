@@ -1,5 +1,6 @@
 import React from "react";
 import { useGameStore } from "../state/useGameStore";
+import { getReputationTier } from "../data/reputationConfig";
 
 export const formatMoney = (val) => {
   return new Intl.NumberFormat("en-US", {
@@ -13,6 +14,7 @@ export default function Header() {
   const cash = useGameStore(state => state.cash);
   const portfolio = useGameStore(state => state.portfolio);
   const turn = useGameStore(state => state.turn);
+  const reputation = useGameStore(state => state.reputation ?? 0);
 
   // Recalculate current net worth
   const activeHoldingsValue = portfolio
@@ -27,6 +29,9 @@ export default function Header() {
 
   const isCashNegative = cash < 0;
   const isNetWorthDanger = netWorth < 200000;
+
+  const tier = getReputationTier(reputation);
+
 
   return (
     <header className="dashboard-header">
@@ -49,12 +54,29 @@ export default function Header() {
       </div>
 
       <div className="header-stat">
-        <span className="stat-label">Active Holdings</span>
-        <span className="stat-value" style={{ color: "var(--color-accent-light)" }}>
-          {portfolio.filter(h => h.status === "active").length}
-        </span>
-        <span className="stat-subtext">Companies funded</span>
+        <span className="stat-label">Reputation</span>
+        <div style={{
+          width: "65%",
+          height: "6px",
+          borderRadius: "3px",
+          background: "rgba(255,255,255,0.08)",
+          overflow: "hidden",
+          margin: "5px 0",
+          position: "relative"
+        }}>
+          <div style={{
+            height: "100%",
+            width: `${Math.min(100, Math.max(0, reputation))}%`,
+            background: "var(--color-accent-light)",
+            borderRadius: "3px",
+            transition: "width 0.4s ease"
+          }} />
+        </div>
+        <span className="stat-subtext" style={{ color: "var(--color-accent-light)" }}>{tier.label}</span>
       </div>
+
+
+
     </header>
   );
 }

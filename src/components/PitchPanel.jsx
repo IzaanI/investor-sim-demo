@@ -66,6 +66,7 @@ export default function PitchPanel() {
   const tutorialStep = useGameStore(state => state.tutorialStep);
   const setTutorialStep = useGameStore(state => state.setTutorialStep);
   const passOnPitch = useGameStore(state => state.passOnPitch);
+  const applyReputationDelta = useGameStore(state => state._applyReputationDelta);
 
   const handleOpenPitch = (pitch) => {
     sounds.modalOpen();
@@ -167,14 +168,17 @@ export default function PitchPanel() {
     });
   };
 
+  const bgCheckDiscountMultiplier = useGameStore(state => state.bgCheckDiscountMultiplier) || 1.0;
+
   const activeLog = selectedPitch
     ? diligenceLog[selectedPitch.instanceId] || { backgroundChecked: false, backgroundClue: null, coiChecked: false, coiWarning: null, hasConflict: false }
     : null;
 
   // Background check cost for the selected pitch
   const bgCheckCost = selectedPitch
-    ? Math.max(5000, Math.round((selectedPitch.ask * 0.05) / 5000) * 5000)
+    ? Math.max(1000, Math.round((selectedPitch.ask * 0.05 * bgCheckDiscountMultiplier) / 1000) * 1000)
     : 0;
+
 
   return (
     <div className="pitch-panel">
@@ -474,7 +478,7 @@ export default function PitchPanel() {
                       )}
                       {negState === "countered" && (
                         <>
-                          <button className="decision-btn pass" onClick={() => { sounds.pass(); passOnPitch(selectedPitch.instanceId); handleClosePitch(); }}>
+                          <button className="decision-btn pass" onClick={() => { sounds.pass(); applyReputationDelta(-3); passOnPitch(selectedPitch.instanceId); handleClosePitch(); }}>
                             Walk Away
                           </button>
                           <button className="decision-btn invest" disabled={cash < selectedPitch.ask} onClick={() => { sounds.invest(); investInPitch(selectedPitch.instanceId, counterValuation); handleClosePitch(); }}>
