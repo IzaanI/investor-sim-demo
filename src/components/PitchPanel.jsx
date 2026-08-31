@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useGameStore } from "../state/useGameStore";
 import { formatMoney } from "./Header";
-import { Search, TrendingUp, X, FileText } from "lucide-react";
+import { Search, TrendingUp, X, FileText, MessageSquare } from "lucide-react";
 import sounds from "../utils/sounds";
+import { NEGOTIATION_PROFILES } from "../data/negotiation";
 
 function TypewriterText({ text, typingSpeed = 15, forceComplete }) {
   const [displayedText, setDisplayedText] = useState(forceComplete ? text : "");
@@ -49,17 +50,41 @@ export default function PitchPanel() {
   const dismissPitch = useGameStore(state => state.dismissPitch);
   const readPitches = useGameStore(state => state.readPitches);
   const markPitchRead = useGameStore(state => state.markPitchRead);
+  const negotiationLog = useGameStore(state => state.negotiationLog);
+  const updateNegotiationLog = useGameStore(state => state.updateNegotiationLog);
 
   const [selectedPitch, setSelectedPitch] = useState(null);
   const [pitchProgress, setPitchProgress] = useState(0);
+  
+  // Negotiation state
+  const [negState, setNegState] = useState("idle"); // idle, offering, countered, accepted, rejected
+  const [negEquity, setNegEquity] = useState(0);
+  const [founderResponse, setFounderResponse] = useState("");
+  const [counterValuation, setCounterValuation] = useState(null);
 
   const tutorialActive = useGameStore(state => state.tutorialActive);
   const tutorialStep = useGameStore(state => state.tutorialStep);
   const setTutorialStep = useGameStore(state => state.setTutorialStep);
+  const passOnPitch = useGameStore(state => state.passOnPitch);
 
   const handleOpenPitch = (pitch) => {
     sounds.modalOpen();
     setSelectedPitch(pitch);
+    
+    // Load saved negotiation state if it exists
+    const savedLog = negotiationLog[pitch.instanceId];
+    if (savedLog) {
+      setNegState(savedLog.state);
+      setNegEquity(savedLog.equity);
+      setFounderResponse(savedLog.response);
+      setCounterValuation(savedLog.counterValuation);
+    } else {
+      setNegState("idle");
+      setNegEquity(((pitch.ask / pitch.valuation) * 100).toFixed(1));
+      setFounderResponse("");
+      setCounterValuation(null);
+    }
+
     if (readPitches.includes(pitch.instanceId)) {
       setPitchProgress(3);
       if (tutorialActive && tutorialStep === 3) {
@@ -75,6 +100,71 @@ export default function PitchPanel() {
   const handleClosePitch = () => {
     sounds.modalClose();
     setSelectedPitch(null);
+  };
+
+  const handleSendOffer = () => {
+    sounds.click();
+    const ask = selectedPitch.ask;
+    const origVal = selectedPitch.valuation;
+    // requestedValuation = ask / (negEquity / 100)
+    const requestedValuation = ask / (negEquity / 100);
+    const originalEquity = (ask / origVal) * 100;
+    
+    // Calculate "discount" as the absolute increase in equity percentage requested
+    // e.g., going from 10% to 15% is a 0.05 discount.
+    const discount = (negEquity - originalEquity) / 100;
+    
+    // Default to operator if archetype missing
+    const profile = NEGOTIATION_PROFILES[selectedPitch.archetypeKey] || NEGOTIATION_PROFILES.operator;
+    
+    let outcomeState = "idle";
+    let finalResponse = "";
+    let finalCounterVal = null;
+
+    if (discount <= 0) {
+      finalResponse = profile.dialogue.accept[Math.floor(Math.random() * profile.dialogue.accept.length)];
+      outcomeState = "accepted";
+      finalCounterVal = requestedValuation;
+    } else if (discount > profile.maxTolerance) {
+      finalResponse = profile.dialogue.reject[Math.floor(Math.random() * profile.dialogue.reject.length)];
+      outcomeState = "rejected";
+    } else {
+      const strictness = discount / profile.maxTolerance; 
+      const acceptChance = Math.max(0.05, 1.0 - (strictness * 1.5));
+      const counterChance = profile.counterBias * strictness;
+
+      const roll = Math.random();
+      if (roll < acceptChance) {
+        finalResponse = profile.dialogue.accept[Math.floor(Math.random() * profile.dialogue.accept.length)];
+        outcomeState = "accepted";
+        finalCounterVal = requestedValuation;
+      } else if (roll < acceptChance + counterChance) {
+        const split = 0.3 + (Math.random() * 0.4); 
+        let newCounterVal = origVal - ((origVal - requestedValuation) * split);
+        newCounterVal = Math.round(newCounterVal / 25000) * 25000;
+        
+        let msg = profile.dialogue.counter[Math.floor(Math.random() * profile.dialogue.counter.length)];
+        const counterEquity = ((ask / newCounterVal) * 100).toFixed(1);
+        msg = msg.replace("{val}", `${counterEquity}%`);
+        
+        finalResponse = msg;
+        outcomeState = "countered";
+        finalCounterVal = newCounterVal;
+      } else {
+        finalResponse = profile.dialogue.reject[Math.floor(Math.random() * profile.dialogue.reject.length)];
+        outcomeState = "rejected";
+      }
+    }
+
+    setFounderResponse(finalResponse);
+    setNegState(outcomeState);
+    setCounterValuation(finalCounterVal);
+    updateNegotiationLog(selectedPitch.instanceId, {
+      state: outcomeState,
+      equity: negEquity,
+      response: finalResponse,
+      counterValuation: finalCounterVal
+    });
   };
 
   const activeLog = selectedPitch
@@ -294,29 +384,107 @@ export default function PitchPanel() {
             </div>
 
             {pitchProgress >= 3 && (
-              <div className="modal-footer" style={{ animation: "slideDown 0.4s ease-out" }}>
-                <button
-                  className="decision-btn pass"
-                  onClick={() => {
-                    sounds.pass();
-                    dismissPitch(selectedPitch.instanceId);
-                    handleClosePitch();
-                  }}
-                >
-                  Pass Deal
-                </button>
-                <button
-                  id="pitch-invest-btn"
-                  className="decision-btn invest"
-                  disabled={cash < selectedPitch.ask}
-                  onClick={() => {
-                    sounds.invest();
-                    investInPitch(selectedPitch.instanceId);
-                    handleClosePitch();
-                  }}
-                >
-                  {cash < selectedPitch.ask ? "Insufficient Cash" : `Invest ${formatMoney(selectedPitch.ask)}`}
-                </button>
+              <div className="modal-footer" style={{ animation: "slideDown 0.4s ease-out", flexDirection: "column", alignItems: "stretch", gap: "1rem" }}>
+                
+                {negState === "idle" && (
+                  <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end", width: "100%" }}>
+                    <button className="decision-btn pass" onClick={() => { sounds.pass(); dismissPitch(selectedPitch.instanceId); handleClosePitch(); }}>
+                      Pass Deal
+                    </button>
+                    <button className="card-action-btn" style={{ padding: "0.8rem 2rem", width: "auto" }} onClick={() => setNegState("offering")}>
+                      <MessageSquare size={16} style={{ marginRight: "0.5rem", display: "inline-block", verticalAlign: "middle" }} /> 
+                      <span style={{ verticalAlign: "middle" }}>Negotiate</span>
+                    </button>
+                    <button id="pitch-invest-btn" className="decision-btn invest" disabled={cash < selectedPitch.ask} onClick={() => { sounds.invest(); investInPitch(selectedPitch.instanceId); handleClosePitch(); }}>
+                      {cash < selectedPitch.ask ? "Insufficient Cash" : `Invest ${formatMoney(selectedPitch.ask)}`}
+                    </button>
+                  </div>
+                )}
+
+                {negState === "offering" && (
+                  <div style={{ background: "rgba(2, 132, 199, 0.1)", border: "1px solid rgba(56, 189, 248, 0.2)", borderRadius: "8px", padding: "1.5rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
+                      <span>Target Equity: <strong style={{ fontSize: "1.2rem", color: "var(--color-accent-light)" }}>{negEquity}%</strong></span>
+                      <span>Implied Valuation: <strong>{formatMoney(selectedPitch.ask / (negEquity / 100))}</strong></span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min={((selectedPitch.ask / selectedPitch.valuation) * 100).toFixed(1)} 
+                      max="49" 
+                      step="0.5" 
+                      value={negEquity} 
+                      onChange={(e) => setNegEquity(e.target.value)}
+                      style={{ width: "100%", accentColor: "var(--color-accent)", marginBottom: "1.5rem" }}
+                    />
+                    <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
+                      <button className="decision-btn pass" onClick={() => setNegState("idle")}>Cancel</button>
+                      <button className="decision-btn invest" onClick={handleSendOffer}>Send Term Sheet</button>
+                    </div>
+                  </div>
+                )}
+
+                {(negState === "countered" || negState === "accepted" || negState === "rejected") && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                    <div className="diligence-log-box" style={{ 
+                      background: "rgba(10, 17, 30, 0.8)", 
+                      borderColor: negState === "accepted" ? "var(--color-success)" : negState === "rejected" ? "var(--color-danger)" : "var(--color-warning)" 
+                    }}>
+                      <div style={{ display: "flex", gap: "0.75rem" }}>
+                        <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "var(--color-accent)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold" }}>
+                          F
+                        </div>
+                        <div>
+                          <div style={{ fontSize: "0.75rem", color: "var(--color-accent-light)", marginBottom: "0.25rem", textTransform: "uppercase", letterSpacing: "1px" }}>
+                            Founder Response
+                          </div>
+                          <p style={{ margin: 0, fontSize: "1rem", lineHeight: "1.5" }}>
+                            "{founderResponse}"
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    { (negState === "accepted" || negState === "countered") && counterValuation && (
+                      <div style={{ display: "flex", justifyContent: "space-between", background: "rgba(2, 132, 199, 0.05)", border: "1px solid rgba(56, 189, 248, 0.2)", borderRadius: "8px", padding: "1rem" }}>
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                          <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", textTransform: "uppercase" }}>Active Deal</span>
+                          <span style={{ fontSize: "1.2rem", fontWeight: "bold", color: "var(--color-accent-light)" }}>
+                            {formatMoney(selectedPitch.ask)} for {((selectedPitch.ask / counterValuation) * 100).toFixed(1)}%
+                          </span>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", textAlign: "right" }}>
+                          <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", textTransform: "uppercase" }}>Implied Valuation</span>
+                          <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
+                            {formatMoney(counterValuation)}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
+                      {negState === "accepted" && (
+                        <button className="decision-btn invest" onClick={() => { sounds.invest(); investInPitch(selectedPitch.instanceId, counterValuation); handleClosePitch(); }}>
+                          Sign Term Sheet
+                        </button>
+                      )}
+                      {negState === "rejected" && (
+                        <button className="decision-btn pass" onClick={() => { sounds.pass(); passOnPitch(selectedPitch.instanceId); handleClosePitch(); }}>
+                          Close
+                        </button>
+                      )}
+                      {negState === "countered" && (
+                        <>
+                          <button className="decision-btn pass" onClick={() => { sounds.pass(); passOnPitch(selectedPitch.instanceId); handleClosePitch(); }}>
+                            Walk Away
+                          </button>
+                          <button className="decision-btn invest" disabled={cash < selectedPitch.ask} onClick={() => { sounds.invest(); investInPitch(selectedPitch.instanceId, counterValuation); handleClosePitch(); }}>
+                            {cash < selectedPitch.ask ? "Insufficient Cash" : `Accept Counter`}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

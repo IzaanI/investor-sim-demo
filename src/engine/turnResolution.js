@@ -572,8 +572,12 @@ export function resolveTurn(state, operatingCost = 50000) {
           } else if (template.type === "distress_request") {
             eventAsk = Math.round((holding.investedAmount * (0.2 + Math.random() * 0.1)) / 2500) * 2500;
           } else if (template.type === "buyout_offer") {
-            const currentValue = holding.investedAmount * holding.currentValueMultiplier;
-            buyoutAmount = Math.round((currentValue * (1.2 + Math.random() * 0.3)) / 10000) * 10000;
+            const baseValuation = holding.valuationAtInvestment || (holding.investedAmount / (holding.equityPercent / 100));
+            const trueValuation = baseValuation * holding.currentValueMultiplier;
+            const currentValue = trueValuation * (holding.equityPercent / 100);
+            let calculatedBuyout = Math.round((currentValue * (1.2 + Math.random() * 0.3)) / 10000) * 10000;
+            if (isNaN(calculatedBuyout) || calculatedBuyout <= 0) calculatedBuyout = Math.round(holding.investedAmount * 1.5);
+            buyoutAmount = calculatedBuyout;
           }
 
           const formatCurrencyStr = (val) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(val);

@@ -36,7 +36,7 @@ export const COMPANY_NEWS_TEMPLATES = {
     },
     {
       category: "PARTNERSHIPS",
-      headline: "{{companyName}} partners with a trendy boba tea chain, launching a controversial but highly successful {{product}} flavor.",
+      headline: "{{companyName}} unexpectedly partners with a trendy boba tea chain, launching a controversial but highly successful flavor.",
       detail: "The strange collaboration has sparked endless online debates, driving both morbid curiosity and massive sales.",
       actionable: true,
       actionableDetail: "Unconventional partnerships can yield high rewards. Monitor the next 1-2 quarters to see if this hype translates into sustained growth.",

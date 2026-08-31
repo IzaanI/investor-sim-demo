@@ -45,6 +45,7 @@ const createInitialState = () => {
     eventQueue: [],
     // instanceId -> { backgroundChecked: bool, backgroundClue: string|null }
     diligenceLog: {},
+    negotiationLog: {}, // instanceId -> { state, equity, response, counterVal }
     currentPitches: initialPitches,
     currentNews: initialNews,
     gameOver: false,
@@ -106,6 +107,20 @@ export const useGameStore = create((set, get) => ({
     const nextStateValues = resolveTurn(state, 10000); // $10K operating cost per turn
     set(nextStateValues);
 
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
+
+  updateNegotiationLog: (pitchInstanceId, logData) => {
+    const { negotiationLog } = get();
+    set({
+      negotiationLog: {
+        ...negotiationLog,
+        [pitchInstanceId]: {
+          ...(negotiationLog[pitchInstanceId] || {}),
+          ...logData
+        }
+      }
+    });
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   },
 
@@ -200,14 +215,45 @@ export const useGameStore = create((set, get) => ({
     localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
   },
 
+  passOnPitch: (pitchInstanceId) => {
+    const { currentPitches, passedPitches } = get();
+    const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
+    if (!pitch) return;
+    
+    const passedHolding = {
+      pitchId: pitch.id,
+      businessName: pitch.businessName,
+      product: pitch.product,
+      customerNoun: pitch.customerNoun,
+      archetypeLabel: pitch.archetypeLabel,
+      industry: pitch.industry,
+      investedAmount: pitch.ask,
+      equityPercent: (pitch.ask / pitch.valuation) * 100,
+      currentValueMultiplier: 1.0,
+      turnsHeld: 0,
+      status: "passed",
+      eventChance: { base: 0.1, trendModifier: 0 },
+      trait: pitch.trait,
+      outcomeWeights: pitch.outcomeWeights,
+      history: [],
+      assembledParagraphs: pitch.assembledParagraphs,
+      valuationAtInvestment: pitch.valuation
+    };
+    
+    set({
+      currentPitches: currentPitches.filter(p => p.instanceId !== pitchInstanceId),
+      passedPitches: [passedHolding, ...passedPitches]
+    });
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...get() }));
+  },
 
-
-  investInPitch: (pitchInstanceId) => {
+  investInPitch: (pitchInstanceId, negotiatedValuation = null) => {
     const { cash, currentPitches, portfolio, diligenceLog } = get();
     const pitch = currentPitches.find(p => p.instanceId === pitchInstanceId);
     if (!pitch || cash < pitch.ask) return;
 
-    const equityPercent = (pitch.ask / pitch.valuation) * 100;
+    const finalValuation = negotiatedValuation || pitch.valuation;
+    const equityPercent = (pitch.ask / finalValuation) * 100;
     const logEntry = diligenceLog[pitchInstanceId];
 
     const hasConflict = portfolio.some(h => h.pitchId === pitch.id && h.status === "active");
@@ -231,7 +277,7 @@ export const useGameStore = create((set, get) => ({
       outcomeWeights: pitch.outcomeWeights,
       history: [],
       assembledParagraphs: pitch.assembledParagraphs,
-      valuationAtInvestment: pitch.valuation,
+      valuationAtInvestment: finalValuation,
       capitalContributions: [{ amount: pitch.ask, turn: get().turn, type: "Initial Investment" }],
       coiLawsuitPending: hasConflict,
       lastMilestoneMultiplier: 1.0
@@ -425,11 +471,12 @@ export const useGameStore = create((set, get) => ({
             ]
           };
         } else if (effectType === "accept_buyout") {
-          nextCash += event.buyoutAmount;
+          const safeBuyoutAmount = Number(event.buyoutAmount) || Math.round(h.investedAmount * 1.5);
+          nextCash += safeBuyoutAmount;
           return {
             ...h,
             status: "exited",
-            exitValue: event.buyoutAmount
+            exitValue: safeBuyoutAmount
           };
         } else if (effectType === "accept_distress") {
           nextCash -= event.eventAsk;
